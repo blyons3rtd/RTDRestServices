@@ -1,0 +1,1421 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<table xmlns="http://xmlns.oracle.com/jdeveloper/1211/offlinedb">
+  <name>LICENSE_PLATE_MASTER</name>
+  <columns>
+    <column>
+      <name>PLATE_NUMBER</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">25</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>PLATE_NUMBER</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>PLATE_ADDRESS</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">250</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>PLATE_ADDRESS</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>PLATE_CITY</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">60</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>PLATE_CITY</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>PLATE_STATE</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">2</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>PLATE_STATE</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>PLATE_ZIP</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">5</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>PLATE_ZIP</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>VEHICLE_TYPE</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">25</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>false</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>VEHICLE_TYPE</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>VEHICLE_CLASS</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>size</key>
+            <value class="java.lang.Long">25</value>
+          </entry>
+          <entry>
+            <key>unit</key>
+            <value class="java.lang.String">BYTE</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>VARCHAR2</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>false</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>VEHICLE_CLASS</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>CREATED_DATE</name>
+      <dataTypeUsage>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>DATE</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>Comment</key>
+          <value class="java.lang.String">DS process creates the record</value>
+        </entry>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>CREATED_DATE</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>CREATED_TXN_ID</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>precision</key>
+            <value class="java.lang.String">15</value>
+          </entry>
+          <entry>
+            <key>scale</key>
+            <value class="java.lang.Long">0</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>NUMBER</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>Comment</key>
+          <value class="java.lang.String">Initial Transaction Id from DMV File</value>
+        </entry>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>CREATED_TXN_ID</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>GEO_PROCESSED</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>precision</key>
+            <value class="java.lang.String">15</value>
+          </entry>
+          <entry>
+            <key>scale</key>
+            <value class="java.lang.Long">0</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>NUMBER</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <default class="java.lang.String">0</default>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>Comment</key>
+          <value class="java.lang.String">RTD GEO Process Flag</value>
+        </entry>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>GEO_PROCESSED</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>IN_DISTRICT</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>precision</key>
+            <value class="java.lang.String">15</value>
+          </entry>
+          <entry>
+            <key>scale</key>
+            <value class="java.lang.Long">0</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>NUMBER</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <default class="java.lang.String">0</default>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>Comment</key>
+          <value class="java.lang.String">In-Out District Flag</value>
+        </entry>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>IN_DISTRICT</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>GEOCODED</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>precision</key>
+            <value class="java.lang.String">15</value>
+          </entry>
+          <entry>
+            <key>scale</key>
+            <value class="java.lang.Long">0</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>NUMBER</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <default class="java.lang.String">0</default>
+      <notNull>true</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>GEOCODED</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>GEO_MODIFIED_DATE</name>
+      <dataTypeUsage>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>DATE</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>false</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>GEO_MODIFIED_DATE</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>DS_MODIFIED_DATE</name>
+      <dataTypeUsage>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>DATE</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>false</notNull>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>DS_MODIFIED_DATE</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+    <column>
+      <name>DS_MODIFIED_TXN_ID</name>
+      <dataTypeUsage>
+        <attributeValues>
+          <entry>
+            <key>precision</key>
+            <value class="java.lang.String">15</value>
+          </entry>
+          <entry>
+            <key>scale</key>
+            <value class="java.lang.Long">0</value>
+          </entry>
+        </attributeValues>
+        <dataTypeID class="oracle.javatools.db.datatypes.DataTypeID">
+          <typeName>NUMBER</typeName>
+        </dataTypeID>
+      </dataTypeUsage>
+      <notNull>false</notNull>
+      <properties>
+        <entry>
+          <key>Comment</key>
+          <value class="java.lang.String">Last Transaction Id from DMV File</value>
+        </entry>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>DS_MODIFIED_TXN_ID</name>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <type>COLUMN</type>
+          </value>
+        </entry>
+      </properties>
+    </column>
+  </columns>
+  <indexes>
+    <index>
+      <name>IDX_CREATED_DATE</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>CREATED_DATE</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>CREATED_DATE</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>IDX_CREATED_DATE</name>
+                  <identifier class="java.math.BigDecimal">102933</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>IDX_CREATED_DATE</name>
+            <identifier class="java.math.BigDecimal">102933</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>IDX_CREATED_TXN_ID</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>CREATED_TXN_ID</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>CREATED_TXN_ID</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>IDX_CREATED_TXN_ID</name>
+                  <identifier class="java.math.BigDecimal">102934</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>IDX_CREATED_TXN_ID</name>
+            <identifier class="java.math.BigDecimal">102934</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>IDX_DS_MODIFIED_DATE</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>DS_MODIFIED_DATE</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>DS_MODIFIED_DATE</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>IDX_DS_MODIFIED_DATE</name>
+                  <identifier class="java.math.BigDecimal">102935</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>IDX_DS_MODIFIED_DATE</name>
+            <identifier class="java.math.BigDecimal">102935</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>IDX_GEO_MODIFIED_DATE</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>GEO_MODIFIED_DATE</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_MODIFIED_DATE</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>IDX_GEO_MODIFIED_DATE</name>
+                  <identifier class="java.math.BigDecimal">102936</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>IDX_GEO_MODIFIED_DATE</name>
+            <identifier class="java.math.BigDecimal">102936</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_IDX1</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>GEO_MODIFIED_DATE</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_MODIFIED_DATE</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX1</name>
+                  <identifier class="java.math.BigDecimal">102937</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>GEO_PROCESSED</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_PROCESSED</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX1</name>
+                  <identifier class="java.math.BigDecimal">102937</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>IN_DISTRICT</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>IN_DISTRICT</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX1</name>
+                  <identifier class="java.math.BigDecimal">102937</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>PLATE_NUMBER</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>PLATE_NUMBER</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX1</name>
+                  <identifier class="java.math.BigDecimal">102937</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_IDX1</name>
+            <identifier class="java.math.BigDecimal">102937</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_IDX2</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>GEO_PROCESSED</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_PROCESSED</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX2</name>
+                  <identifier class="java.math.BigDecimal">102938</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>BITMAP</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_IDX2</name>
+            <identifier class="java.math.BigDecimal">102938</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>false</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_IDX3</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>GEOCODED</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEOCODED</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX3</name>
+                  <identifier class="java.math.BigDecimal">102939</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>IN_DISTRICT</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>IN_DISTRICT</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX3</name>
+                  <identifier class="java.math.BigDecimal">102939</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>GEO_PROCESSED</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_PROCESSED</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX3</name>
+                  <identifier class="java.math.BigDecimal">102939</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+        <columnExpression>
+          <expressionSource>GEO_MODIFIED_DATE</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>GEO_MODIFIED_DATE</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX3</name>
+                  <identifier class="java.math.BigDecimal">102939</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_IDX3</name>
+            <identifier class="java.math.BigDecimal">102939</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_IDX4</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>IN_DISTRICT</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>IN_DISTRICT</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX4</name>
+                  <identifier class="java.math.BigDecimal">102940</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>BITMAP</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_IDX4</name>
+            <identifier class="java.math.BigDecimal">102940</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_IDX5</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>PLATE_ZIP</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>PLATE_ZIP</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_IDX5</name>
+                  <identifier class="java.math.BigDecimal">102941</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>NORMAL</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_IDX5</name>
+            <identifier class="java.math.BigDecimal">102941</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+    <index>
+      <name>LICENSE_PLATE_MASTER_PK</name>
+      <columnExpressions>
+        <columnExpression>
+          <expressionSource>PLATE_NUMBER</expressionSource>
+          <orderType>ASC</orderType>
+          <properties>
+            <entry>
+              <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+              <value class="oracle.javatools.db.ReferenceID">
+                <name>PLATE_NUMBER</name>
+                <parent class="oracle.javatools.db.ReferenceID">
+                  <name>LICENSE_PLATE_MASTER_PK</name>
+                  <identifier class="java.math.BigDecimal">102942</identifier>
+                  <parent class="oracle.javatools.db.ReferenceID">
+                    <name>LICENSE_PLATE_MASTER</name>
+                    <identifier class="java.math.BigDecimal">102921</identifier>
+                    <schemaName>CHK_PLT</schemaName>
+                    <type>TABLE</type>
+                  </parent>
+                  <schemaName>CHK_PLT</schemaName>
+                  <type>INDEX</type>
+                </parent>
+                <type>IndexObject</type>
+              </value>
+            </entry>
+          </properties>
+        </columnExpression>
+      </columnExpressions>
+      <indexType>UNIQUE</indexType>
+      <parallelDegree>1</parallelDegree>
+      <properties>
+        <entry>
+          <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+          <value class="oracle.javatools.db.ReferenceID">
+            <name>LICENSE_PLATE_MASTER_PK</name>
+            <identifier class="java.math.BigDecimal">102942</identifier>
+            <parent class="oracle.javatools.db.ReferenceID">
+              <name>LICENSE_PLATE_MASTER</name>
+              <identifier class="java.math.BigDecimal">102921</identifier>
+              <schemaName>CHK_PLT</schemaName>
+              <type>TABLE</type>
+            </parent>
+            <schemaName>CHK_PLT</schemaName>
+            <type>INDEX</type>
+          </value>
+        </entry>
+        <entry>
+          <key>OracleStorageProperties</key>
+          <value class="oracle.javatools.db.ora.OracleStorageProperties">
+            <bufferMode>DEFAULT</bufferMode>
+            <initialExtent>65536</initialExtent>
+            <initrans>2</initrans>
+            <logging>true</logging>
+            <maxExtent>0</maxExtent>
+            <minExtent>1</minExtent>
+            <nextExtent>1048576</nextExtent>
+            <percentFree>10</percentFree>
+            <tablespaceID class="oracle.javatools.db.ReferenceID">
+              <name>PLT_DIR_INDEX</name>
+              <type>TABLESPACE</type>
+            </tablespaceID>
+          </value>
+        </entry>
+      </properties>
+      <reverse>false</reverse>
+      <schema>
+        <name>CHK_PLT</name>
+      </schema>
+      <systemGenerated>false</systemGenerated>
+    </index>
+  </indexes>
+  <properties>
+    <entry>
+      <key>OfflineDBConstants.IMPORT_SOURCE_CONNECTION</key>
+      <value class="java.lang.String">Connection1</value>
+    </entry>
+    <entry>
+      <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+      <value class="oracle.javatools.db.ReferenceID">
+        <name>LICENSE_PLATE_MASTER</name>
+        <identifier class="java.math.BigDecimal">102921</identifier>
+        <schemaName>CHK_PLT</schemaName>
+        <type>TABLE</type>
+      </value>
+    </entry>
+    <entry>
+      <key>OracleInMemoryProperties</key>
+      <value class="oracle.javatools.db.ora.OracleInMemoryProperties">
+        <inMemory>false</inMemory>
+      </value>
+    </entry>
+    <entry>
+      <key>OracleStorageProperties</key>
+      <value class="oracle.javatools.db.ora.OracleStorageProperties">
+        <bufferMode>DEFAULT</bufferMode>
+        <initialExtent>212992</initialExtent>
+        <initrans>1</initrans>
+        <logging>true</logging>
+        <maxExtent>0</maxExtent>
+        <minExtent>1</minExtent>
+        <nextExtent>1048576</nextExtent>
+        <percentFree>10</percentFree>
+        <tablespaceID class="oracle.javatools.db.ReferenceID">
+          <name>PLT_DIR_DATA</name>
+          <type>TABLESPACE</type>
+        </tablespaceID>
+      </value>
+    </entry>
+    <entry>
+      <key>OracleTableProperties</key>
+      <value class="oracle.javatools.db.ora.OracleTableProperties">
+        <parallelDegree>1</parallelDegree>
+        <tableCompression>NOCOMPRESS</tableCompression>
+      </value>
+    </entry>
+    <entry>
+      <key>TableType</key>
+      <value class="oracle.javatools.db.Table$TableType">NORMAL</value>
+    </entry>
+  </properties>
+  <schema>
+    <name>CHK_PLT</name>
+  </schema>
+</table>

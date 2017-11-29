@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+  <persistence-unit name="licensePlateModel">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>jdbc/LicensePlateDS</jta-data-source>
+    <class>com.rtddenver.model.LicensePlate</class>
+    <properties>
+      <property name="javax.persistence.jtaDataSource" value="jdbc/LicensePlateDS"/>
+     <!-- 
+    <property name="eclipselink.target-database" value="Oracle"/> 
+      <property name="eclipselink.target-server" value="WebLogic_12"/>
+     -->
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="schedulesModel">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>java:/app/jdbc/jdbc/SchedulesDS</jta-data-source>
+    <class>com.rtddenver.model.AlertEvents</class>
+    <class>com.rtddenver.model.AlertEventRoutes</class>
+    <properties>
+      <property name="javax.persistence.jtaDataSource" value="jdbc/SchedulesDS"/>
+    </properties>
+  </persistence-unit>
+</persistence>

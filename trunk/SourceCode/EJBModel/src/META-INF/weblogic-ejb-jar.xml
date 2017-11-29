@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<weblogic-ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar http://xmlns.oracle.com/weblogic/weblogic-ejb-jar/1.5/weblogic-ejb-jar.xsd"
+                  xmlns="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar">
+  <weblogic-enterprise-bean>
+    <ejb-name>LicensePlateService</ejb-name>
+    <stateless-session-descriptor>
+      <stateless-clustering>
+        <home-is-clusterable>false</home-is-clusterable>
+        <stateless-bean-is-clusterable>false</stateless-bean-is-clusterable>
+      </stateless-clustering>
+    </stateless-session-descriptor>
+    <enable-call-by-reference>true</enable-call-by-reference>
+    <clients-on-same-server>true</clients-on-same-server>
+  </weblogic-enterprise-bean>
+</weblogic-ejb-jar>

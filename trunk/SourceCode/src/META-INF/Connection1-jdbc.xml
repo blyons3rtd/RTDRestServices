@@ -1,0 +1,26 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<jdbc-data-source xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://xmlns.oracle.com/weblogic/jdbc-data-source http://xmlns.oracle.com/weblogic/jdbc-data-source/1.4/jdbc-data-source.xsd"
+                  xmlns="http://xmlns.oracle.com/weblogic/jdbc-data-source">
+    <name>Connection1</name>
+    <jdbc-driver-params>
+        <url>jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = et0101-vip.rtd-denver.com)(PORT = 5421))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = ecore01d)))</url>
+        <driver-name>oracle.jdbc.OracleDriver</driver-name>
+        <properties>
+            <property>
+                <name>user</name>
+                <value>chkplt_web</value>
+            </property>
+        </properties>
+        <password-encrypted>EDA13CFB4C5E031B9605D54D1D004287</password-encrypted>
+        <use-password-indirection>true</use-password-indirection>
+    </jdbc-driver-params>
+    <jdbc-connection-pool-params>
+        <test-table-name>SQL SELECT 1 FROM DUAL</test-table-name>
+    </jdbc-connection-pool-params>
+    <jdbc-data-source-params>
+        <jndi-name>jdbc/LicensePlateDS</jndi-name>
+        <jndi-name>jdbc/Connection1DS</jndi-name>
+        <scope>Application</scope>
+    </jdbc-data-source-params>
+</jdbc-data-source>
