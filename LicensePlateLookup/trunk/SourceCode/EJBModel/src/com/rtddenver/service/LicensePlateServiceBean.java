@@ -1,12 +1,13 @@
 package com.rtddenver.service;
 
-
+import java.util.logging.Logger;
 import com.rtddenver.model.data.LicensePlate;
 import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.dto.LicensePlateDTO;
 
-
 import java.util.List;
+
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 
@@ -18,6 +19,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import weblogic.logging.NonCatalogLogger;
 //***********************************************************
 /* Description:
 /*
@@ -30,6 +32,8 @@ import javax.persistence.PersistenceContext;
 @Stateless(name = "LicensePlateService")
 public class LicensePlateServiceBean implements LicensePlateServiceLocal {
 
+    private NonCatalogLogger ncl = new NonCatalogLogger("LicensePlateServiceBean");
+    
     @Resource
     private SessionContext sessionContext;
 
@@ -53,7 +57,7 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
         //double start = System.currentTimeMillis();
         LicensePlateDTO dto = null;
         List<LicensePlate> lp = null;
-
+        
         try {
             lp = em.createNamedQuery("findByLicensePlateNumber", LicensePlate.class)
                    .setParameter("plateNumber", plateNumber)
@@ -67,13 +71,14 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
                 dto = new LicensePlateDTO(p.getPlateNumber(), p.getInDistrict());
             }
         } catch (Exception ex) {
+            ncl.error("Error querying and processing entity bean", ex);
             if (em != null) {
                 em.clear();
-
                 try {
                     em.close();
                 } catch (Exception e) {
                     // do noting
+                    ncl.error("Error closing EntityManager", e);
                 } finally {
                     em = null;
                 }

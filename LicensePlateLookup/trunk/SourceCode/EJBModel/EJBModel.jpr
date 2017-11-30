@@ -194,6 +194,10 @@
             <value n="id" v="Oracle XML Parser v2"/>
             <value n="isJDK" v="false"/>
          </hash>
+         <hash>
+            <value n="id" v="WebLogic 12.1 Thin-Client"/>
+            <value n="isJDK" v="false"/>
+         </hash>
       </list>
       <list n="libraryReferences">
          <hash>
@@ -210,6 +214,10 @@
          </hash>
          <hash>
             <value n="id" v="Oracle XML Parser v2"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="WebLogic 12.1 Thin-Client"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
