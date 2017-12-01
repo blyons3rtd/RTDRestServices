@@ -200,7 +200,7 @@
    </hash>
    <hash n="oracle.jdeveloper.model.J2eeSettings">
       <value n="j2eeWebAppName" v="LicensePlateLookup"/>
-      <value n="j2eeWebContextRoot" v="LicensePlate"/>
+      <value n="j2eeWebContextRoot" v="LicensePlateLookup"/>
    </hash>
    <hash n="oracle.jdeveloper.model.PathsConfiguration">
       <hash n="javaContentSet">

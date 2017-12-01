@@ -23,7 +23,7 @@ import javax.ws.rs.Produces;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/check")
+@Path("v1/plates")
 @Produces("application/json")
 public class LicensePlateLookup {
 

@@ -70,7 +70,7 @@
    </list>
    <value n="defaultPackage" v="com.rtddenver.model"/>
    <hash n="ejbModuleContainer">
-      <value n="dbConnection" v="Schedules"/>
+      <value n="dbConnection" v="Connection1"/>
       <value n="ejbMetaDataPrefs" v="PREFASANNON"/>
       <value n="ejbVersion" v="3.0"/>
       <value n="ejbVersionMinor" v="0.1"/>
@@ -233,10 +233,10 @@
             <hash n="Model">
                <value n="development-database" v="LicencesPlateChecket"/>
             </hash>
-            <hash n="schedulesModel">
-               <value n="development-database" v="Schedules"/>
-            </hash>
          </hash>
       </hash>
+   </hash>
+   <hash n="ResourceBundleOptions">
+      <list n="RegisteredResourceBundles"/>
    </hash>
 </jpr:project>

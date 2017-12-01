@@ -5,7 +5,7 @@
   <persistence-unit name="licensePlateModel">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/LicensePlateDS</jta-data-source>
-    <class>com.rtddenver.model.LicensePlate</class>
+    <class>com.rtddenver.model.data.LicensePlate</class>
     <properties>
       <property name="javax.persistence.jtaDataSource" value="jdbc/LicensePlateDS"/>
      <!-- 
@@ -14,13 +14,4 @@
      -->
     </properties>
   </persistence-unit>
-  <persistence-unit name="schedulesModel">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <jta-data-source>java:/app/jdbc/jdbc/SchedulesDS</jta-data-source>
-    <class>com.rtddenver.model.AlertEvents</class>
-    <class>com.rtddenver.model.AlertEventRoutes</class>
-    <properties>
-      <property name="javax.persistence.jtaDataSource" value="jdbc/SchedulesDS"/>
-    </properties>
-  </persistence-unit>
-</persistence>
+ </persistence>
