@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 
 //***********************************************************
@@ -24,7 +25,6 @@ import javax.ws.rs.Produces;
 //@Stateless
 @javax.enterprise.context.RequestScoped
 @Path("v1/plates")
-@Produces("application/json")
 public class LicensePlateLookup {
 
     //@EJB(name="LicensePlateService", beanInterface=com.rtddenver.model.facade.LicensePlateServiceLocal.class, beanName="EJBModel.jar#LicensePlateService")
@@ -44,7 +44,7 @@ public class LicensePlateLookup {
      * @return LicensePlateDTO
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{plateNumber}")
     public LicensePlateDTO getLicensePlate(@Encoded @PathParam("plateNumber") String plateNumber) {
         return this.licensePlateService.getLicensePlate(plateNumber);
