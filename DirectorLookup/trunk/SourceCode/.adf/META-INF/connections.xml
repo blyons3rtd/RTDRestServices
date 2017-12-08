@@ -1,0 +1,30 @@
+<References xmlns="http://xmlns.oracle.com/adf/jndi">
+  <Reference name="BoardDir" className="oracle.jdeveloper.db.adapter.DatabaseProvider" credentialStoreKey="BoardDir"
+             xmlns="">
+    <Factory className="oracle.jdevimpl.db.adapter.DatabaseProviderFactory1212"/>
+    <RefAddresses>
+      <StringRefAddr addrType="oraDriverType">
+        <Contents>thin</Contents>
+      </StringRefAddr>
+      <StringRefAddr addrType="hostname">
+        <Contents>et0101-vip.rtd-denver.com</Contents>
+      </StringRefAddr>
+      <SecureRefAddr addrType="password"/>
+      <StringRefAddr addrType="subtype">
+        <Contents>oraJDBC</Contents>
+      </StringRefAddr>
+      <StringRefAddr addrType="port">
+        <Contents>5421</Contents>
+      </StringRefAddr>
+      <StringRefAddr addrType="serviceName">
+        <Contents>ecore01d</Contents>
+      </StringRefAddr>
+      <StringRefAddr addrType="user">
+        <Contents>boarddir_dev_user</Contents>
+      </StringRefAddr>
+    </RefAddresses>
+  </Reference>
+  <Reference name="Connection1" className="oracle.jdeveloper.db.adapter.DatabaseProvider" xmlns="">
+    <Factory className="oracle.jdevimpl.db.adapter.DatabaseProviderFactory1212"/>
+  </Reference>
+</References>
