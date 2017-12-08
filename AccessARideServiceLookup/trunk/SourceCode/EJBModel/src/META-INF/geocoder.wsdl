@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://rtd-denver.com/geocoder" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://rtd-denver.com/geocoder" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://rtd-denver.com/geocoder">
+      <s:element name="GeocodeAddressWOptions2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddress" type="tns:Address" />
+            <s:element minOccurs="0" maxOccurs="unbounded" name="Options" type="tns:Options" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="optionsMatchValue" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="maxOptionsCalc" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Address">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="StreetAddress" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="City" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="State" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="ZipCode" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="Options">
+        <s:restriction base="s:string">
+          <s:enumeration value="All" />
+          <s:enumeration value="InRTDDistrict" />
+          <s:enumeration value="InDirectorDistrict" />
+          <s:enumeration value="InADAArea" />
+          <s:enumeration value="InCallNRide" />
+          <s:enumeration value="InCheckPoint" />
+          <s:enumeration value="InCallNRideWCheckPoint" />
+          <s:enumeration value="None" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GeocodeAddressWOptions2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddressResponse" type="tns:MatchCandidates" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="MatchCandidates">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="MatchCandidates" type="tns:ArrayOfMatchCandidate" />
+          <s:choice minOccurs="1" maxOccurs="1">
+            <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="InputStandardItersectionAddress" nillable="true" type="tns:StandardIntersectionAddress" />
+            <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="InputStandardHouseAddress" nillable="true" type="tns:StandardHouseAddress" />
+          </s:choice>
+        </s:sequence>
+        <s:attribute form="unqualified" name="count" type="s:int" use="required" />
+      </s:complexType>
+      <s:complexType name="ArrayOfMatchCandidate">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="MatchCandidate" type="tns:MatchCandidate" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MatchCandidate">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Y" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="X" type="s:double" />
+          <s:choice minOccurs="1" maxOccurs="1">
+            <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="StandardHouseAddress" nillable="true" type="tns:StandardHouseAddress" />
+            <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="StandardItersectionAddress" nillable="true" type="tns:StandardIntersectionAddress" />
+          </s:choice>
+        </s:sequence>
+        <s:attribute form="unqualified" name="inCallNRide" type="s:boolean" use="required" />
+        <s:attribute form="unqualified" name="callNRide">
+          <s:simpleType>
+            <s:list itemType="s:string" />
+          </s:simpleType>
+        </s:attribute>
+        <s:attribute form="unqualified" name="DirectorDistrict" type="s:string" />
+        <s:attribute form="unqualified" name="InRTDDistrict" type="s:boolean" use="required" />
+        <s:attribute form="unqualified" name="InCheckPoint" type="s:boolean" use="required" />
+        <s:attribute form="unqualified" name="CheckPoint">
+          <s:simpleType>
+            <s:list itemType="s:string" />
+          </s:simpleType>
+        </s:attribute>
+        <s:attribute form="unqualified" name="score" type="s:short" use="required" />
+        <s:attribute form="unqualified" name="coordinateSystem" type="s:string" />
+      </s:complexType>
+      <s:complexType name="StandardHouseAddress">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:StandardAddress">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="HouseNumber" nillable="true" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="StandardAddress" abstract="true">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Street" nillable="true" type="tns:StandardStreet" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="City" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Zipcode" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="State" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="MatchAddr" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StandardStreet">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Prefix" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Name" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Type" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Suffix" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StandardIntersectionAddress">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:StandardAddress">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="CrossStreet" nillable="true" type="tns:StandardStreet" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GeocodeAddressWOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddress" type="tns:Address" />
+            <s:element minOccurs="0" maxOccurs="unbounded" name="Options" type="tns:Options" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GeocodeAddressWOptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddressResponse" type="tns:MatchCandidates" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddress">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Zipcode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddressResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JsonGeocode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddressWOptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Zipcode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Options" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddressWOptionsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JsonGeocode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddressWOptions2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Zipcode" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Options" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="optionsMatchValue" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="maxOptionsCalc" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_GeocodeAddressWOptions2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="JsonGeocode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GeocodeAddress">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddress" type="tns:Address" />
+            <s:element minOccurs="1" maxOccurs="1" name="ReturnInWGS84" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GeocodeAddressResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GeocodeAddressResponse" type="tns:MatchCandidates" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ProjectLocation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Location" type="tns:Location" />
+            <s:element minOccurs="0" maxOccurs="1" name="CoordinateSystem" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Location">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Name" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="CoordSystem" nillable="true" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="X" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" form="unqualified" name="Y" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ProjectLocationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProjectLocationResponse" type="tns:Location" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_ProjectLocation">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="x" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="y" type="s:double" />
+            <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inCoordSystem" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="outCoordSystem" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Json_ProjectLocationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ProjectLocationResponse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GeocodeAddressWOptions2SoapIn">
+    <wsdl:part name="parameters" element="tns:GeocodeAddressWOptions2" />
+  </wsdl:message>
+  <wsdl:message name="GeocodeAddressWOptions2SoapOut">
+    <wsdl:part name="parameters" element="tns:GeocodeAddressWOptions2Response" />
+  </wsdl:message>
+  <wsdl:message name="GeocodeAddressWOptionsSoapIn">
+    <wsdl:part name="parameters" element="tns:GeocodeAddressWOptions" />
+  </wsdl:message>
+  <wsdl:message name="GeocodeAddressWOptionsSoapOut">
+    <wsdl:part name="parameters" element="tns:GeocodeAddressWOptionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressSoapIn">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddress" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressSoapOut">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddressResponse" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressWOptionsSoapIn">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddressWOptions" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressWOptionsSoapOut">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddressWOptionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressWOptions2SoapIn">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddressWOptions2" />
+  </wsdl:message>
+  <wsdl:message name="Json_GeocodeAddressWOptions2SoapOut">
+    <wsdl:part name="parameters" element="tns:Json_GeocodeAddressWOptions2Response" />
+  </wsdl:message>
+  <wsdl:message name="GeocodeAddressSoapIn">
+    <wsdl:part name="parameters" element="tns:GeocodeAddress" />
+  </wsdl:message>
+  <wsdl:message name="GeocodeAddressSoapOut">
+    <wsdl:part name="parameters" element="tns:GeocodeAddressResponse" />
+  </wsdl:message>
+  <wsdl:message name="ProjectLocationSoapIn">
+    <wsdl:part name="parameters" element="tns:ProjectLocation" />
+  </wsdl:message>
+  <wsdl:message name="ProjectLocationSoapOut">
+    <wsdl:part name="parameters" element="tns:ProjectLocationResponse" />
+  </wsdl:message>
+  <wsdl:message name="Json_ProjectLocationSoapIn">
+    <wsdl:part name="parameters" element="tns:Json_ProjectLocation" />
+  </wsdl:message>
+  <wsdl:message name="Json_ProjectLocationSoapOut">
+    <wsdl:part name="parameters" element="tns:Json_ProjectLocationResponse" />
+  </wsdl:message>
+  <wsdl:portType name="GeocoderInterface">
+    <wsdl:operation name="GeocodeAddressWOptions2">
+      <wsdl:input message="tns:GeocodeAddressWOptions2SoapIn" />
+      <wsdl:output message="tns:GeocodeAddressWOptions2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddressWOptions">
+      <wsdl:input message="tns:GeocodeAddressWOptionsSoapIn" />
+      <wsdl:output message="tns:GeocodeAddressWOptionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddress">
+      <wsdl:input message="tns:Json_GeocodeAddressSoapIn" />
+      <wsdl:output message="tns:Json_GeocodeAddressSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions">
+      <wsdl:input message="tns:Json_GeocodeAddressWOptionsSoapIn" />
+      <wsdl:output message="tns:Json_GeocodeAddressWOptionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions2">
+      <wsdl:input message="tns:Json_GeocodeAddressWOptions2SoapIn" />
+      <wsdl:output message="tns:Json_GeocodeAddressWOptions2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddress">
+      <wsdl:input message="tns:GeocodeAddressSoapIn" />
+      <wsdl:output message="tns:GeocodeAddressSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ProjectLocation">
+      <wsdl:input message="tns:ProjectLocationSoapIn" />
+      <wsdl:output message="tns:ProjectLocationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Json_ProjectLocation">
+      <wsdl:input message="tns:Json_ProjectLocationSoapIn" />
+      <wsdl:output message="tns:Json_ProjectLocationSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GeocoderInterface" type="tns:GeocoderInterface">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GeocodeAddressWOptions2">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddressWOptions2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddressWOptions">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddressWOptions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddress">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddress" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddressWOptions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions2">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddressWOptions2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddress">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddress" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProjectLocation">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#ProjectLocation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_ProjectLocation">
+      <soap:operation soapAction="http://rtd-denver.com/geocoder#Json_ProjectLocation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="GeocoderInterface1" type="tns:GeocoderInterface">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GeocodeAddressWOptions2">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddressWOptions2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddressWOptions">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddressWOptions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddress">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddress" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddressWOptions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_GeocodeAddressWOptions2">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#JSON_GeocodeAddressWOptions2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GeocodeAddress">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#GeocodeAddress" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProjectLocation">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#ProjectLocation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Json_ProjectLocation">
+      <soap12:operation soapAction="http://rtd-denver.com/geocoder#Json_ProjectLocation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GeocoderService">
+    <wsdl:port name="GeocoderInterface" binding="tns:GeocoderInterface">
+      <soap:address location="http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="GeocoderInterface1" binding="tns:GeocoderInterface1">
+      <soap12:address location="http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
