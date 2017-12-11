@@ -26,61 +26,87 @@ import weblogic.logging.NonCatalogLogger;
 
 @Stateless(name = "GeoCoderService")
 public class GeoCoderServiceBean implements GeoCoderServiceLocal {
-    
+
     private NonCatalogLogger ncl = new NonCatalogLogger("GeoCoderServiceServiceBean");
-    
+
     @Resource
     SessionContext sessionContext;
 
-    @WebServiceRef(wsdlLocation = "http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx?WSDL#%7Bhttp%3A%2F%2Frtd-denver.com%2Fgeocoder%7DGeocoderService")
+    @WebServiceRef(wsdlLocation =
+                   "geocoder.wsdl") //"http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx?WSDL#%7Bhttp%3A%2F%2Frtd-denver.com%2Fgeocoder%7DGeocoderService")
     private GeocoderService geocoderService;
 
     public GeoCoderServiceBean() {
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public GeoCodeAddressDTO getGeoCodeAddress(String street, String city, String zip, int options, boolean returnInWGS84) {
+    public GeoCodeAddressDTO getGeoCodeAddress(String street, String city, String zip, int options,
+                                               boolean returnInWGS84) {
         GeoCodeAddressDTO dto = null;
-        
-        System.out.println("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" + zip + ", returnInWGS84:" + returnInWGS84);
-        
+
+        ncl.debug("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" + zip +
+                  ", returnInWGS84:" + returnInWGS84);
+        System.out.println("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" +
+                           zip + ", returnInWGS84:" + returnInWGS84);
+
         try {
             street = street.replaceAll("%20", " ");
-            
+
             String str = geocoderService.getGeocoderInterface().jsonGeocodeAddress(street, city, zip, returnInWGS84);
-            
-            //TODO: Comment-out line below after testing
+
+            ncl.debug("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
             System.out.println("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
-            
+
             JsonParser jsonParser = new JsonParser();
-            JsonObject jo = (JsonObject)jsonParser.parse(str);
-            //JsonPrimitive jsonObtPrim = jo.getAsJsonPrimitive("Count");
-            JsonArray jsonArr = jo.getAsJsonArray("Candidates");
-            if (jsonArr != null && jsonArr.size() > 0) {
-                JsonObject candidate = jsonArr.get(0).getAsJsonObject();  //Only need the first item
-                JsonElement inRtdDistrictE = candidate.get("InRTDDistrict");
-                JsonElement xE = candidate.get("X");
-                JsonElement yE = candidate.get("Y");
-                Gson googleJson = new Gson();
-                boolean inRtdDistrict = googleJson.fromJson(inRtdDistrictE, Boolean.class);
-                double x = googleJson.fromJson(xE, Double.class);
-                double y = googleJson.fromJson(yE, Double.class);
-                dto = new GeoCodeAddressDTO(inRtdDistrict, x, y);
+            JsonObject jo = (JsonObject) jsonParser.parse(str);
+            if (jo != null) {
+                JsonElement count = jo.get("Count");
+                if (count != null) {
+                    if (count.getAsInt() > 0) {
+                        JsonArray jsonArr = jo.getAsJsonArray("Candidates");
+                        if (jsonArr != null && jsonArr.size() > 0) {
+                            JsonObject candidate = jsonArr.get(0).getAsJsonObject(); //Only need the first item
+                            JsonElement inRtdDistrictE = candidate.get("InRTDDistrict");
+                            JsonElement xE = candidate.get("X");
+                            JsonElement yE = candidate.get("Y");
+                            Gson googleJson = new Gson();
+                            boolean inRtdDistrict = googleJson.fromJson(inRtdDistrictE, Boolean.class);
+                            double x = googleJson.fromJson(xE, Double.class);
+                            double y = googleJson.fromJson(yE, Double.class);
+                            dto = new GeoCodeAddressDTO(inRtdDistrict, x, y);
+                        } else {
+                            ErrorDTO err =
+                                new ErrorDTO("400", "No address returned from GeocodeAddress service",
+                                             "Address not found in RTD service area");
+                            dto = new GeoCodeAddressDTO(err);
+                        }
+                    } else {
+                        ErrorDTO err =
+                            new ErrorDTO("400", "No address returned from GeocodeAddress service",
+                                         "Address not found in RTD service area");
+                        dto = new GeoCodeAddressDTO(err);
+                    }
+                } else {
+                    ErrorDTO err =
+                        new ErrorDTO("400", "No address returned from GeocodeAddress service",
+                                     "Address not found in RTD service area");
+                    dto = new GeoCodeAddressDTO(err);
+                }
             } else {
-                ErrorDTO err = new ErrorDTO("400", "No address returned from GeocodeAddress service", "Address not found in RTD service area");
+                ErrorDTO err =
+                    new ErrorDTO("400", "No address returned from GeocodeAddress service",
+                                 "Address not found in RTD service area");
                 dto = new GeoCodeAddressDTO(err);
             }
-            
-            System.out.println("So far so good!");
-            
+
         } catch (Exception e) {
             ncl.error("Error querying and processing entity bean", e);
             e.printStackTrace();
-            ErrorDTO err = new ErrorDTO("500",e.toString(),"Error querying and processing GeoCoder service");
+            ErrorDTO err = new ErrorDTO("500", e.toString(), "Error querying and processing GeoCoder service");
             dto = new GeoCodeAddressDTO(err);
         }
 
         return dto;
     }
-    
+
 }

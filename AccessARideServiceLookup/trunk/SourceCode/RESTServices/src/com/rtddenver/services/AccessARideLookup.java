@@ -22,11 +22,13 @@ import javax.ejb.EJB;
 import javax.ws.rs.Encoded;
 import javax.ws.rs.PathParam;
 
+import weblogic.logging.NonCatalogLogger;
+
 
 //***********************************************************
 /* Description:
 /*   RESTful service for determining RTD Access-A-Ride service
-/*   availability for the provided address, city, zip, 
+/*   availability for the provided address, city, zip,
 /*   departureDay and departureTime
 /*
 /* @author Jay Butler
@@ -40,15 +42,18 @@ import javax.ws.rs.PathParam;
 @Produces("application/json")
 public class AccessARideLookup {
 
-    @EJB(name="DistrictService", beanInterface=com.rtddenver.service.facade.DistrictServiceLocal.class, beanName="EJBModel.jar#DistrictService")
+    private NonCatalogLogger ncl = new NonCatalogLogger("AccessARideLookup");
+    
+    @EJB(name = "DistrictService", beanInterface = com.rtddenver.service.facade.DistrictServiceLocal.class,
+         beanName = "EJBModel.jar#DistrictService")
     //@EJB
     private DistrictServiceLocal districtService;
 
-    @EJB(name="GeoCoderService", beanInterface=com.rtddenver.service.facade.GeoCoderServiceLocal.class, beanName="EJBModel.jar#GeoCoderService")
+    @EJB(name = "GeoCoderService", beanInterface = com.rtddenver.service.facade.GeoCoderServiceLocal.class,
+         beanName = "EJBModel.jar#GeoCoderService")
     //@EJB
     private GeoCoderServiceLocal geocoderService;
 
-    
 
     public AccessARideLookup() {
         super();
@@ -58,16 +63,18 @@ public class AccessARideLookup {
     @GET
     @Produces("application/json")
     @Path("{street}/{city}/{zip}/{departureDay}/{departureTime}")
-    public AccessARideDTO getAccessARideInfo(@Encoded @PathParam("street") String street, @PathParam("city") String city,
-                                          @PathParam("zip") String zip, @PathParam("departureDay") String departureDay,
-                                          @PathParam("departureTime") String departureTime) {
+    public AccessARideDTO getAccessARideInfo(@Encoded @PathParam("street") String street,
+                                             @PathParam("city") String city, @PathParam("zip") String zip,
+                                             @PathParam("departureDay") String departureDay,
+                                             @PathParam("departureTime") String departureTime) {
         int options = 1;
         boolean returnInWGS84 = true;
         AccessARideDTO aarDTO = null;
         DistrictDTO districtDTO = null;
-        
-        System.out.println("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " + departureTime);
-        
+
+        System.out.println("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
+                           departureTime);
+
         GeoCodeAddressDTO geocodeDTO =
             this.geocoderService.getGeoCodeAddress(street, city, zip, options, returnInWGS84);
 
@@ -76,14 +83,12 @@ public class AccessARideLookup {
             aarDTO = new AccessARideDTO(geocodeDTO.getError());
         } else {
             if (!geocodeDTO.isError()) {
-               // if (geocodeDTO.isInRTDDistrict()) {
-                    double lon = geocodeDTO.getX();
-                    double lat = geocodeDTO.getY();
-                    districtDTO = this.districtService.getAdaOnDayTimeLoc(departureDay, departureTime, lon, lat);
-                    aarDTO = evaluateResponseCode(districtDTO.getResponse(), departureDay, departureTime);
-                //} else {
-                //    aarDTO = new AccessARideDTO(false, "Address not found in RTD service area");
-                //}
+                double lon = geocodeDTO.getX();
+                double lat = geocodeDTO.getY();
+                districtDTO = this.districtService.getAdaOnDayTimeLoc(departureDay, departureTime, lon, lat);
+                aarDTO = evaluateResponseCode(districtDTO.getResponse(), departureDay, departureTime);
+            } else {
+                aarDTO = new AccessARideDTO(geocodeDTO.getError());
             }
         }
 
@@ -143,7 +148,7 @@ public class AccessARideLookup {
             adaAvail = false;
             break;
         }
-        
+
         AccessARideDTO aarDTO = new AccessARideDTO(adaAvail, message);
         return aarDTO;
     }

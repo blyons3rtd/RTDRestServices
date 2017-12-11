@@ -37,13 +37,13 @@ public class DistrictServiceBean implements DistrictServiceLocal {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public DistrictDTO getAdaOnDayTimeLoc(String dayOfWeek, String time, double lon, double lat) {
         
+        ncl.debug("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
         System.out.println("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
         
         DistrictDTO dto = null;
         boolean IsInWGS84 = true; //default
         int retVal = -1;
         try {
-            System.out.println("District Service WSDL location: " + district.getWSDLDocumentLocation().toString());
             retVal = district.getDistrictSoap().getADAOnDayTimeLoc(dayOfWeek, time, lon, lat, IsInWGS84);
             dto = new DistrictDTO(retVal);
         } catch (Exception e) {
