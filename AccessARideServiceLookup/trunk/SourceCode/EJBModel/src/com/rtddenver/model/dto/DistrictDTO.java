@@ -20,8 +20,11 @@ public class DistrictDTO implements Serializable {
     @SuppressWarnings("compatibility:-5871720097955122133")
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(name = "Response")
-    private int responseCode = 0;
+    @XmlElement(name="Available")
+    private boolean available = false;
+    
+    @XmlElement(name = "Message")
+    private String message = "";
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -31,18 +34,15 @@ public class DistrictDTO implements Serializable {
         super();
     }
     
-    public DistrictDTO(int response) {
+    public DistrictDTO(boolean available, String message) {
         this();
-        this.responseCode = response;
+        this.available = available;
+        this.message = message;
     }
     
     public DistrictDTO(ErrorDTO error) {
         this();
         this.error = error;
-    }
-
-    public int getResponse() {
-        return responseCode;
     }
 
     public ErrorDTO getError() {

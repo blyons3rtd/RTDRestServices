@@ -38,7 +38,7 @@ import weblogic.logging.NonCatalogLogger;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/accessARide")
+@Path("v1/address")
 @Produces("application/json")
 public class AccessARideLookup {
 
@@ -63,13 +63,13 @@ public class AccessARideLookup {
     @GET
     @Produces("application/json")
     @Path("{street}/{city}/{zip}/{departureDay}/{departureTime}")
-    public AccessARideDTO getAccessARideInfo(@Encoded @PathParam("street") String street,
+    public DistrictDTO getAccessARideInfo(@Encoded @PathParam("street") String street,
                                              @PathParam("city") String city, @PathParam("zip") String zip,
                                              @PathParam("departureDay") String departureDay,
                                              @PathParam("departureTime") String departureTime) {
         int options = 1;
         boolean returnInWGS84 = true;
-        AccessARideDTO aarDTO = null;
+        //AccessARideDTO aarDTO = null;
         DistrictDTO districtDTO = null;
 
         System.out.println("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
@@ -80,19 +80,19 @@ public class AccessARideLookup {
 
         if (geocodeDTO.isError()) {
             // Error handling
-            aarDTO = new AccessARideDTO(geocodeDTO.getError());
+            districtDTO = new DistrictDTO(geocodeDTO.getError());
         } else {
             if (!geocodeDTO.isError()) {
                 double lon = geocodeDTO.getX();
                 double lat = geocodeDTO.getY();
                 districtDTO = this.districtService.getAdaOnDayTimeLoc(departureDay, departureTime, lon, lat);
-                aarDTO = evaluateResponseCode(districtDTO.getResponse(), departureDay, departureTime);
+                //aarDTO = evaluateResponseCode(districtDTO.getResponse(), departureDay, departureTime);
             } else {
-                aarDTO = new AccessARideDTO(geocodeDTO.getError());
+                districtDTO = new DistrictDTO(geocodeDTO.getError());
             }
         }
 
-        return aarDTO;
+        return districtDTO;
     }
 
     /**
@@ -103,6 +103,7 @@ public class AccessARideLookup {
      * @param departureTime
      * @return AccessARideDTO
      */
+    /*
     private AccessARideDTO evaluateResponseCode(int retVal, String departureDay, String departureTime) {
         String message = "";
         boolean adaAvail = false;
@@ -152,5 +153,5 @@ public class AccessARideLookup {
         AccessARideDTO aarDTO = new AccessARideDTO(adaAvail, message);
         return aarDTO;
     }
-
+    */
 }
