@@ -40,6 +40,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public DistrictDTO getDistrictForAddress(String street, String city, String zip) {
+        
+        ncl.debug("GisDistrictServiceBean.getDistrictForAddress() street:" + street + ", city:" + city + ", zip:" + zip);
         DistrictDTO dto = null;
         try {
             street = street.replaceAll("%20", " ");
@@ -48,7 +50,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         } catch (Exception e) {
             ncl.error("Error querying and processing entity bean", e);
             e.printStackTrace();
-            dto = new DistrictDTO("", e.getMessage(), "");
+            dto = new DistrictDTO("500", e.getMessage(), "Error calling GISDistrictService");
         }
 
         return dto;

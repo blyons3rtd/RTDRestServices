@@ -47,7 +47,7 @@ public class DirectorServiceBean implements DirectorServiceLocal {
                     .getResultList();
 
             if (bdL.size() == 0) {
-                ErrorDTO error = new ErrorDTO("",null, "No director found for district " + district);
+                ErrorDTO error = new ErrorDTO("400",null, "No director found for district " + district);
                 dto = new DirectorDTO(error);
             } else {
                 BoardDirector bd = bdL.get(0);

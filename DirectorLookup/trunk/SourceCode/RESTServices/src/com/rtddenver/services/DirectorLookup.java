@@ -18,7 +18,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import javax.ws.rs.core.Response;
 
 
 //***********************************************************
@@ -32,7 +31,7 @@ import javax.ws.rs.core.Response;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/directorLookup")
+@Path("v1")
 @Produces("application/json")
 public class DirectorLookup{
 
@@ -63,13 +62,9 @@ public class DirectorLookup{
     @GET
     @Produces("application/json")
     @Path("district/{district}")
-    public Response getDirectorByDistrict(@Encoded @PathParam("district") String district) {
+    public DirectorDTO getDirectorByDistrict(@Encoded @PathParam("district") String district) {
         DirectorDTO dto = this.directorService.getDirectorByDistrict(district);
-        Response response = null;
-        response = Response.status(Response.Status.ACCEPTED)
-                           .entity(dto)
-                           .build();
-        return response;
+        return dto;
     }
 
     /**
@@ -85,7 +80,6 @@ public class DirectorLookup{
     @Path("address/{street}/{city}/{zip}")
     public DirectorDTO getDirector(@Encoded @PathParam("street") String street, @PathParam("city") String city,
                                          @PathParam("zip") String zip) {
-        //Response response = null;
         DirectorDTO dirDto = null;
         DistrictDTO distDto = null;
         ErrorDTO err = null;
@@ -111,9 +105,6 @@ public class DirectorLookup{
             dirDto = new DirectorDTO(err);
         }
         
-        //response = Response.status(Response.Status.ACCEPTED)
-        //                   .entity(dirDto)
-        //                   .build();
         return dirDto;
     }
 
