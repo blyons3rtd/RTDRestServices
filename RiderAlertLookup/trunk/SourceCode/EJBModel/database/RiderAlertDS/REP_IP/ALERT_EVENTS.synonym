@@ -1,0 +1,28 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<synonym xmlns="http://xmlns.oracle.com/jdeveloper/1211/offlinedb">
+  <name>ALERT_EVENTS</name>
+  <properties>
+    <entry>
+      <key>OfflineDBConstants.IMPORT_SOURCE_CONNECTION</key>
+      <value class="java.lang.String">RiderAlertDS</value>
+    </entry>
+    <entry>
+      <key>OfflineDBConstants.IMPORT_SOURCE_ID</key>
+      <value class="oracle.javatools.db.ReferenceID">
+        <name>ALERT_EVENTS</name>
+        <identifier class="java.math.BigDecimal">87869</identifier>
+        <schemaName>REP_IP</schemaName>
+        <type>SYNONYM</type>
+      </value>
+    </entry>
+  </properties>
+  <public>false</public>
+  <reference class="oracle.javatools.db.NameBasedID">
+    <name>ALERT_EVENTS</name>
+    <schemaName>REP</schemaName>
+    <type>TABLE</type>
+  </reference>
+  <schema>
+    <name>REP_IP</name>
+  </schema>
+</synonym>
