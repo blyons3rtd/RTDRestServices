@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="all" basedir=".">
+    <!--
+    This is the ant build file for the Application-level 
+    -->
+  <property file="build.properties"/>
+  <property name="version.file" location="${basedir}/build.properties"/>
+  <tstamp>
+    <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
+    <format property="build_time" pattern="HH:mm:ss zzz" locale="en,US"/>
+  </tstamp>
+  
+  <path id="library.WebLogic.12.1.Thin-Client">
+        <pathelement location="${install.dir}/wlserver/server/lib/wlclient.jar"/>
+        <pathelement location="${install.dir}/wlserver/server/lib/wljmxclient.jar"/>
+        <pathelement location="${install.dir}/wlserver/server/lib/wljmsclient.jar"/>
+        <pathelement location="${install.dir}/wlserver/server/lib/wlnmclient.jar"/>
+        <pathelement location="${install.dir}/wlserver/server/lib/wlsafclient.jar"/>
+    </path>
+  <target name="all" description="Build the entire application" depends="clean,model,services,copy,createEAR"/>
+  <target name="clean" description="Clean the project">
+    <delete includeemptydirs="true" quiet="true">
+      <fileset dir="${output.dir}" includes="**/*"/>
+    </delete>
+  </target>
+  <target name="model">
+    <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml"/>
+  </target>
+  <target name="services">
+    <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml"/>
+  </target>
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${output.dir}"/>
+    <mkdir dir="${output.dir}/lib"/>
+    <mkdir dir="${output.dir}/META-INF"/>
+  </target>
+  <target name="copy" description="Copy files to output directory" depends="init">
+    <patternset id="copy.patterns">
+      <include name="**/*.cpx"/>
+      <include name="**/*.dcx"/>
+      <include name="**/*.ejx"/>
+      <include name="**/*.gif"/>
+      <include name="**/*.ini"/>
+      <include name="**/*.jpeg"/>
+      <include name="**/*.jpg"/>
+      <include name="**/*.png"/>
+      <include name="**/*.properties"/>
+      <include name="**/*.sva"/>
+      <include name="**/*.tag"/>
+      <include name="**/*.tld"/>
+      <include name="**/*.wsdl"/>
+      <include name="**/*.xcfg"/>
+      <include name="**/*.xlf"/>
+      <include name="**/*.xml"/>
+      <include name="**/*.xsd"/>
+      <include name="**/*.xsl"/>
+      <include name="**/*.jar"/>
+      <include name="**/*.war"/>
+      <exclude name="build.xml"/>
+      <exclude name="build.properties"/>
+    </patternset>
+    <copy todir="${output.dir}/lib">
+      <fileset dir="lib">
+        <patternset refid="copy.patterns"/>
+      </fileset>
+    </copy>
+    <copy todir="${output.dir}/META-INF">
+      <fileset dir="${basedir}/src/META-INF">
+        <patternset refid="copy.patterns"/>
+      </fileset>
+    </copy>
+    <copy todir="${output.dir}">
+      <fileset dir="${basedir}/EJBModel/${dist.dir}">
+        <patternset refid="copy.patterns"/>
+      </fileset>
+    </copy>
+    <copy todir="${output.dir}">
+      <fileset dir="${basedir}/RESTServices/${dist.dir}">
+        <patternset refid="copy.patterns"/>
+      </fileset>
+    </copy>
+  </target>
+  <!-- 
+        Create EAR file 
+        
+        Targets:
+          buildAppMajor - Increments the major release number. Resets the minor to 0 and the build increment to 1.
+          buildAppMinor - Increments the minor release number. Resets the build increment to 1.
+          buildApp      - Increments the build number. This is the default build target.
+        -->
+    <target name="buildAppMajor" depends="resetIncrementMajor, all"></target>
+    <target name="buildAppMinor" depends="resetIncrementMinor, all"></target>
+    <target name="buildApp" depends="all"></target>
+    
+    <target name="createEAR" depends="inc.build">
+    <echo>Building the ear file...</echo>
+    <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+      <attribute name="Built-By" value="${user.name}"/>
+      <attribute name="Weblogic-Application-Version" value="${application.version}"/>
+      <attribute name="Build-Number" value="${build.revision.number}"/>
+      <attribute name="Build-Date" value="${build_date}"/>
+      <attribute name="Build-Time" value="${build_time}"/>
+    </manifest>
+    <ear destfile="${dist.dir}/${project.name}.ear" appxml="${basedir}/src/META-INF/application.xml"
+         manifest="${output.dir}/META-INF/MANIFEST.MF">
+      <fileset dir="${output.dir}">
+        <include name="META-INF/**"/>
+      </fileset>
+      <fileset dir="${output.dir}">
+        <include name="/lib/**"/>
+      </fileset>
+      <fileset dir="${output.dir}">
+        <include name="**/EJBModel.jar"/>
+      </fileset>
+      <fileset dir="${output.dir}">
+        <include name="**/RESTServices.war"/>
+      </fileset>
+    </ear>
+  </target>
+  <!-- - - - - - - - - - - - - - - - - - 
+         Build Numbering targets                     
+      - - - - - - - - - - - - - - - - - -->
+    <target name="inc.build" depends="inc.major, inc.minor, inc.revision, inc.application.version"></target>
+    <!-- -->
+    <target name="resetIncrementMinor">
+        <propertyreset name="increment.minor" value="true"/>
+    </target>
+    <!-- -->
+    <target name="resetIncrementMajor">
+        <propertyreset name="increment.major" value="true"/>
+    </target>
+    <!-- -->
+    <target name="inc.major" depends="inc.major.properties" if="${increment.major}">
+    </target>
+    <!-- -->
+    <target name="inc.minor" depends="inc.major, inc.minor.properties" if="${increment.minor}">
+    </target>
+    <!-- -->
+    <target name="inc.revision" depends="inc.major, inc.minor, inc.revision.properties" if="${increment.revision}">
+    </target>
+    <!-- -->
+    <!-- Next three targets update the build numbers in the properties file -->
+    <target name="inc.revision.properties" if="${increment.revision}">
+        <echo>Incrementing build.revision.number...</echo>
+        <math operation="+" operator1="${build.revision.number}" operator2="1" result="newRevision"/>
+        <echo>newRevision=${newRevision}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="=" type="int"/>
+            <entry key="build.minor.number" default="0" operation="=" type="int"/>
+            <entry key="build.revision.number" default="0" operation="+" type="int"/>
+            <entry key="increment.revision" value="true" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.revision.number" value="${newRevision}"/>
+    </target>
+    <!-- -->
+    <target name="inc.minor.properties" if="${increment.minor}">
+        <echo>Incrementing build.minor.number...</echo>
+        <property name="increment.revision" value="false"/>
+        <math operation="+" operator1="${build.minor.number}" operator2="1" result="newMinor"/>
+        <echo>new build.minor.number=${newMinor}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="=" type="int"/>
+            <entry key="build.minor.number" default="0" operation="+" type="int"/>
+            <entry key="build.revision.number" value="0" operation="=" type="int"/>
+            <entry key="increment.minor" value="false" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.minor.number" value="${newMinor}"/>
+        <propertyreset name="increment.revision" value="false"/>
+        <propertyreset name="increment.app.version" value="true"/>
+    </target>
+    <!-- -->
+    <target name="inc.major.properties" if="${increment.major}">
+        <echo>Incrementing build.major.number...</echo>
+        <!--<echo>inc.major=${increment.major}, inc.minor=${increment.minor}, inc.revision=${increment.revision}</echo>-->
+        <math operation="+" operator1="${build.major.number}" operator2="1" result="newMajor"/>
+        <echo>new build.major.number=${newMajor}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="+" type="int"/>
+            <entry key="build.minor.number" value="0" operation="=" type="int"/>
+            <entry key="build.revision.number" value="0" operation="=" type="int"/>
+            <entry key="increment.major" value="false" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.major.number" value="${newMajor}"/>
+        <propertyreset name="build.minor.number" value="0"/>
+        <propertyreset name="build.revision.number" value="0"/>
+        <propertyreset name="increment.minor" value="false"/>
+        <propertyreset name="increment.revision" value="false"/>
+        <propertyreset name="increment.app.version" value="true"/>
+    </target>
+    
+    <!-- -->
+    <target name="inc.application.version" if="increment.app.version">
+        <echo>Updating application.version...</echo>
+        <property file="build.properties"/>
+        <property name="major.number" value="${build.major.number}"/>
+        <property name="minor.number" value="${build.minor.number}"/>
+        <propertyreset name="application.version" value="v${major.number}.${minor.number}"/>
+        <echo>new application.version=${application.version}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="application.version" value="v${build.major.number}.${build.minor.number}" type="string"/>
+        </propertyfile>
+    </target>
+    <!-- -->
+    <!-- Macros for resetting properties -->
+    <macrodef name="load.version.info">
+        <sequential>
+            <property file="${version.file}"/>
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" format="CHECKSUM"/>
+            <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
+            <echo>SHA1: ${sha1.number}</echo>
+        </sequential>
+    </macrodef>
+    <scriptdef name="propertyreset" language="javascript" description="Allows to assign @{property} new value">
+        <attribute name="name"/>
+        <attribute name="value"/>
+        project.setProperty(attributes.get("name"), attributes.get("value"));
+    </scriptdef>
+    <macrodef name="math">
+        <attribute name="operation"/>
+        <attribute name="operator1"/>
+        <attribute name="operator2"/>
+        <attribute name="result"/>
+        <sequential>
+            <script language="javascript">
+		     tmp = 0;
+		     switch ("@{operation}")
+		     {
+		      case "+" :
+		       tmp = parseInt("@{operator1}") + parseInt("@{operator2}");
+		       break;
+		      case "-" :
+		       tmp = parseInt("@{operator1}") - parseInt("@{operator2}");
+		       break;
+		      case "=" :
+		       tmp = parseInt("@{operator1}") * parseInt("@{operator2}");
+		       break;
+		     }
+		     project.setProperty("@{result}", tmp);
+		    </script>
+        </sequential>
+    </macrodef>
+</project>

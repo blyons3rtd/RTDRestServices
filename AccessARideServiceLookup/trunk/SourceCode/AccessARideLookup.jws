@@ -93,6 +93,26 @@
                      <hash n="filters">
                         <list n="rules">
                            <hash>
+                              <value n="pattern" v="wlsafclient.jar"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="wlnmclient.jar"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="wljmxclient.jar"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="wljmsclient.jar"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="wlclient.jar"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
                               <value n="pattern" v="**"/>
                               <value n="type" v="0"/>
                            </hash>

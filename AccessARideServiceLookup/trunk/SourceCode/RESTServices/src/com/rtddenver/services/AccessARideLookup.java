@@ -69,7 +69,6 @@ public class AccessARideLookup {
                                              @PathParam("departureTime") String departureTime) {
         int options = 1;
         boolean returnInWGS84 = true;
-        //AccessARideDTO aarDTO = null;
         DistrictDTO districtDTO = null;
 
         System.out.println("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
@@ -86,7 +85,6 @@ public class AccessARideLookup {
                 double lon = geocodeDTO.getX();
                 double lat = geocodeDTO.getY();
                 districtDTO = this.districtService.getAdaOnDayTimeLoc(departureDay, departureTime, lon, lat);
-                //aarDTO = evaluateResponseCode(districtDTO.getResponse(), departureDay, departureTime);
             } else {
                 districtDTO = new DistrictDTO(geocodeDTO.getError());
             }
@@ -95,63 +93,4 @@ public class AccessARideLookup {
         return districtDTO;
     }
 
-    /**
-     * Evaluates the response code returned from the GIS District service and assigns
-     * the appropriate values for adaAvail and message in the AccessARideDTO
-     * @param retVal
-     * @param departureDay
-     * @param departureTime
-     * @return AccessARideDTO
-     */
-    /*
-    private AccessARideDTO evaluateResponseCode(int retVal, String departureDay, String departureTime) {
-        String message = "";
-        boolean adaAvail = false;
-        switch (retVal) {
-        case -2:
-            message = "-2: Timed out waiting for District Service response";
-            break;
-        case -1:
-            message = "-1: General error in calling District Service";
-            break;
-        case 0:
-            message = "0: Location is not in ADA service area at any time or day";
-            adaAvail = false;
-            break;
-        case 1:
-            message = "1: Service for location is available on " + departureDay + " at " + departureTime;
-            adaAvail = true;
-            break;
-        case 3:
-            message = "3: Service for location is available at a different time on " + departureDay;
-            adaAvail = false;
-            break;
-        case 5:
-            message = "5: Service for location is available on a different day at " + departureTime;
-            adaAvail = false;
-            break;
-        case 7:
-            message = "7: Service for location is available at a different time on " + departureDay;
-            message += " and service for location is available on a different day at " + departureTime;
-            adaAvail = false;
-            break;
-        case 8:
-            message = "8: Service for location is only available on other days and at other times";
-            adaAvail = false;
-            break;
-        case 10:
-            message = "10: Service for location is available at a different time on " + departureDay;
-            message += " and service for location is also available on other days at times other than " + departureTime;
-            adaAvail = false;
-            break;
-        default:
-            message = "Unexpected return value: " + retVal;
-            adaAvail = false;
-            break;
-        }
-
-        AccessARideDTO aarDTO = new AccessARideDTO(adaAvail, message);
-        return aarDTO;
-    }
-    */
 }
