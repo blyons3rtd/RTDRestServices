@@ -82,6 +82,25 @@
       <value n="j2eeWebAppName" v="DirectorLookup-scripts-webapp"/>
       <value n="j2eeWebContextRoot" v="DirectorLookup-scripts-context-root"/>
    </hash>
+   <hash n="oracle.jdeveloper.runner.RunConfigurations">
+      <hash n="runConfigurationDefinitions">
+         <hash n="Default">
+            <value n="custom" v="false"/>
+            <value n="name" v="Default"/>
+            <value n="targetURL"/>
+         </hash>
+         <hash n="localhost">
+            <value n="custom" v="false"/>
+            <value n="name" v="localhost"/>
+            <value n="remoteDebuggingProfiling" v="true"/>
+            <value n="targetURL"/>
+         </hash>
+      </hash>
+      <list n="runConfigurationList">
+         <string v="Default"/>
+         <string v="localhost"/>
+      </list>
+   </hash>
    <hash n="oracle.jdevimpl.config.JProjectPaths">
       <url n="outputDirectory" path="classes/"/>
    </hash>
