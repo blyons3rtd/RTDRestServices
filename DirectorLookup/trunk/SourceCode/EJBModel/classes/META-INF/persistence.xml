@@ -5,7 +5,6 @@
   <persistence-unit name="DirectorLookup">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/BoardDirDS</jta-data-source>
-    <class>com.rtddenver.service.BoardDirector</class>
     <properties>
       <!--<property name="eclipselink.target-server" value="WebLogic_10"/>-->
       <property name="javax.persistence.jtaDataSource" value="jdbc/BoardDirDS"/>

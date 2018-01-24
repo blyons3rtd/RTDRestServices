@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="antlib:org.apache.tools.ant" name="RESTServices" default="all" basedir=".">
+    <property file="${basedir}/build.properties"/>
+    <tstamp>
+        <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
+        <format property="build_time" pattern="HH:mm:ss zzz" locale="en,US"/>
+    </tstamp>
+    <path id="library.Java.EE">
+        <pathelement location="${oracle.commons}/modules/javax.annotation.javax.annotation-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.ejb.javax.ejb-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.enterprise.deploy.deployment-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.interceptor.javax.interceptor-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.enterprise.cdi-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.inject.javax.inject.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.jms.javax.jms-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.servlet.jsp.javax.servlet.jsp-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.javax.el.jar"/>
+        <pathelement location="${oracle.commons}/modules/com.sun.mail.javax.mail.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.management.j2ee.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.persistence.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.resource.javax.resource-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.security.jacc.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.servlet.javax.servlet-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.transaction.javax.transaction-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.validation.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.xml.jaxrpc-api.jar"/>
+    </path>
+    <path id="library.EJB">
+        <pathelement location="${oracle.commons}/modules/javax.ejb.javax.ejb-api.jar"/>
+    </path>
+    <path id="library.TopLink">
+        <pathelement location="${oracle.commons}/modules/oracle.toplink/eclipselink.jar"/>
+        <pathelement location="${oracle.commons}/modules/oracle.toplink/org.eclipse.persistence.nosql.jar"/>
+        <pathelement location="${oracle.commons}/modules/oracle.toplink/org.eclipse.persistence.oracle.nosql.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/com.bea.core.antlr.runtime.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.persistence.jar"/>
+    </path>
+    <path id="library.JAX-RS.Jersey.2.x">
+        <pathelement location="${oracle.commons}/modules/javax.annotation.javax.annotation-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.ws.rs.javax.ws.rs-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.inject.javax.inject.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.core.jersey-client.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.core.jersey-common.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.containers.jersey-container-servlet.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.containers.jersey-container-servlet-core.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.ext.jersey-entity-filtering.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.media.jersey-media-json-jackson.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.media.jersey-media-json-jettison.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.media.jersey-media-moxy.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.media.jersey-media-multipart.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.media.jersey-media-sse.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.core.jersey-server.jar"/>
+        <pathelement location="${oracle.commons}/modules/weblogic.jaxrs.client.jar"/>
+        <pathelement location="${oracle.commons}/modules/weblogic.jaxrs.portable.server.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.jersey.bundles.repackaged.jersey-guava.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/org.glassfish.hk2.osgi-resource-locator.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/weblogic.jaxrs.integration.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/javax.enterprise.cdi-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.javassist.javassist.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.validation.jar"/>
+        <pathelement location="${install.dir}/wlserver/server/lib/wls-api.jar"/>
+        <pathelement location="${install.dir}/wlserver/modules/com.oracle.weblogic.beangen.general.api.jar"/>
+    </path>
+    <path id="library.JSP.Runtime">
+        <pathelement location="${oracle.commons}/modules/javax.servlet.javax.servlet-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/javax.servlet.jsp.javax.servlet.jsp-api.jar"/>
+        <pathelement location="${oracle.commons}/modules/org.glassfish.javax.el.jar"/>
+    </path>
+    <path id="library.Gson-2.7.jar">
+        <pathelement location="../lib/gson-2.7.jar"/>
+    </path>
+    <path id="classpath">
+        <pathelement location="../EJBModel/deploy/EJBModel.jar"/>
+        <path refid="library.Java.EE"/>
+        <path refid="library.EJB"/>
+        <path refid="library.TopLink"/>
+        <path refid="library.JAX-RS.Jersey.2.x"/>
+        <path refid="library.JSP.Runtime"/>
+        <path refid="library.Gson-2.7.jar"/>
+    </path>
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${output.dir}"/>
+        <mkdir dir="${output.dir}/WEB-INF/classes"/>
+        <mkdir dir="${output.dir}/WEB-INF/lib"/>
+        <mkdir dir="${output.dir}/META-INF"/>
+    </target>
+    <target name="all" description="Build the project" depends="clean,compile,copy,war"/>
+    <target name="clean" description="Clean the project">
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${output.dir}" includes="**/*"/>
+        </delete>
+    </target>
+    <target name="compile" description="Compile Java source files" depends="init">
+        <javac destdir="${output.dir}/WEB-INF/classes" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
+               deprecation="${javac.deprecation}" encoding="Cp1252" source="${javac.source}" target="${javac.target}">
+            <src path="src"/>
+        </javac>
+    </target>
+    <target name="copy" description="Copy files to output directory" depends="init">
+        <patternset id="copy.patterns">
+            <include name="**/*.cpx"/>
+            <include name="**/*.dcx"/>
+            <include name="**/*.ejx"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.ini"/>
+            <include name="**/*.jpeg"/>
+            <include name="**/*.jpg"/>
+            <include name="**/*.png"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.sva"/>
+            <include name="**/*.tag"/>
+            <include name="**/*.tld"/>
+            <include name="**/*.wsdl"/>
+            <include name="**/*.xcfg"/>
+            <include name="**/*.xlf"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.xsd"/>
+            <include name="**/*.xsl"/>
+            <exclude name="build.xml"/>
+            <exclude name="build.properties"/>
+            <exclude name="package-info.class"/>
+        </patternset>
+        <copy todir="${output.dir}/WEB-INF/classes">
+            <fileset dir="src">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <copy todir="${output.dir}/WEB-INF">
+            <fileset dir="${basedir}/public_html/WEB-INF">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <copy todir="${output.dir}/WEB-INF/lib">
+            <fileset dir="${basedir}/../lib">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+    </target>
+    <!-- 
+        Create WAR file 
+        -->
+    <target name="war" depends="compile">
+        <echo>Building the war file...</echo>
+        <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Build-Date" value="${build_date}"/>
+            <attribute name="Build-Time" value="${build_time}"/>
+        </manifest>
+        <war destfile="${dist.dir}/RESTServices.war" webxml="${output.dir}/WEB-INF/web.xml"
+             manifest="${output.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${output.dir}">
+                <include name="WEB-INF/**"/>
+            </fileset>
+            <fileset dir="${output.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </war>
+    </target>
+</project>

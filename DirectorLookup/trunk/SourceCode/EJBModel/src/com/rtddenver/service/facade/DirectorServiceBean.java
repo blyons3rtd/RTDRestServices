@@ -4,7 +4,10 @@ import com.rtddenver.model.dto.DirectorDTO;
 import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.service.BoardDirector;
 
+import java.util.HashMap;
 import java.util.List;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -80,4 +83,51 @@ public class DirectorServiceBean implements DirectorServiceLocal {
         return dto;
     }
     
+    /** <code>select o from BoardDirector o WHERE UPPER(o.active) = 'Y' order by DISTRICT</code> */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public Map<String, BoardDirector> getAllDirectors() {
+
+        DirectorDTO dto = null;
+        List<BoardDirector> bdL = null;
+        Map<String, BoardDirector> directorMap = new HashMap<String, BoardDirector>();
+        try {
+            bdL = em.createNamedQuery("getAllDirectors", BoardDirector.class)
+                    .getResultList();
+
+            if (bdL.size() == 0) {
+                ErrorDTO error = new ErrorDTO("500",null, "No directors retrieved from database");
+                dto = new DirectorDTO(error);
+            } else {
+                int sz = bdL.size();
+                for (int x=0; x < sz;x++) {
+                    BoardDirector bd = bdL.get(0);
+                    directorMap.put(bd.getDistrict(), bd);
+                }
+            }
+
+        } catch (Exception ex) {
+            ncl.error("Error querying and processing entity bean", ex);
+            if (em != null) {
+                em.clear();
+                try {
+                    em.close();
+                } catch (Exception e) {
+                    // do noting 
+                    ncl.error("Error closing EntityManager", e);
+                } finally {
+                    em = null;
+                }
+            }
+            
+            if (bdL != null) {
+                bdL.clear();
+                bdL = null;
+            }
+            
+            ErrorDTO error = new ErrorDTO("500", ex.getClass().getName(), ex.getMessage());
+            dto = new DirectorDTO(error);
+        }
+
+        return directorMap;
+    }
 }

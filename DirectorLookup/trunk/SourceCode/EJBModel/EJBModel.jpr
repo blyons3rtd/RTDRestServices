@@ -105,6 +105,7 @@
    </hash>
    <hash n="oracle.ide.model.TechnologyScopeConfiguration">
       <list n="technologyScope">
+         <string v="Ant"/>
          <string v="Database"/>
          <string v="EJB"/>
          <string v="Java"/>
@@ -179,6 +180,19 @@
          <list n="url-path">
             <url path="src/"/>
          </list>
+      </hash>
+   </hash>
+   <hash n="oracle.jdeveloper.runner.RunConfigurations">
+      <hash n="runConfigurationDefinitions">
+         <hash n="Default">
+            <value n="custom" v="false"/>
+            <value n="name" v="Default"/>
+            <hash n="oracle.jdevimpl.runner.debug.DebugConfiguration">
+               <value n="remoteParameter:jpda:port" v="8500"/>
+               <value n="tracingInclude" v="com.rtddenver;com.rtddenver.service.facade.DirectorServiceBean"/>
+            </hash>
+            <value n="targetURL"/>
+         </hash>
       </hash>
    </hash>
    <hash n="oracle.jdevimpl.config.JProjectLibraries">

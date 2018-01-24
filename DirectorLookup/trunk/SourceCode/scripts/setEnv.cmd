@@ -1,0 +1,89 @@
+@ECHO OFF
+
+SET JAVA_HOME=c:\java\jdk1.8.0_102
+SET Path=%JAVA_HOME%\bin;%Path%
+
+IF NOT DEFINED ORACLE_HOME (
+	SET ORACLE_HOME=C:\Oracle\Middleware\Oracle_Home
+)
+IF NOT DEFINED WL_HOME (
+	SET WL_HOME=C:\Oracle\Middleware\Oracle_Home\wlserver\server
+)
+
+SET SCRIPT_PATH=%ORACLE_HOME%\oracle_common\common\bin
+@echo SCRIPT_PATH=%SCRIPT_PATH%
+FOR %%i IN ("%SCRIPT_PATH%") DO SET SCRIPT_PATH=%%~fsi
+
+@REM Set CURRENT_HOME...
+FOR %%i IN ("%SCRIPT_PATH%\..\..") DO SET CURRENT_HOME=%%~fsi
+
+@REM Set the MW_HOME relative to the CURRENT_HOME...
+FOR %%i IN ("%CURRENT_HOME%\..") DO SET MW_HOME=%%~fsi
+@echo MW_HOME=%MW_HOME%
+
+@REM Set the home directories...
+CALL "%SCRIPT_PATH%\setHomeDirs.cmd"
+
+@REM Set the DELEGATE_ORACLE_HOME to CURRENT_HOME if it's not set...
+IF "%DELEGATE_ORACLE_HOME%"=="" (
+  SET DELEGATE_ORACLE_HOME=%CURRENT_HOME%
+)
+SET ORACLE_HOME=%DELEGATE_ORACLE_HOME%
+@echo ORACLE_HOME=%ORACLE_HOME%
+
+@REM some scripts in the the WLST_HOME directory reference ORACLE_HOME
+SET WLST_PROPERTIES=%WLST_PROPERTIES% -DORACLE_HOME=%ORACLE_HOME%
+
+IF DEFINED WLS_NOT_BRIEF_ENV (
+  IF "%WLS_NOT_BRIEF_ENV%"=="true" SET WLS_NOT_BRIEF_ENV=
+  IF "%WLS_NOT_BRIEF_ENV%"=="TRUE" SET WLS_NOT_BRIEF_ENV=
+) ELSE (
+  SET WLS_NOT_BRIEF_ENV=false
+)
+
+CALL "%MW_HOME%\oracle_common\common\bin\commBaseEnv.cmd"
+
+if exist %SCRIPT_PATH%\cam_config.cmd (
+  call %SCRIPT_PATH%\cam_config.cmd
+)
+
+SET CLASSPATH=%WLST_EXT_CLASSPATH%;%FMWCONFIG_CLASSPATH%
+@echo CLASSPATH=%CLASSPATH%
+
+if "%WLS_NOT_BRIEF_ENV%"=="" (
+@echo.
+@echo CLASSPATH=%CLASSPATH%
+)
+
+SET JVM_ARGS=%WLST_PROPERTIES% %UTILS_MEM_ARGS% %CONFIG_JVM_ARGS%
+
+@REM IF EXIST %JAVA_HOME% (
+@REM  "%JAVA_HOME%\bin\java" %JVM_ARGS% weblogic.WLST %*
+@REM ) ELSE (
+@REM   CALL :SET_RC 1
+@REM )
+
+@REM SET RETURN_CODE=%ERRORLEVEL%
+
+@REM IF DEFINED USE_CMD_EXIT (
+@REM   EXIT %RETURN_CODE%
+@REM ) ELSE (
+@REM   EXIT /B %RETURN_CODE%
+@REM )
+
+
+@echo.
+@echo JAVA_HOME=%JAVA_HOME%
+@echo ORACLE_HOME=%ORACLE_HOME%
+@echo WL_HOME=%WL_HOME%
+@echo CLASSPATH=%CLASSPATH%
+@echo PATH=%Path%
+
+
+:SET_RC
+EXIT /B %1
+
+:APPEND_CLASSPATH
+SET CLASSPATH=%CLASSPATH%;%1
+
+
