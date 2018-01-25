@@ -42,9 +42,11 @@ def deployApplication():
         progress=deploy(deploymentName, deploymentFile, targets=deploymentTarget, upload='true')
         print '\n'
         if archiveVersion == '':
-            progress=startApplication(deploymentName, archiveVersion=archiveVersion)
-        else:
+            print 'startApplication:'+deploymentName
             progress=startApplication(deploymentName)
+        else:
+            print 'startApplication:'+deploymentName+' Version:'+archiveVersion
+            progress=startApplication(deploymentName, archiveVersion=archiveVersion)
 
     except:
         print 'Error during the deployment of ' +deploymentName+ ' ' +archiveVersion+ '\n'

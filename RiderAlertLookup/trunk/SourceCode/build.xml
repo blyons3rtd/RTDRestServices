@@ -40,6 +40,11 @@
   </path>
   <target name="all" description="Build the entire application" depends="clean,model,services,copy,createEAR"/>
   <target name="clean" description="Clean the project" unless="cleanDone">
+    <echo>Cleaning RESTServices...</echo>
+    <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml"/>
+    <echo>Cleaning EJBModel...</echo>
+    <ant target="clean" dir="${basedir}/EJBModel" antfile="build.xml"/>
+    <echo>Cleaning Application...</echo>
     <delete includeemptydirs="true" quiet="true">
       <fileset dir="${output.dir}" includes="**/*"/>
     </delete>
@@ -103,13 +108,11 @@
       <exclude name="build.xml"/>
       <exclude name="build.properties"/>
     </patternset>
-    <!--
     <copy todir="${output.dir}/lib">
       <fileset dir="lib">
         <patternset refid="copy.patterns"/>
       </fileset>
     </copy>
-    -->
     <copy todir="${output.dir}/META-INF">
       <fileset dir="${basedir}/src/META-INF">
         <patternset refid="copy.patterns"/>
@@ -189,10 +192,10 @@
     <antcall target="deploy2WLS"/>
   </target>
   <target name="deployCert">
-    <property name="deploy.admin.user" value="cert.admin.user"/>
-    <property name="deploy.admin.pswd" value="cert.admin.pswd"/>
-    <property name="deploy.admin.url" value="cert.admin.url"/>
-    <property name="deploy.target" value="cert.deploy.target"/>
+    <property name="deploy.admin.user" value="${cert.admin.user}"/>
+    <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
+    <property name="deploy.admin.url" value="${cert.admin.url}"/>
+    <property name="deploy.target" value="${cert.deploy.target}"/>
     <condition property="deploymentDefined">
       <available file="${dist.dir}/${applicationArchive}" type="file"/>
     </condition>
@@ -234,10 +237,10 @@
   </target>
   <!-- -->
   <target name="undeployCert" depends="getVersion">
-    <property name="deploy.admin.user" value="cert.admin.user"/>
-    <property name="deploy.admin.pswd" value="cert.admin.pswd"/>
-    <property name="deploy.admin.url" value="cert.admin.url"/>
-    <property name="deploy.target" value="cert.deploy.target"/>
+    <property name="deploy.admin.user" value="${cert.admin.user}"/>
+    <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
+    <property name="deploy.admin.url" value="${cert.admin.url}"/>
+    <property name="deploy.target" value="${cert.deploy.target}"/>
     <condition property="undeploymentDefined">
         <isset property="deploy.admin.url"/>
     </condition>

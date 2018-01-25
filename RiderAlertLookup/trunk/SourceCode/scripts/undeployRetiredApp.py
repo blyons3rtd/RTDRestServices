@@ -74,6 +74,7 @@ def undeployApplication(applicationId, deploymentTarget):
     serverConfig()
     
     try:
+        print 'UnDeploying... DeploymentName:' +deploymentName+' Targets:'+deploymentTarget+' Version:'+archiveVersion
         undeploy(deploymentName, targets=deploymentTarget, archiveVersion=archiveVersion)
 
     except:
