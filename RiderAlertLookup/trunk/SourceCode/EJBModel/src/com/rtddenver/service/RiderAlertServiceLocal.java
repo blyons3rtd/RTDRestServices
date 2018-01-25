@@ -1,12 +1,12 @@
 package com.rtddenver.service;
 
 import com.rtddenver.model.dto.ActiveAlertDTO;
-import com.rtddenver.model.dto.RouteDTO;
-
+import com.rtddenver.model.dto.AlertRouteDTO;
 import javax.ejb.Local;
 
 @Local
 public interface RiderAlertServiceLocal {
     abstract ActiveAlertDTO getActiveAlertList();
-    abstract RouteDTO getActiveAlertRoutes();
+    abstract AlertRouteDTO getActiveAlertRoutes();
+    abstract ActiveAlertDTO getActiveAlertByID(String alertURL);
 }

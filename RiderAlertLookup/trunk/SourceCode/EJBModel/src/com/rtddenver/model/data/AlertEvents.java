@@ -17,10 +17,14 @@ import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "findAllActiveAlerts", query = "select o from AlertEvents o WHERE o.alertTypeId = 1 " +
-                    "AND o.alertEventEffEndDate >= CURRENT_DATE " +
-                    "AND o.alertEventEffStartDate <= CURRENT_DATE " +
-                    "ORDER BY o.alertEventId desc") })
-@Table(name = "ALERT_EVENTS")
+                    "AND o.alertEventEffEndDate >= :alertDate " +
+                    "AND o.alertEventEffStartDate <= :alertDate " +
+                    "ORDER BY o.alertEventId DESC"),
+                @NamedQuery(name = "findActiveAlertByID", query = "select o from AlertEvents o WHERE o.alertTypeId = 1 " +
+                    "AND o.alertEventId = :alertID " +
+                    "AND o.alertEventEffEndDate >= :alertDate " +
+                    "AND o.alertEventEffStartDate <= :alertDate ") })
+@Table(name = "ALERT_EVENTS", schema = "REP_IP")
 public class AlertEvents implements Serializable {
     private static final long serialVersionUID = -6202385501726449589L;
     @Column(name = "ALERT_CATEGORY_DETAIL", length = 4000)

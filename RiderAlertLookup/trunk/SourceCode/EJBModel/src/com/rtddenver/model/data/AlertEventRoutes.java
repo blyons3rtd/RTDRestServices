@@ -11,9 +11,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import javax.persistence.Transient;
+
 @Entity
 @NamedQueries({ @NamedQuery(name = "findAllRoutes", query = "select o from AlertEventRoutes o " +
-                        "WHERE o.alertEventId in (18397, 18388, 17915) ORDER BY o.routeSequence") })  //(:alertEventIDList)//(18397, 18388, 17915)
+                        "WHERE o.alertEventId in :alertEventIDList ORDER BY o.routeSequence") })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "REP_IP")
 public class AlertEventRoutes implements Serializable {
     private static final long serialVersionUID = 6738713795768565884L;
@@ -30,18 +32,21 @@ public class AlertEventRoutes implements Serializable {
     private Integer routeSequence;
     @Column(name = "ROUTE_TYPE_NAME", length = 50)
     private String routeTypeName;
-
+    @Transient
+    private String alertURL;
+    
     public AlertEventRoutes() {
     }
 
     public AlertEventRoutes(Integer alertEventId, Integer alertEventRoutesId,
-                            String masterRoute, String routeId, Integer routeSequence, String routeTypeName) {
+                            String masterRoute, String routeId, Integer routeSequence, String routeTypeName, String alertURL) {
         this.alertEventId = alertEventId;
         this.alertEventRoutesId = alertEventRoutesId;
         this.masterRoute = masterRoute;
         this.routeId = routeId;
         this.routeSequence = routeSequence;
         this.routeTypeName = routeTypeName;
+        this.alertURL = alertURL;
     }
 
     public Integer getAlertEventId() {
@@ -90,5 +95,13 @@ public class AlertEventRoutes implements Serializable {
 
     public void setRouteTypeName(String routeTypeName) {
         this.routeTypeName = routeTypeName;
+    }
+
+    public void setAlertURL(String alertURL) {
+        this.alertURL = alertURL;
+    }
+
+    public String getAlertURL() {
+        return alertURL;
     }
 }

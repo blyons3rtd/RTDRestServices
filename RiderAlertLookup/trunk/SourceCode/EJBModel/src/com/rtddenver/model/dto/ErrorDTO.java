@@ -2,12 +2,8 @@ package com.rtddenver.model.dto;
 
 import java.io.Serializable;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 
 //***********************************************************
 /* Description:

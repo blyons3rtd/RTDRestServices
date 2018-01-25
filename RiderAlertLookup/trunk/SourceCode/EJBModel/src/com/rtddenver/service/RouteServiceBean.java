@@ -29,7 +29,7 @@ public class RouteServiceBean implements RouteServiceLocal {
     public RouteDTO getRouteList() {
         RouteDTO dto = null;
         List<AlertEventRoutes> aer = null;
-        ArrayList<AlertEventRoutes> busRailList = new ArrayList();
+        ArrayList<AlertEventRoutes> busRailList = new ArrayList<AlertEventRoutes>();
         
         try {
           aer = em.createNamedQuery("findAllRoutes", AlertEventRoutes.class)
@@ -45,7 +45,8 @@ public class RouteServiceBean implements RouteServiceLocal {
                 }
                 //AlertEventRoutes a = aer.get(0);
                 //dto = new RiderAlertDTO(a.getAlertEventId(), a.getAlertEventRoutesId(), a.getRouteId(), a.getMasterRoute(), a.getRouteTypeName(), busRailList);
-                dto = new RouteDTO(busRailList);
+                dto = new RouteDTO();
+                dto.setBusList(busRailList);
             } 
         } catch (Exception ex) {
             if (em != null) {

@@ -4,6 +4,6 @@
       <value n="databaseType" v="Oracle Database"/>
       <value n="databaseVersion" v="112"/>
    </hash>
-   <value n="id" v="6ad111fa-e41c-462d-8f1b-c1454b49a1c1"/>
+   <value n="id" v="54c6bae0-3591-41d9-b567-cf38b95adeda"/>
    <value n="name" v="RiderAlertDS"/>
 </ProviderSettings>

@@ -5,13 +5,22 @@
   <persistence-unit name="riderAlertModel">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/RiderAlertDS</jta-data-source>
-    <class>com.rtddenver.model.data.AlertEvents</class>
     <properties>
       <property name="javax.persistence.jtaDataSource" value="jdbc/RiderAlertDS"/>
      <!-- <property name="eclipselink.target-database" value="Oracle"/> 
       <property name="eclipselink.target-server" value="WebLogic_12"/>
      
      -->
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="EJBModel" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <properties>
+      <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@ora-dmz-t01:15305:ECORE01S"/>
+      <property name="javax.persistence.jdbc.user" value="REP_IP"/>
+      <property name="javax.persistence.jdbc.password" value="67E06B57549483396E73585AD148D262"/>
+      <property name="eclipselink.logging.level" value="FINER"/>
     </properties>
   </persistence-unit>
 </persistence>
