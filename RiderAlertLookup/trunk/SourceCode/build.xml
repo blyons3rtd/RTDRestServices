@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="buildApp" basedir=".">
+<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="all" basedir=".">
   <!--
     This is the ant build file for the Application-level 
     -->
@@ -26,15 +26,6 @@
     <pathelement location="${wldeploy.lib.dir}/weblogic.jar"/>
   </path>
   <echo message="wldeploy path: ${toString:wldeploy.WebLogic.12.1}"></echo>
-  <!--
-  <path id="library.WebLogic.12.1.Thin-Client">
-    <pathelement location="${install.dir}/wlserver/server/lib/wlclient.jar"/>
-    <pathelement location="${install.dir}/wlserver/server/lib/wljmxclient.jar"/>
-    <pathelement location="${install.dir}/wlserver/server/lib/wljmsclient.jar"/>
-    <pathelement location="${install.dir}/wlserver/server/lib/wlnmclient.jar"/>
-    <pathelement location="${install.dir}/wlserver/server/lib/wlsafclient.jar"/>
-  </path>
-  -->
   <path id="classpath">
     <path refid="wldeploy.WebLogic.12.1"/>
   </path>
@@ -47,6 +38,8 @@
     <echo>Cleaning Application...</echo>
     <delete includeemptydirs="true" quiet="true">
       <fileset dir="${output.dir}" includes="**/*"/>
+      <fileset dir="${dist.dir}" includes="**/*"/>
+      <fileset dir="${cert.dir}" includes="**/*"/>
     </delete>
     <condition property="cleanDone">
       <not>
@@ -63,11 +56,13 @@
   <target name="model">
     <echo>Calling EJBModel ant build...</echo>
     <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml"/>
+    <echo message="Done"/>
   </target>
   <!-- Call the build.xml for the Services project -->
   <target name="services">
     <echo>Calling RESTServices ant build...</echo>
     <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml"/>
+    <echo message="Done"/>
   </target>
   <!--
   ==========================================================================================
@@ -145,9 +140,9 @@
           buildAppMinor - Increments the minor release number. Resets the build increment to 1.
           buildApp      - Increments the build number. This is the default build target.
         -->
-  <target name="buildAppMajor" depends="resetIncrementMajor, all"></target>
-  <target name="buildAppMinor" depends="resetIncrementMinor, all"></target>
-  <target name="buildApp" depends="all"></target>
+  <target name="buildAppMajor" depends="resetIncrementMajor, all"><echo message="Build complete"/></target>
+  <target name="buildAppMinor" depends="resetIncrementMinor, all"><echo message="Build complete"/></target>
+  <target name="buildApp" depends="all"><echo message="Build complete"/></target>
   <target name="createEAR" depends="inc.build">
     <echo>Building the ear file...</echo>
     <manifest file="${output.dir}/META-INF/MANIFEST.MF">
@@ -172,6 +167,7 @@
         <include name="**/"/>
       </fileset>
     </ear>
+    <echo message="Done"/>
   </target>
   <!--
   ==========================================================================================
@@ -181,33 +177,49 @@
   <!--
         Deploy to WebLogic
         -->
-  <target name="deployLocal">
+  <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic" depends="buildApp, check4Archive">
+    <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
     <property name="deploy.admin.user" value="${local.admin.user}"/>
     <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
     <property name="deploy.admin.url" value="${local.admin.url}"/>
     <property name="deploy.target" value="${local.deploy.target}"/>
-    <condition property="deploymentDefined">
-      <available file="${dist.dir}/${applicationArchive}" type="file"/>
-    </condition>
+    <property name="ok2Deploy" value="true"/>
     <antcall target="deploy2WLS"/>
+    <echo message="Done"/>
   </target>
-  <target name="deployCert">
+  <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic" depends="buildApp, check4Archive">
+    <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
     <property name="deploy.admin.user" value="${cert.admin.user}"/>
     <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
     <property name="deploy.admin.url" value="${cert.admin.url}"/>
     <property name="deploy.target" value="${cert.deploy.target}"/>
-    <condition property="deploymentDefined">
-      <available file="${dist.dir}/${applicationArchive}" type="file"/>
+    <!-- Copy archive to the cert directory for retention and deployment -->
+    <echo message="Copying file ${applicationArchive} to CERT deployment directory..."/>
+    <copy file="${dist.dir}/${applicationArchive}" todir="${cert.dir}"/>
+    <condition property="archiveExists">
+      <available file="${cert.dir}/${applicationArchive}" type="file"/>
     </condition>
+    <property name="ok2Deploy" value="true"/>
     <antcall target="deploy2WLS"/>
+    <echo message="deployCert Done"/>
   </target>
-  <target name="deployProd" if="prodPermitted"></target>
+  <!-- -->
+  <target name="deployProd" description="Deploys the application archive to the PROD instance of Weblogic" depends="check4CertArchive">
+    <fail unless="certArchiveExists" message="*** Deploy failed!  No CERT archive available to deploy."/>
+    <property name="deploy.admin.user" value="${prod.admin.user}"/>
+    <property name="deploy.admin.pswd" value="${prod.admin.pswd}"/>
+    <property name="deploy.admin.url" value="${prod.admin.url}"/>
+    <property name="deploy.target" value="${prod.deploy.target}"/>
+    <property name="ok2Deploy" value="true"/>
+    <antcall target="deploy2WLS"/>
+    <echo message="deployProd Done"/>
+  </target>
   <!-- 
     This deploy tasks executes scripts located in folder ./scripts 
     -->
-  <target name="deploy2WLS" if="deploymentDefined" depends="">
+  <target name="deploy2WLS" if="ok2Deploy" depends="">
     <echo message="Deploying ${dist.dir}/${project.name}.ear"></echo>
-    <exec executable="./scripts/deployApp.cmd">
+    <exec executable="./scripts/deployApp.cmd" failonerror="true">
       <arg value="${deploy.admin.user}"/>
       <arg value="${deploy.admin.pswd}"/>
       <arg value="${deploy.admin.url}"/>
@@ -216,6 +228,25 @@
       <arg value="${application.version}"/>
       <arg value="${deploy.target}"/>
     </exec>
+  </target>
+  <!-- -->
+  <target name="check4Archive">
+    <condition property="archiveExists">
+      <available file="${dist.dir}/${applicationArchive}" type="file"/>
+    </condition>
+    <echo message="Done"/>
+  </target>
+  <target name="check4CertArchive">
+    <condition property="certArchiveExists">
+      <available file="${cert.dir}/${applicationArchive}" type="file"/>
+    </condition>
+    <echo message="Done"/>
+  </target>
+  <!-- 
+    Prompt user for override of existing file 
+    -->
+  <target name="permissionToReplaceFile">
+    <input message="Do you wish to overwrite the existing CERT candidate file? (y/n)" addproperty="y.n"/>
   </target>
   <!--
   ==========================================================================================
@@ -253,7 +284,7 @@
     -->
   <target name="unDeployFromWLS" if="undeploymentDefined">
     <echo message="Un-Deploying ${dist.dir}/${project.name}.ear"></echo>
-    <exec executable="./scripts/undeployRetiredApp.cmd">
+    <exec executable="./scripts/undeployRetiredApp.cmd" failonerror="true">
       <arg value="${deploy.admin.user}"/>
       <arg value="${deploy.admin.pswd}"/>
       <arg value="${deploy.admin.url}"/>

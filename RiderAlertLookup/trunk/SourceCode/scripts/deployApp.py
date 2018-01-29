@@ -1,8 +1,8 @@
-#========================================================
+#==================================================================
 # ScriptFile: deployApp.py 
 # Author : Jay Butler
 # Purpose : Deploys an application WAR or EAR to a Weblogic Server
-#========================================================
+#==================================================================
 import sys
 import os
 import re
@@ -53,7 +53,8 @@ def deployApplication():
         dumpStack()
         dumpVariables()
         exit(exitcode=101)
-		
+
+
 #========================
 #Input Values Validation Section
 #========================
@@ -121,11 +122,16 @@ def deployMain():
     appList = re.findall(deploymentName, ls('/AppDeployments/'))
     print(appList)
     if len(appList) > 1:
+        # More than one version of the app is currently installed.
+        # Does one of them include the version # of this deployment?
         print 'Looking for existence of ' + appVersionString + '...'
         verList = re.findall(appVersionString, ls('/AppDeployments'))
         if len(verList) == 0:
-            print 'There are already two previous versions of this application installed'
-            print 'In order to install version ' + archiveVersion + ' the current retired version must first be deleted'
+            # The existing two versions does NOT include the version being deployed.
+            # The oldest of the two must be deleted to make room for this new version.
+            print '*** FAILED! There are already two previous versions of this application installed!'
+            print 'In order to install version ' + archiveVersion + ' the current retired version must first be deleted.'
+            print 'Use the ant UnDeploy task to delete the oldest version and then retry the deployment of the newer version.'
             exit()
     
     if len(appList) >= 1:
@@ -164,12 +170,13 @@ print '=========================================================================
 print 'Connecting to Admin Server...'
 print '=============================================================================='
 connectToDomain()
+listDeployedVersionsOfApp()
 print '=============================================================================='
 print 'Starting Deployment...'
 print '=============================================================================='
 #edit()
 #startEdit()
-deployMain()
+#deployMain()
 #save()
 #activate()
 print '=============================================================================='
