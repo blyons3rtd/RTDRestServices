@@ -161,6 +161,20 @@
          </list>
       </hash>
    </hash>
+   <hash n="oracle.jdeveloper.runner.RunConfigurations">
+      <hash n="runConfigurationDefinitions">
+         <hash n="localhost">
+            <value n="custom" v="false"/>
+            <value n="name" v="localhost"/>
+            <value n="remoteDebuggingProfiling" v="true"/>
+            <url n="runDirectoryURL" path="../"/>
+            <url n="targetURL" path="src/com/rtddenver/service/facade/DistrictServiceBean.java"/>
+         </hash>
+      </hash>
+      <list n="runConfigurationList">
+         <string v="localhost"/>
+      </list>
+   </hash>
    <hash n="oracle.jdevimpl.config.JProjectLibraries">
       <list n="exportedReferences">
          <hash>
@@ -189,6 +203,14 @@
          </hash>
          <hash>
             <value n="id" v="Gson-2.7.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Log4j-1.2.15.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Spring.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
@@ -221,6 +243,24 @@
                <value n="id" v="District.jar"/>
                <value n="locked" v="true"/>
             </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/log4j-1.2.15.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Log4j-1.2.15.jar"/>
+               <value n="id" v="Log4j-1.2.15.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/spring.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Spring.jar"/>
+               <value n="id" v="Spring.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
          </list>
       </hash>
       <list n="libraryReferences">
@@ -250,6 +290,14 @@
          </hash>
          <hash>
             <value n="id" v="Gson-2.7.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Log4j-1.2.15.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Spring.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>

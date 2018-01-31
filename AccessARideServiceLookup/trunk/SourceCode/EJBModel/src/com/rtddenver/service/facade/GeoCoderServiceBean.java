@@ -22,18 +22,22 @@ import javax.ejb.TransactionAttributeType;
 
 import javax.xml.ws.WebServiceRef;
 
-import weblogic.logging.NonCatalogLogger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 
 @Stateless(name = "GeoCoderService")
 public class GeoCoderServiceBean implements GeoCoderServiceLocal {
 
-    private NonCatalogLogger ncl = new NonCatalogLogger("GeoCoderServiceServiceBean");
 
+    private static final Logger LOGGER = LogManager.getLogger(GeoCoderServiceBean.class.getName());
+    
+    
     @Resource
     SessionContext sessionContext;
 
-    @WebServiceRef(wsdlLocation =
-                   "geocoder.wsdl") //"http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx?WSDL#%7Bhttp%3A%2F%2Frtd-denver.com%2Fgeocoder%7DGeocoderService")
+    @WebServiceRef(wsdlLocation = "geocoder.wsdl") 
+        //"http://maps.rtd-denver.com/RTDGeocoder3A/GeocoderService.asmx?WSDL#%7Bhttp%3A%2F%2Frtd-denver.com%2Fgeocoder%7DGeocoderService")
     private GeocoderService geocoderService;
 
     public GeoCoderServiceBean() {
@@ -44,18 +48,22 @@ public class GeoCoderServiceBean implements GeoCoderServiceLocal {
                                                boolean returnInWGS84) {
         GeoCodeAddressDTO dto = null;
 
-        ncl.debug("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" + zip +
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" + zip +
                   ", returnInWGS84:" + returnInWGS84);
-        System.out.println("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" +
-                           zip + ", returnInWGS84:" + returnInWGS84);
+        }
+        //System.out.println("GeoCoderServiceBean.getGeoCodeAddress() street:" + street + ", city:" + city + ", zip:" +
+        //                   zip + ", returnInWGS84:" + returnInWGS84);
 
         try {
             street = street.replaceAll("%20", " ");
 
             String str = geocoderService.getGeocoderInterface().jsonGeocodeAddress(street, city, zip, returnInWGS84);
 
-            ncl.debug("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
-            System.out.println("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
+            }
+            //System.out.println("GeoCoderServiceBean.getGeoCodeAddress() Geocoder Service Response: " + str);
 
             JsonParser jsonParser = new JsonParser();
             JsonObject jo = (JsonObject) jsonParser.parse(str);
@@ -100,7 +108,7 @@ public class GeoCoderServiceBean implements GeoCoderServiceLocal {
             }
 
         } catch (Exception e) {
-            ncl.error("Error querying and processing entity bean", e);
+            LOGGER.error("Error querying and processing entity bean", e);
             e.printStackTrace();
             ErrorDTO err = new ErrorDTO("500", e.toString(), "Error querying and processing GeoCoder service");
             dto = new GeoCodeAddressDTO(err);

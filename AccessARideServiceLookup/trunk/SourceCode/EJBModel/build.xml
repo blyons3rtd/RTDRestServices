@@ -51,6 +51,10 @@
     <path id="library.Gson-2.7.jar">
         <pathelement location="../lib/gson-2.7.jar"/>
     </path>
+    <path id="Logging.jar">
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/spring.jar"/>
+    </path>
     <path id="classpath">
         <path refid="library.Java.EE"/>
         <path refid="library.EJB"/>
@@ -59,6 +63,7 @@
         <path refid="library.Geocoder.jar"/>
         <path refid="library.District.jar"/>
         <path refid="library.Gson-2.7.jar"/>
+        <path refid="Logging.jar"/>
     </path>
     <target name="init">
         <tstamp/>
@@ -71,8 +76,10 @@
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
-        <javac destdir="${output.dir}" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
-               deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}" target="${javac.target}">
+         <echo>Compiling with debug=${debugSetting}</echo>
+        <javac destdir="${output.dir}" classpathref="classpath" debug="${debugSetting}" nowarn="${javac.nowarn}" 
+               deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
+               includeantruntime="false" target="${javac.target}">
             <src path="src"/>
         </javac>
     </target>
@@ -104,11 +111,6 @@
             <fileset dir="src">
                 <patternset refid="copy.patterns"/>
             </fileset>
-            <!--
-            <fileset dir=".">
-                <patternset refid="copy.patterns"/>
-            </fileset>
-            -->
         </copy>
     </target>
     <!-- 

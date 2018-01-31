@@ -1,16 +1,12 @@
 package com.rtddenver.services;
 
-import com.rtddenver.model.dto.AccessARideDTO;
 import com.rtddenver.model.dto.DistrictDTO;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.dto.GeoCodeAddressDTO;
 
 import com.rtddenver.service.facade.DistrictServiceLocal;
 import com.rtddenver.service.facade.GeoCoderServiceLocal;
 
 import java.util.concurrent.TimeUnit;
-
-import javax.enterprise.context.RequestScoped;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +18,8 @@ import javax.ejb.EJB;
 import javax.ws.rs.Encoded;
 import javax.ws.rs.PathParam;
 
-import weblogic.logging.NonCatalogLogger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 
 //***********************************************************
@@ -42,7 +39,7 @@ import weblogic.logging.NonCatalogLogger;
 @Produces("application/json")
 public class AccessARideLookup {
 
-    private NonCatalogLogger ncl = new NonCatalogLogger("AccessARideLookup");
+    private static final Logger LOGGER = LogManager.getLogger(AccessARideLookup.class.getName());
     
     @EJB(name = "DistrictService", beanInterface = com.rtddenver.service.facade.DistrictServiceLocal.class,
          beanName = "EJBModel.jar#DistrictService")
@@ -71,8 +68,10 @@ public class AccessARideLookup {
         boolean returnInWGS84 = true;
         DistrictDTO districtDTO = null;
 
-        System.out.println("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
                            departureTime);
+        }
 
         GeoCodeAddressDTO geocodeDTO =
             this.geocoderService.getGeoCodeAddress(street, city, zip, options, returnInWGS84);

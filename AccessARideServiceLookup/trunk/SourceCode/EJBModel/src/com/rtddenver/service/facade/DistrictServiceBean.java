@@ -1,10 +1,7 @@
 package com.rtddenver.service.facade;
 
-import com.google.gson.Gson;
-
 import com.rtd_denver.gis.District;
 
-import com.rtddenver.model.dto.AccessARideDTO;
 import com.rtddenver.model.dto.DistrictDTO;
 
 import com.rtddenver.model.dto.ErrorDTO;
@@ -22,18 +19,20 @@ import javax.ejb.TransactionAttributeType;
 
 import javax.xml.ws.WebServiceRef;
 
-import weblogic.logging.NonCatalogLogger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 
 @Stateless(name = "DistrictService")
 public class DistrictServiceBean implements DistrictServiceLocal {
 
-    private NonCatalogLogger ncl = new NonCatalogLogger("DistrictServiceBean");
+    private static final Logger LOGGER = LogManager.getLogger(DistrictServiceBean.class.getName());
 
     @Resource
     SessionContext sessionContext;
 
-    @WebServiceRef(wsdlLocation =
-                   "district.wsdl") //"http://maps.rtd-denver.com/services/whoismydirector/district.asmx?WSDL")
+    @WebServiceRef(wsdlLocation = "district.wsdl")
+    //"http://maps.rtd-denver.com/services/whoismydirector/district.asmx?WSDL")
     private District district;
 
     public DistrictServiceBean() {
@@ -42,8 +41,10 @@ public class DistrictServiceBean implements DistrictServiceLocal {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public DistrictDTO getAdaOnDayTimeLoc(String dayOfWeek, String time, double lon, double lat) {
 
-        ncl.debug("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
-        System.out.println("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
+        }
+        //System.out.println("Entered getAdaOnDayTimeLoc(" + dayOfWeek + ", " + time + ", " + lon + ", " + lat + ")");
 
         DistrictDTO dto = null;
         boolean IsInWGS84 = true; //default
@@ -68,7 +69,7 @@ public class DistrictServiceBean implements DistrictServiceLocal {
             retVal = district.getDistrictSoap().getADAOnDayTimeLoc(dayOfWeek, time, lon, lat, IsInWGS84);
             dto = evaluateResponseCode(retVal, dayOfWeek, time);
         } catch (Exception e) {
-            ncl.error("Error querying and processing entity bean", e);
+            LOGGER.error("Error querying and processing entity bean", e);
             e.printStackTrace();
             if (userError) {
                 errorCode = "400";
@@ -82,11 +83,11 @@ public class DistrictServiceBean implements DistrictServiceLocal {
 
     /**
      * Evaluates the response code returned from the GIS District service and assigns
-     * the appropriate values for adaAvail and message in the AccessARideDTO
+     * the appropriate values for adaAvail and message in the DistrictDTO
      * @param retVal
      * @param departureDay
      * @param departureTime
-     * @return AccessARideDTO
+     * @return DistrictDTO
      */
     private DistrictDTO evaluateResponseCode(int retVal, String departureDay, String departureTime) {
         String message = "";
@@ -144,12 +145,20 @@ public class DistrictServiceBean implements DistrictServiceLocal {
      * @return true valid time format, false invalid time format
      */
     private boolean timeFormatValidator(String time) {
-        if (time == null) return false;
-        Pattern pattern;
-        Matcher matcher;
-        String TIME_PATTERN = "(0[1-9]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|([1-9]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|(1[0-2]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|(([01]?[0-9]|2[0-3]):[0-5][0-9])";
-        pattern = Pattern.compile(TIME_PATTERN);
-        matcher = pattern.matcher(time.toUpperCase());
-        return matcher.matches();
+        if (time == null)
+            return false;
+        boolean retVal = false;
+        try {
+            Pattern pattern;
+            Matcher matcher;
+            String TIME_PATTERN =
+                "(0[1-9]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|([1-9]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|(1[0-2]:[0-5][0-9]((AM)|(PM)|(am)|(pm)))|(([01]?[0-9]|2[0-3]):[0-5][0-9])";
+            pattern = Pattern.compile(TIME_PATTERN);
+            matcher = pattern.matcher(time.toUpperCase());
+            retVal = matcher.matches();
+        } catch (Exception e) {
+            LOGGER.error("Exception trying to validate time value:" + time + " : " + e);
+        }
+        return retVal;
     }
 }

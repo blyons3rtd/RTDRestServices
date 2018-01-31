@@ -37,6 +37,7 @@
    <list n="listOfChildren">
       <hash><url n="URL" path="EJBModel/EJBModel.jpr"/></hash>
       <hash><url n="URL" path="RESTServices/RESTServices.jpr"/></hash>
+      <hash><url n="URL" path="scripts/scripts.jpr"/></hash>
    </list>
    <hash n="oracle.jdeveloper.deploy.dt.DeploymentProfiles">
       <hash n="profileDefinitions">
