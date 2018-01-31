@@ -105,6 +105,7 @@
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
+        <!-- debugSetting value defined in application level build.xml -->
         <echo>Compiling with debug=%{debugSetting}</echo>
         <javac destdir="${output.dir}/WEB-INF/classes" classpathref="classpath" debug="${debugSetting}"
                nowarn="${javac.nowarn}" deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
@@ -156,7 +157,7 @@
             <filterset>
                 <filter token="log_basedir" value="${log.basedir}"/>
                 <filter token="application_name" value="${log.name}"/>
-                <filter token="log_level" value="${log.level}"/>
+                <filter token="log_level" value="${log.level}"/> <!-- Value defined in application level build.xml -->
             </filterset>
         </copy>
     </target>

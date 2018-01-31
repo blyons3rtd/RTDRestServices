@@ -252,9 +252,11 @@
     </target>
     <target name="setDev">
         <property name="debugSetting" value="on"/>
+        <property name="log.level" value="DEBUG"/>
     </target>
     <target name="setProd">
         <property name="debugSetting" value="on"/>
+        <property name="log.level" value="INFO"/>
     </target>
     <!-- 
     Prompt user for override of existing file 
