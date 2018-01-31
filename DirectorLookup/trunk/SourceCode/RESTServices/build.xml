@@ -69,6 +69,10 @@
     <path id="library.Gson-2.7.jar">
         <pathelement location="../lib/gson-2.7.jar"/>
     </path>
+    <path id="Logging.jar">
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/spring.jar"/>
+    </path>
     <path id="classpath">
         <pathelement location="../EJBModel/deploy/EJBModel.jar"/>
         <path refid="library.Java.EE"/>
@@ -77,6 +81,7 @@
         <path refid="library.JAX-RS.Jersey.2.x"/>
         <path refid="library.JSP.Runtime"/>
         <path refid="library.Gson-2.7.jar"/>
+        <path refid="Logging.jar"/>
     </path>
     <target name="init">
         <tstamp/>
@@ -85,6 +90,14 @@
         <mkdir dir="${output.dir}/WEB-INF/lib"/>
         <mkdir dir="${output.dir}/META-INF"/>
     </target>
+    <target name="dev" description="Build the project with development settings">
+      <property name="debugSetting" value="on" />
+      <antcall target="all" />
+    </target>
+    <target name="prod" description="Build the project with production settings">
+      <property name="debugSetting" value="off" />
+      <antcall target="all" />
+    </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,war"/>
     <target name="clean" description="Clean the project">
         <delete includeemptydirs="true" quiet="true">
@@ -92,8 +105,11 @@
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
-        <javac destdir="${output.dir}/WEB-INF/classes" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
-               deprecation="${javac.deprecation}" encoding="Cp1252" source="${javac.source}" target="${javac.target}">
+        <!-- debugSetting value defined in application level build.xml -->
+        <echo>Compiling with debug=%{debugSetting}</echo>
+        <javac destdir="${output.dir}/WEB-INF/classes" classpathref="classpath" debug="${debugSetting}"
+               nowarn="${javac.nowarn}" deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
+               includeantruntime="false" target="${javac.target}">
             <src path="src"/>
         </javac>
     </target>
@@ -135,6 +151,14 @@
             <fileset dir="${basedir}/../lib">
                 <patternset refid="copy.patterns"/>
             </fileset>
+        </copy>
+        <copy file="${basedir}/public_html/WEB-INF/classes/log4j.xml" tofile="${output.dir}/WEB-INF/classes/log4j.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="log_basedir" value="${log.basedir}"/>
+                <filter token="application_name" value="${log.name}"/>
+                <filter token="log_level" value="${log.level}"/> <!-- Value defined in application level build.xml -->
+            </filterset>
         </copy>
     </target>
     <!-- 

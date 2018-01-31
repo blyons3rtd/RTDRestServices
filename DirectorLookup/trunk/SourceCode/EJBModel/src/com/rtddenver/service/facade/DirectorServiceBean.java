@@ -9,6 +9,9 @@ import java.util.List;
 
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import javax.annotation.Resource;
 
 import javax.ejb.SessionContext;
@@ -20,13 +23,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import weblogic.logging.NonCatalogLogger;
+
 
 
 @Stateless(name = "DirectorService")
 public class DirectorServiceBean implements DirectorServiceLocal {
     
-    private NonCatalogLogger ncl = new NonCatalogLogger("DirectorServiceBean");
+    private static final Logger LOGGER = LogManager.getLogger(DirectorServiceBean.class.getName());
     
     @Resource
     SessionContext sessionContext;
@@ -43,6 +46,10 @@ public class DirectorServiceBean implements DirectorServiceLocal {
 
         DirectorDTO dto = null;
         List<BoardDirector> bdL = null;
+        
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered getDirectorByDistrict... district:" + district);
+        }
 
         try {
             bdL = em.createNamedQuery("findDirectorByDistrict", BoardDirector.class)
@@ -50,6 +57,7 @@ public class DirectorServiceBean implements DirectorServiceLocal {
                     .getResultList();
 
             if (bdL.size() == 0) {
+                LOGGER.warn("No director found for district " + district);
                 ErrorDTO error = new ErrorDTO("400",null, "No director found for district " + district);
                 dto = new DirectorDTO(error);
             } else {
@@ -58,14 +66,14 @@ public class DirectorServiceBean implements DirectorServiceLocal {
             }
 
         } catch (Exception ex) {
-            ncl.error("Error querying and processing entity bean", ex);
+            LOGGER.error("Error querying and processing entity bean: " + ex);
             if (em != null) {
                 em.clear();
                 try {
                     em.close();
                 } catch (Exception e) {
                     // do noting 
-                    ncl.error("Error closing EntityManager", e);
+                    LOGGER.error("Error closing EntityManager: " + e);
                 } finally {
                     em = null;
                 }
@@ -89,12 +97,18 @@ public class DirectorServiceBean implements DirectorServiceLocal {
 
         DirectorDTO dto = null;
         List<BoardDirector> bdL = null;
+        
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered getAllDirectors...");
+        }
+        
         Map<String, BoardDirector> directorMap = new HashMap<String, BoardDirector>();
         try {
             bdL = em.createNamedQuery("getAllDirectors", BoardDirector.class)
                     .getResultList();
 
             if (bdL.size() == 0) {
+                LOGGER.error("No directors retrieved from database");
                 ErrorDTO error = new ErrorDTO("500",null, "No directors retrieved from database");
                 dto = new DirectorDTO(error);
             } else {
@@ -106,14 +120,14 @@ public class DirectorServiceBean implements DirectorServiceLocal {
             }
 
         } catch (Exception ex) {
-            ncl.error("Error querying and processing entity bean", ex);
+            LOGGER.error("Error querying and processing entity bean: " + ex);
             if (em != null) {
                 em.clear();
                 try {
                     em.close();
                 } catch (Exception e) {
                     // do noting 
-                    ncl.error("Error closing EntityManager", e);
+                    LOGGER.error("Error closing EntityManager: " + e);
                 } finally {
                     em = null;
                 }

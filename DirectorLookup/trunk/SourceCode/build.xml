@@ -155,7 +155,7 @@
     <ear destfile="${dist.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
          manifest="${output.dir}/META-INF/MANIFEST.MF">
       <fileset dir="${output.dir}">
-        <include name="META-INF/**"/>
+        <include name="META-INF/weblogic-application.xml"/>
       </fileset>
       <fileset dir="${output.dir}">
         <include name="/lib/**"/>
@@ -164,7 +164,7 @@
         <include name="**/${modelArchive}"/>
       </fileset>
       <fileset dir="${output.dir}">
-        <include name="**/"/>
+        <include name="**/${servicesArchive}"/>
       </fileset>
     </ear>
     <echo message="Done"/>
@@ -177,7 +177,7 @@
   <!--
         Deploy to WebLogic
         -->
-  <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic" depends="buildApp, check4Archive">
+  <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic" depends="setDev, buildApp, check4Archive">
     <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
     <property name="deploy.admin.user" value="${local.admin.user}"/>
     <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
@@ -187,7 +187,7 @@
     <antcall target="deploy2WLS"/>
     <echo message="Done"/>
   </target>
-  <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic" depends="buildApp, check4Archive">
+  <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic" depends="setProd, buildApp, check4Archive">
     <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
     <property name="deploy.admin.user" value="${cert.admin.user}"/>
     <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
@@ -242,6 +242,14 @@
     </condition>
     <echo message="Done"/>
   </target>
+  <target name="setDev">
+        <property name="debugSetting" value="on"/>
+        <property name="log.level" value="${dev.log.level}"/>
+    </target>
+    <target name="setProd">
+        <property name="debugSetting" value="on"/>
+        <property name="log.level" value="${prod.log.level}"/>
+    </target>
   <!-- 
     Prompt user for override of existing file 
     -->
