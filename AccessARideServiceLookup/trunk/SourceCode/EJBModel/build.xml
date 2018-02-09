@@ -67,17 +67,18 @@
     </path>
     <target name="init">
         <tstamp/>
-        <mkdir dir="${output.dir}"/>
+        <mkdir dir="${build.dir}"/>
     </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,jar"/>
     <target name="clean" description="Clean the project">
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${output.dir}" includes="**/*"/>
+            <fileset dir="${build.dir}" includes="**/*"/>
+            <fileset dir="${dist.dir}" includes="**/*"/>
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
-         <echo>Compiling with debug=${debugSetting}</echo>
-        <javac destdir="${output.dir}" classpathref="classpath" debug="${debugSetting}" nowarn="${javac.nowarn}" 
+         <echo>Compiling with debug=${javac.debug}</echo>
+        <javac destdir="${build.dir}" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}" 
                deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
                includeantruntime="false" target="${javac.target}">
             <src path="src"/>
@@ -107,10 +108,19 @@
             <exclude name="build.properties"/>
             <exclude name="package-info.class"/>
         </patternset>
-        <copy todir="${output.dir}">
+        <copy todir="${build.dir}">
             <fileset dir="src">
                 <patternset refid="copy.patterns"/>
             </fileset>
+        </copy>
+        <echo>Setting values in log4j.xml...  log_basedir:${log.basedir}, application_name:${project.name}, log_level:${log.level}</echo>
+        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/log4j.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="log_basedir" value="${log.basedir}"/>
+                <filter token="application_name" value="${project.name}"/>
+                <filter token="log_level" value="${log.level}"/>
+            </filterset>
         </copy>
     </target>
     <!-- 
@@ -118,15 +128,16 @@
         -->
     <target name="jar" depends="compile">
         <echo>Building the jar file...</echo>
-        <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Build-Date" value="${build_date}"/>
             <attribute name="Build-Time" value="${build_time}"/>
         </manifest>
-        <jar destfile="${dist.dir}/EJBModel.jar" manifest="${output.dir}/META-INF/MANIFEST.MF">
-            <fileset dir="${output.dir}">
+        <jar destfile="${dist.dir}/EJBModel.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}">
                 <include name="com/rtddenver/**"/>
                 <include name="META-INF/**"/>
+                <include name="log4j.xml"/>
             </fileset>
         </jar>
     </target>

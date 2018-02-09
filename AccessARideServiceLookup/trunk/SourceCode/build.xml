@@ -29,7 +29,7 @@
     <path id="classpath">
         <path refid="wldeploy.WebLogic.12.1"/>
     </path>
-    <target name="all" description="Build the entire application" depends="clean,model,services,copy,createEAR"/>
+    <target name="all" description="Build the entire application" depends="clean,model,services,copy"/>
     <target name="clean" description="Clean the project" unless="cleanDone">
         <echo>Cleaning RESTServices...</echo>
         <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml"/>
@@ -37,13 +37,14 @@
         <ant target="clean" dir="${basedir}/EJBModel" antfile="build.xml"/>
         <echo>Cleaning Application...</echo>
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${output.dir}" includes="**/*"/>
+            <fileset dir="${build.dir}" includes="**/*"/>
             <fileset dir="${dist.dir}" includes="**/*"/>
             <fileset dir="${cert.dir}" includes="**/*"/>
+            <fileset dir="${prod.dir}" includes="**/*"/>
         </delete>
         <condition property="cleanDone">
             <not>
-                <available file="${output.dir}" type="dir"/>
+                <available file="${build.dir}" type="dir"/>
             </not>
         </condition>
     </target>
@@ -55,12 +56,23 @@
     <!-- Call the build.xml for the Model project -->
     <target name="model">
         <echo>Calling EJBModel ant build...</echo>
-        <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml" inheritall="true"/>
+        <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml">
+            <property name="javac.debug" value="${javac.debug}"/>
+            <property name="log.level" value="${log.level}"/>
+            <property name="log.basedir" value="${log.basedir}"/>
+            <property name="project.name" value="${project.name}"/>
+        </ant>
         <echo message="Done"></echo>
     </target>
     <!-- Call the build.xml for the Services project -->
     <target name="services">
-        <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml"/>
+        <echo>Calling RESTServices ant build...</echo>
+        <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml">
+            <property name="javac.debug" value="${javac.debug}"/>
+            <property name="log.level" value="${log.level}"/>
+            <property name="log.basedir" value="${log.basedir}"/>
+            <property name="project.name" value="${project.name}"/>
+        </ant>
         <echo message="Done"></echo>
     </target>
     <!--
@@ -70,11 +82,13 @@
   -->
     <target name="init" unless="initDone">
         <tstamp/>
-        <mkdir dir="${output.dir}"/>
-        <mkdir dir="${output.dir}/lib"/>
-        <mkdir dir="${output.dir}/META-INF"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/lib"/>
+        <mkdir dir="${build.dir}/META-INF"/>
+        <mkdir dir="${cert.dir}"/>
+        <mkdir dir="${prod.dir}"/>
         <condition property="initDone">
-            <available file="${output.dir}" type="dir"/>
+            <available file="${build.dir}" type="dir"/>
         </condition>
     </target>
     <target name="copy" description="Copy files to output directory" depends="init" unless="copyDone">
@@ -102,28 +116,28 @@
             <exclude name="build.xml"/>
             <exclude name="build.properties"/>
         </patternset>
-        <copy todir="${output.dir}/lib">
+        <copy todir="${build.dir}/lib">
             <fileset dir="lib">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
-        <copy todir="${output.dir}/META-INF">
+        <copy todir="${build.dir}/META-INF">
             <fileset dir="${basedir}/src/META-INF">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
-        <copy todir="${output.dir}">
+        <copy todir="${build.dir}">
             <fileset dir="${basedir}/EJBModel/${dist.dir}">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
-        <copy todir="${output.dir}">
+        <copy todir="${build.dir}">
             <fileset dir="${basedir}/RESTServices/${dist.dir}">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
         <condition property="copyDone">
-            <available file="${output.dir}/WEB-INF/lib/*.jar" type="file"/>
+            <available file="${build.dir}/WEB-INF/lib/*.jar" type="file"/>
         </condition>
     </target>
     <!--
@@ -139,36 +153,91 @@
           buildAppMinor - Increments the minor release number. Resets the build increment to 1.
           buildApp      - Increments the build number. This is the default build target.
         -->
-    <target name="buildAppMajor" depends="resetIncrementMajor, all">
+    <!-- DEV Version -->
+    <target name="createEARDev" depends="inc.build, setDev, all">
+        <echo>Creating EAR for DEV...</echo>
+        <property name="deploy.dir" value="${dist.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
+    <!-- CERT Version targets -->
+    <target name="createEARCertMajor" depends="resetIncrementMajor, createEARCert">
         <echo message="Build complete"></echo>
     </target>
-    <target name="buildAppMinor" depends="resetIncrementMinor, all">
+    <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
         <echo message="Build complete"></echo>
     </target>
-    <target name="buildApp" depends="all">
-        <echo message="Build complete"></echo>
+    <target name="createEARCert" depends="inc.build, setProd, all">
+        <echo>Creating EAR for CERT...</echo>
+        <property name="deploy.dir" value="${cert.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
     </target>
-    <target name="createEAR" depends="inc.build">
+    <!-- PROD Version -->
+    <target name="createEARProd" depends="check4CertArchive">
+        <fail unless="certArchiveExists"
+              message="*** Deploy failed!  No CERT archive available to create PROD version."/>
+        <echo>Creating EAR for PROD...</echo>
+        <!-- Clean build dir of current contents-->
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${prod.dir}"/>
+        <!-- Unzip CERT EAR -->
+        <echo>Un-zipping CERT EAR...</echo>
+        <unzip src="${cert.dir}/${applicationArchive}" dest="${build.dir}"/>
+        <!-- Over-write files with corresponding PROD versions -->
+        <echo>Over-writing some files with their PROD version...</echo>
+        <copy file="${web.content}/WEB-INF/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+            <filterset>
+                <filter token="log_basedir" value="${prod.log.basedir}"/>
+            </filterset>
+            <filterset>
+                <filter token="log_level" value="${prod.log.level}"/>
+            </filterset>
+        </copy>
+        <copy file="${web.content}/WEB-INF/classes/struts.xml" tofile="${build.dir}/WEB-INF/classes/struts.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="true_or_false" value="${prod.struts.devMode}"/>
+            </filterset>
+        </copy>
+        <echo>Creating PROD EAR...</echo>
+        <war destfile="${prod.dir}/${applicationArchive}" webxml="${build.dir}/WEB-INF/web.xml"
+             manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}"/>
+        </war>
+    </target>
+    <!--
+        This is the main target for creating the EAR.
+        This should not be called directly. But, rather via createEARDev, createEARCert, createEARProd.
+    -->
+    <target name="createEAR" depends="">
+        <fail unless="properlyCalled"
+              message="*** createEAR failed!  Call via createEARDev, createEARCert, or createEARProd"/>
         <echo>Building the ear file...</echo>
-        <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Weblogic-Application-Version" value="${application.version}"/>
             <attribute name="Build-Number" value="${build.revision.number}"/>
             <attribute name="Build-Date" value="${build_date}"/>
             <attribute name="Build-Time" value="${build_time}"/>
         </manifest>
-        <ear destfile="${dist.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
-             manifest="${output.dir}/META-INF/MANIFEST.MF">
-            <fileset dir="${output.dir}">
+        <ear destfile="${deploy.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
+             manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}">
                 <include name="META-INF/weblogic-application.xml"/>
             </fileset>
-            <fileset dir="${output.dir}">
+            <fileset dir="${build.dir}">
                 <include name="/lib/**"/>
             </fileset>
-            <fileset dir="${output.dir}">
+            <fileset dir="${build.dir}">
                 <include name="**/${modelArchive}"/>
             </fileset>
-            <fileset dir="${output.dir}">
+            <fileset dir="${build.dir}">
                 <include name="**/${servicesArchive}"/>
             </fileset>
         </ear>
@@ -183,30 +252,26 @@
         Deploy to WebLogic
         -->
     <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic"
-            depends="setDev, buildApp, check4Archive">
+            depends="createEARDev, check4Archive">
         <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
         <property name="deploy.admin.user" value="${local.admin.user}"/>
         <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
         <property name="deploy.admin.url" value="${local.admin.url}"/>
         <property name="deploy.target" value="${local.deploy.target}"/>
         <property name="ok2Deploy" value="true"/>
+        <property name="archive.dir" value="${deploy.dir}"/>
         <antcall target="deploy2WLS"/>
         <echo message="Done"></echo>
     </target>
     <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic"
-            depends="setProd, buildApp, check4Archive">
-        <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
+            depends="createEARCert">
+        <!--<fail unless="certArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARCert"/>-->
         <property name="deploy.admin.user" value="${cert.admin.user}"/>
         <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
         <property name="deploy.admin.url" value="${cert.admin.url}"/>
         <property name="deploy.target" value="${cert.deploy.target}"/>
-        <!-- Copy archive to the cert directory for retention and deployment -->
-        <echo message="Copying file ${applicationArchive} to CERT deployment directory..."></echo>
-        <copy file="${dist.dir}/${applicationArchive}" todir="${cert.dir}"/>
-        <condition property="archiveExists">
-            <available file="${cert.dir}/${applicationArchive}" type="file"/>
-        </condition>
         <property name="ok2Deploy" value="true"/>
+        <property name="archive.dir" value="${cert.dir}"/>
         <antcall target="deploy2WLS"/>
         <echo message="deployCert Done"></echo>
     </target>
@@ -219,6 +284,7 @@
         <property name="deploy.admin.url" value="${prod.admin.url}"/>
         <property name="deploy.target" value="${prod.deploy.target}"/>
         <property name="ok2Deploy" value="true"/>
+        <property name="archive.dir" value="${cert.dir}"/>
         <antcall target="deploy2WLS"/>
         <echo message="deployProd Done"></echo>
     </target>
@@ -232,7 +298,7 @@
             <arg value="${deploy.admin.pswd}"/>
             <arg value="${deploy.admin.url}"/>
             <arg value="${project.name}"/>
-            <arg value="../${dist.dir}/${applicationArchive}"/>
+            <arg value="../${archive.dir}/${applicationArchive}"/>
             <arg value="${application.version}"/>
             <arg value="${deploy.target}"/>
         </exec>
@@ -240,23 +306,26 @@
     <!-- -->
     <target name="check4Archive">
         <condition property="archiveExists">
-            <available file="${dist.dir}/${applicationArchive}" type="file"/>
+            <available file="${basedir}\${dist.dir}\${applicationArchive}" type="file"/>
         </condition>
         <echo message="Done"></echo>
     </target>
     <target name="check4CertArchive">
+        <echo>Looking for archive: ${basedir}\${cert.dir}\${applicationArchive}</echo>
         <condition property="certArchiveExists">
-            <available file="${cert.dir}/${applicationArchive}" type="file"/>
+            <available file="$basedir}\${cert.dir}\${applicationArchive}" type="file"/>
         </condition>
         <echo message="Done"></echo>
     </target>
     <target name="setDev">
-        <property name="debugSetting" value="on"/>
-        <property name="log.level" value="DEBUG"/>
+        <property name="javac.debug" value="${dev.javac.debug}"/>
+        <property name="log.level" value="${dev.log.level}"/>
+        <property name="log.basedir" value="${dev.log.basedir}"/>
     </target>
     <target name="setProd">
-        <property name="debugSetting" value="on"/>
-        <property name="log.level" value="INFO"/>
+        <property name="javac.debug" value="${prod.javac.debug}"/>
+        <property name="log.level" value="${prod.log.level}"/>
+        <property name="log.basedir" value="${prod.log.basedir}"/>
     </target>
     <!-- 
     Prompt user for override of existing file 

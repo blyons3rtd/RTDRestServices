@@ -135,6 +135,9 @@ public class DistrictServiceBean implements DistrictServiceLocal {
             break;
         }
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Returning message: " + message);
+        }
         DistrictDTO dto = new DistrictDTO(adaAvail, message);
         return dto;
     }

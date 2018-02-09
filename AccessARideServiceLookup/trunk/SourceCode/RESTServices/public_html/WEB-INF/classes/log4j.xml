@@ -10,8 +10,8 @@
 	</appender>
 
 	<appender name="DEBUG" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="@log_basedir@@application_name@_debug.log" />
-		<param name="MaxFileSize" value="500kb" />
+		<param name="File" value="@log_basedir@@application_name@.log" />
+		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
@@ -19,8 +19,8 @@
 	</appender>
 
 	<appender name="ERROR" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="@log_basedir@@application_name@_error.log" />
-		<param name="MaxFileSize" value="500kb" />
+		<param name="File" value="@log_basedir@@application_name@.log" />
+		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
@@ -28,8 +28,8 @@
 	</appender>
 
 	<appender name="INFO" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="@log_basedir@@application_name@_info.log" />
-		<param name="MaxFileSize" value="500kb" />
+		<param name="File" value="@log_basedir@@application_name@.log" />
+		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
