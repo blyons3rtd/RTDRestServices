@@ -15,8 +15,13 @@ import javax.persistence.Transient;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "findAllRoutes", query = "select o from AlertEventRoutes o " +
-                        "WHERE o.alertEventId in :alertEventIDList ORDER BY o.routeSequence") })
+                        "WHERE o.alertEventId in :alertEventIDList ORDER BY o.routeSequence"),
+                @NamedQuery(name = "findRouteByID", query = "select o from AlertEventRoutes o " +
+                        "WHERE o.alertEventId in :alertID " +
+                        "AND o.masterRoute = :masterRoute " +
+                        "ORDER BY o.routeSequence") })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
+//schema = "REP_IP"
 public class AlertEventRoutes implements Serializable {
     private static final long serialVersionUID = 6738713795768565884L;
     @Column(name = "ALERT_EVENT_ID", nullable = false)

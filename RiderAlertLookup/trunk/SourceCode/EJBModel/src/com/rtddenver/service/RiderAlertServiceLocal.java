@@ -8,5 +8,5 @@ import javax.ejb.Local;
 public interface RiderAlertServiceLocal {
     abstract ActiveAlertDTO getActiveAlertList();
     abstract AlertRouteDTO getActiveAlertRoutes();
-    abstract ActiveAlertDTO getActiveAlertByID(String alertURL);
+    abstract ActiveAlertDTO getActiveAlertByID(String alertID, String route);
 }

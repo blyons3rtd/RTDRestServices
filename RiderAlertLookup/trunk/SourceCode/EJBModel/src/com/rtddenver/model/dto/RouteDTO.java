@@ -7,12 +7,15 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "routes")	//@XmlRootElement(name = "alertEventRoutes")
+@XmlRootElement(name = "routes")
 public class RouteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlElement(name = "alertEventId")
     private int alertEventId;
+    
+    @XmlElement(name = "routeList")
+    private List<AlertEventRoutes> routeList;
         
     @XmlElement(name = "busList")
     private List<AlertEventRoutes> busList;
@@ -30,12 +33,28 @@ public class RouteDTO implements Serializable {
         this.alertEventId = alertEventId;
     }
 
+    public void setRouteList(List<AlertEventRoutes> routeList) {
+        this.routeList = routeList;
+    }
+
+    public List<AlertEventRoutes> getRouteList() {
+        return routeList;
+    }
+
     public void setBusList(List<AlertEventRoutes> busList) {
         this.busList = busList;
     }
 
     public void setRailList(List<AlertEventRoutes> railList) {
         this.railList = railList;
+    }
+
+    public List<AlertEventRoutes> getBusList() {
+        return busList;
+    }
+
+    public List<AlertEventRoutes> getRailList() {
+        return railList;
     }
 
     public void setError(ErrorDTO error) {

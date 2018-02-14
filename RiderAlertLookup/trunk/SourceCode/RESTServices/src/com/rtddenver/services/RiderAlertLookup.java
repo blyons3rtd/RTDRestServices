@@ -42,7 +42,13 @@ public class RiderAlertLookup {
     @Produces("application/json")
     @Path("alerts")
     public ActiveAlertDTO getActiveAlerts() {
-        return this.riderAlertService.getActiveAlertList();
+        ActiveAlertDTO aa = null;
+        try{
+            aa = this.riderAlertService.getActiveAlertList();
+        }catch(Exception ex){
+            System.out.println("Exception returned from RiderAlertLookup() > getActiveAlerts(): " + ex); 
+        }
+        return aa;
     }
     
     /**
@@ -53,7 +59,13 @@ public class RiderAlertLookup {
     @Produces("application/json")
     @Path("routes")
     public AlertRouteDTO getActiveAlertRoutes() {
-        return this.riderAlertService.getActiveAlertRoutes();
+        AlertRouteDTO ar = null;
+        try{
+            ar = this.riderAlertService.getActiveAlertRoutes();
+        }catch(Exception ex){
+            System.out.println("Exception returned from RiderAlertLookup() > getActiveAlertRoutes(): " + ex); 
+        }
+        return ar;
     }
     
     /**
@@ -62,12 +74,12 @@ public class RiderAlertLookup {
      */
     @GET
     @Produces("application/json")
-    @Path("alerts/{alertURL}")
-    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertURL") String alertURL) {
+    @Path("alerts/{alertID}/{route}")
+    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertID") String alertID, @PathParam("route") String route) {
         ActiveAlertDTO ae = null;
         try{
-            //System.out.println("alertURL: " + alertURL);
-            ae = this.riderAlertService.getActiveAlertByID(alertURL);
+            System.out.println("alertID: " + alertID + " | route: " + route) ;
+            ae = this.riderAlertService.getActiveAlertByID(alertID, route);
         }catch (Exception ex){
             System.out.println("Exception returned from RiderAlertLookup() > getAlertByID(): " + ex);
         }

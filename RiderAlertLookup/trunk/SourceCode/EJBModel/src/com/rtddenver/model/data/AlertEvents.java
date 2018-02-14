@@ -24,7 +24,8 @@ import javax.persistence.TemporalType;
                     "AND o.alertEventId = :alertID " +
                     "AND o.alertEventEffEndDate >= :alertDate " +
                     "AND o.alertEventEffStartDate <= :alertDate ") })
-@Table(name = "ALERT_EVENTS", schema = "SCHEDLS")
+@Table(name = "ALERT_EVENTS", schema = "SCHEDLS") 
+//schema = "REP_IP"
 public class AlertEvents implements Serializable {
     private static final long serialVersionUID = -6202385501726449589L;
     @Column(name = "ALERT_CATEGORY_DETAIL", length = 4000)
