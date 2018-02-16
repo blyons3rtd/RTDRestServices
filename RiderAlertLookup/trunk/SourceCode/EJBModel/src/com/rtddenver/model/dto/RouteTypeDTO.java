@@ -11,11 +11,14 @@ public class RouteTypeDTO implements Serializable {
     @XmlElement(name = "busList")
     private String busList;
     
+    @XmlElement(name = "busAlertURLList")
+    private String busAlertURLList;
+    
     @XmlElement(name = "railList")
     private String railList;
-    
-    @XmlElement(name = "alertURLList")
-    private String alertURLList;
+
+    @XmlElement(name = "railAlertURLList")
+    private String railAlertURLList;
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -32,8 +35,12 @@ public class RouteTypeDTO implements Serializable {
         this.railList = railList;
     }
 
-    public void setAlertURLList(String alertURLList) {
-        this.alertURLList = alertURLList;
+    public void setBusAlertURLList(String busAlertURLList) {
+        this.busAlertURLList = busAlertURLList;
+    }
+    
+    public void setRailAlertURLList(String railAlertURLList) {
+        this.railAlertURLList = railAlertURLList;
     }
 
     public void setError(ErrorDTO error) {

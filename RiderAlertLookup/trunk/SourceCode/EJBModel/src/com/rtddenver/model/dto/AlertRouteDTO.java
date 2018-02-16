@@ -60,7 +60,7 @@ public class AlertRouteDTO implements Serializable{
         this.routeToAlertList.add(stagingRouteDTO);
     }
     
-    public void addBusRouteTypeDTO(RouteTypeDTO rteType) {
+    public void addRouteTypeDTO(RouteTypeDTO rteType) {
         if (this.routeType == null) {
             this.routeType = new ArrayList<RouteTypeDTO>();
         }

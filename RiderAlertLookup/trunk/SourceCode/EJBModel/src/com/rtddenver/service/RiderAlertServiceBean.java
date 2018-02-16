@@ -96,12 +96,20 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
         RouteToAlertDTO routeToAlertDTO = null;
         StagingRouteDTO stagingRouteDTO = null;
         RouteTypeDTO routeTypeDTO = null;
-        String tmpRouteId = "";
-        String tmpAlertURL = "";
-        int iCntRt = 0;
-        int iCnt = 0;
-        String commaStr = "";
-        String colonStr = "";
+        String alertAPILink = "http://APIWSGoesHere/alerts/";
+        String bus_tmpRouteId = "";
+        String bus_tmpAlertURL = "";
+        String bus_separator = "";
+        int iCnt_bus = 0;
+        int iCntValue_bus = 0;
+        String rail_tmpRouteId = "";
+        String rail_tmpAlertURL = "";
+        String rail_separator = "";
+        int iCnt_rail = 0;
+        int iCntValue_rail = 0;
+        String commaStr = ",";
+        String colonStr = ":";
+        String charStr = "/";
 
         try {
             routeToAlertDTO = new RouteToAlertDTO();
@@ -133,7 +141,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                     Iterator<AlertEventRoutes> itr = aerList.iterator();
                     while (itr.hasNext()) {
                         AlertEventRoutes aer = itr.next(); 
-                        aer.setAlertURL("APIWSGoesHere/alerts/" + aer.getAlertEventId() + "/" + aer.getMasterRoute());
+                        aer.setAlertURL(alertAPILink + aer.getAlertEventId() + charStr + aer.getMasterRoute());
                         aerRouteList.add(aer);
                         if( "LIGHT RAIL".equalsIgnoreCase(aer.getRouteTypeName()) || "COMMUTER RAIL".equalsIgnoreCase(aer.getRouteTypeName()) ) {
                             // Create a map of unique routeIds for Rail
@@ -159,8 +167,8 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                 Iterator<String> routeIdItr = routeToAlertMap.keySet().iterator();
                 while (routeIdItr.hasNext()) {
                     String routeId = routeIdItr.next();
-                    System.out.println("== RouteId ====================================================");
-                    System.out.println("Map routeId: " + routeId);
+//                    System.out.println("== RouteId ====================================================");
+//                    System.out.println("Map routeId: " + routeId);
                     
                     //Iterate through rDTO to id RouteDTO pertinant to the current routeId
                     List<RouteDTO> routeDTOList = alertRouteDTO.getRouteDTO();
@@ -168,53 +176,64 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                     
                     //While
                     routeListNew = new ArrayList<AlertEventRoutes>();
-                    System.out.println("Route List contains " + routeDTOList.size() + " records");
-                    System.out.println("Iterating through RouteDTO list. Contains " + routeDTOList.size() + " records");
+//                    System.out.println("Route List contains " + routeDTOList.size() + " records");
+//                    System.out.println("Iterating through RouteDTO list. Contains " + routeDTOList.size() + " records");
                     while (routeDTOItr.hasNext()) {
                         RouteDTO rteDTO = routeDTOItr.next();
-                        System.out.println("=======================================");
+//                        System.out.println("=======================================");
                         if(rteDTO.getRouteList() != null) {
                             //iterate through rteDTO.getRouteList() to get elements in this list
-                            System.out.println("Iterating through the RouteList... Records: " + rteDTO.getRouteList().size());
+//                            System.out.println("Iterating through the RouteList... Records: " + rteDTO.getRouteList().size());
                             Iterator<AlertEventRoutes> routeListItr = rteDTO.getRouteList().iterator();
                             while (routeListItr.hasNext()) {
                                 AlertEventRoutes aerRoute = routeListItr.next();
-                                System.out.println("Looking at Route List RouteId: " + aerRoute.getRouteId() + ", AlertEventId: " + aerRoute.getAlertEventId());
+//                                System.out.println("Looking at Route List RouteId: " + aerRoute.getRouteId() + ", AlertEventId: " + aerRoute.getAlertEventId());
                                 //if routeId matches save RouteDTO to new list
                                 if(routeId.equalsIgnoreCase(aerRoute.getRouteId())) {
                                     //Add to new list
                                     routeListNew.add(aerRoute);
-                                    System.out.println("Assigning AlertEventId: " + aerRoute.getAlertEventId());
+//                                    System.out.println("Assigning AlertEventId: " + aerRoute.getAlertEventId());
                                 }
                             }
-                            System.out.println("End of RouteList");
+//                            System.out.println("End of RouteList");
                         }  
                     }
                     
-                    System.out.println("\nDone processing routeId: " + routeId);
+//                    System.out.println("\nDone processing routeId: " + routeId);
                     
                     if (routeListNew != null) {
                         routeToAlertMap.put(routeId, routeListNew);
-                        System.out.println("Adding route to routeToAlertMap...");
+//                        System.out.println("Adding route to routeToAlertMap...");
                     }
                     
                     // end While
-                    System.out.println();
                 }
                 
                 routeToAlertDTO.setRouteToAlertMap(routeToAlertMap);
-                
-                List<AlertEventRoutes> aerBusList = new ArrayList<AlertEventRoutes>();
+
                 routeTypeDTO = new RouteTypeDTO();
             
                 //Setup new DTO to define list of a single route and one-to-many alerts
                 //iterate through routeToAlertMap object containing List in a Map of route and list of alerts
                 Iterator<Map.Entry<String, List<AlertEventRoutes>>> routeMapItr = routeToAlertMap.entrySet().iterator();
-                String tmpAlertEventId = "";
+                String bus_tmpAlertEventId = "";
+                String bus_tmpAlertEventRoutesId = "";
+                String b_separator = "";
+                String bus_tmpRte = "";
+                String rail_tmpAlertEventId = "";
+                String rail_tmpAlertEventRoutesId = "";
+                String r_separator = "";
+                String rail_tmpRte = "";
+                
                 while(routeMapItr.hasNext()) {
                     Map.Entry<String, List<AlertEventRoutes>> aer = routeMapItr.next();
-                    
-                    //iterate over busTypeMapItr, find a match key with aer.key, set the alertURL to combine all possible alertEventId(s):alertEventRoutesId                    
+
+                    //iterate over busTypeMapItr, find a match key with aer.key, set the alertURL to combine all possible alertEventId(s) & append with alertEventRoutesId(s)
+                    if(!aer.getKey().equalsIgnoreCase(bus_tmpRte)){
+                        bus_tmpAlertEventId = "";
+                        bus_tmpAlertEventRoutesId = "";
+                        b_separator = "";
+                    }
                     Iterator<String> rIdItr = busTypeMap.keySet().iterator();
                     while (rIdItr.hasNext()) {
                         String routeId = rIdItr.next();
@@ -222,43 +241,93 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                             Iterator<AlertEventRoutes> alertListItr = aer.getValue().iterator();
                             while (alertListItr.hasNext()) {
                                 AlertEventRoutes aerL = alertListItr.next();
-                                if (iCntRt != 0 && iCntRt < aer.getValue().size()) {
-                                    colonStr = ":";  
+                                if (iCntValue_bus != 0 && iCntValue_bus < aer.getValue().size()) {
+                                    b_separator = colonStr;  
                                 }
-                                tmpAlertEventId += colonStr + aerL.getAlertEventId();
-                                iCntRt++;
-                            }  
+                                bus_tmpAlertEventId += b_separator + aerL.getAlertEventId();
+                                bus_tmpAlertEventRoutesId += b_separator + aerL.getAlertEventRoutesId();
+                                iCntValue_bus++;    
+                            }
+                            bus_tmpRte = routeId;
                         }
-                        busTypeMap.replace(routeId, tmpAlertEventId);
                     }
-
+                    busTypeMap.replace(aer.getKey(), alertAPILink + bus_tmpAlertEventId + charStr + bus_tmpAlertEventRoutesId);
+                    
+                    //iterate over railTypeMapItr, find a match key with aer.key, set the alertURL to combine all possible alertEventId(s) & append with alertEventRoutesId(s)
+                    if(!aer.getKey().equalsIgnoreCase(rail_tmpRte)){
+                        rail_tmpAlertEventId = "";
+                        rail_tmpAlertEventRoutesId = "";
+                        r_separator = "";
+                    }
+                    Iterator<String> rIdItr2 = railTypeMap.keySet().iterator();
+                    while (rIdItr2.hasNext()) {
+                        String routeId = rIdItr2.next();
+                        if(routeId.equalsIgnoreCase(aer.getKey())){
+                            Iterator<AlertEventRoutes> alertListItr = aer.getValue().iterator();
+                            while (alertListItr.hasNext()) {
+                                AlertEventRoutes aerL = alertListItr.next();
+                                if (iCntValue_rail != 0 && iCntValue_rail < aer.getValue().size()) {
+                                    r_separator = colonStr;  
+                                }
+                                rail_tmpAlertEventId += r_separator + aerL.getAlertEventId();
+                                rail_tmpAlertEventRoutesId += r_separator + aerL.getAlertEventRoutesId();
+                                iCntValue_rail++;    
+                            }
+                            rail_tmpRte = routeId;
+                        }
+                    }
+                    railTypeMap.replace(aer.getKey(), alertAPILink + rail_tmpAlertEventId + charStr + rail_tmpAlertEventRoutesId);
+                    
                     //Add to new list
                     stagingRouteDTO = new StagingRouteDTO();
-                    stagingRouteDTO.setRouteId(findRouteId(aer.getKey()));
+                    stagingRouteDTO.setRouteId(aer.getKey());
                     stagingRouteDTO.setAlertList(aer.getValue());
                     alertRouteDTO.addStagingRouteDTO(stagingRouteDTO);
                 }
                 
+                //Bus List
+                //iterate through busTypeMap to get elements in this list
                 Iterator<Map.Entry<String, String>> busTypeMapItr = busTypeMap.entrySet().iterator();
                 while(busTypeMapItr.hasNext()) {
                     Map.Entry<String, String> rteType = busTypeMapItr.next();
-                    System.out.println("RouteId: " + rteType.getKey() + " | AlertURL: " + rteType.getValue());
-                    if (iCnt != 0 && iCnt < busTypeMap.size()) {
-                        commaStr = ",";
-                    }                    
-                    tmpRouteId += commaStr + rteType.getKey();
-                    tmpAlertURL += commaStr + rteType.getValue();
-                    iCnt++;
+                    //System.out.println("RouteId: " + rteType.getKey() + " | AlertURL: " + rteType.getValue());
+                    if (iCnt_bus != 0 && iCnt_bus < busTypeMap.size()) {
+                        bus_separator = commaStr;
+                    }
+                    bus_tmpRouteId += bus_separator + rteType.getKey();
+                    bus_tmpAlertURL += bus_separator + rteType.getValue();
+                    iCnt_bus++;
                 }
                 
-                if(tmpRouteId != null){
-                    routeTypeDTO.setBusList(tmpRouteId);
+                if(bus_tmpRouteId != null){
+                    routeTypeDTO.setBusList(bus_tmpRouteId);
                 }
-                if(tmpAlertURL != null){
-                    routeTypeDTO.setAlertURLList(tmpAlertURL);
+                if(bus_tmpAlertURL != null){
+                    routeTypeDTO.setBusAlertURLList(bus_tmpAlertURL);
                 }
                 
-                alertRouteDTO.addBusRouteTypeDTO(routeTypeDTO);
+                //Rail List
+                //iterate through railTypeMap to get elements in this list
+                Iterator<Map.Entry<String, String>> railTypeMapItr = railTypeMap.entrySet().iterator();
+                while(railTypeMapItr.hasNext()) {
+                    Map.Entry<String, String> rteType = railTypeMapItr.next();
+                    //System.out.println("RouteId: " + rteType.getKey() + " | AlertURL: " + rteType.getValue());
+                    if (iCnt_rail != 0 && iCnt_rail < railTypeMap.size()) {
+                        rail_separator = commaStr;
+                    }
+                    rail_tmpRouteId += rail_separator + rteType.getKey();
+                    rail_tmpAlertURL += rail_separator + rteType.getValue();
+                    iCnt_rail++;
+                }
+                
+                if(rail_tmpRouteId != null){
+                    routeTypeDTO.setRailList(rail_tmpRouteId);
+                }
+                if(rail_tmpAlertURL != null){
+                    routeTypeDTO.setRailAlertURLList(rail_tmpAlertURL);
+                }
+                
+                alertRouteDTO.addRouteTypeDTO(routeTypeDTO);
                 
                 /*Comment out the line below - no need to create the object 'List<RouteToAlertDTO> routeToAlert' but still need the logic to create the Map<String, List<AlertEventRoutes>>
                 alertRouteDTO.addRouteToAlertDTO(routeToAlertDTO);

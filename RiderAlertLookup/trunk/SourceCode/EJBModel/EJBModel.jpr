@@ -77,6 +77,7 @@
       <list n="serviceFacadeUrls">
          <url path="src/com/rtddenver/model/facade/RiderAlert.java"/>
          <url path="src/com/rtddenver/model/dto.java"/>
+         <url path="src/com/rtddenver/model/dto/RouteToAlertDTO.java"/>
       </list>
       <url n="weblogicEjbJarNodeURL" path="src/META-INF/weblogic-ejb-jar.xml"/>
    </hash>
@@ -111,6 +112,7 @@
       <list n="technologyScope">
          <string v="Ant"/>
          <string v="Database"/>
+         <string v="Database-Modeling"/>
          <string v="EJB"/>
          <string v="Java"/>
          <string v="TopLink"/>
