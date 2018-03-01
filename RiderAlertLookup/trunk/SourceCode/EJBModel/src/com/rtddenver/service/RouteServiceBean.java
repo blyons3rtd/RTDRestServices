@@ -1,6 +1,6 @@
 package com.rtddenver.service;
 
-import com.rtddenver.model.data.AlertEventRoutes;
+import com.rtddenver.model.data.AlertEventRoute;
 
 import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.dto.RouteDTO;
@@ -28,18 +28,18 @@ public class RouteServiceBean implements RouteServiceLocal {
     
     public RouteDTO getRouteList() {
         RouteDTO dto = null;
-        List<AlertEventRoutes> aer = null;
-        ArrayList<AlertEventRoutes> busRailList = new ArrayList<AlertEventRoutes>();
+        List<AlertEventRoute> aer = null;
+        ArrayList<AlertEventRoute> busRailList = new ArrayList<AlertEventRoute>();
         
         try {
-          aer = em.createNamedQuery("findAllRoutes", AlertEventRoutes.class)
+          aer = em.createNamedQuery("findAllRoutes", AlertEventRoute.class)
                                     .getResultList();
             if (aer.size() == 0) {
                 ErrorDTO error = new ErrorDTO("", null, "Currently there are no records found.");
                 dto = new RouteDTO(error);
             } else {
                 for (int i=0; i<aer.size(); i++){
-                    AlertEventRoutes a = aer.get(i);
+                    AlertEventRoute a = aer.get(i);
                     busRailList.add(a);
                     //System.out.println("Count: " + i);
                 }

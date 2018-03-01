@@ -1,10 +1,9 @@
 package com.rtddenver.model.data;
 
 import java.io.Serializable;
-
 import java.math.BigDecimal;
-
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +13,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "findAllActiveAlerts", query = "select o from AlertEvents o WHERE o.alertTypeId = 1 " +
@@ -21,9 +21,15 @@ import javax.persistence.TemporalType;
                     "AND o.alertEventEffStartDate <= :alertDate " +
                     "ORDER BY o.alertEventId DESC"),
                 @NamedQuery(name = "findActiveAlertByID", query = "select o from AlertEvents o WHERE o.alertTypeId = 1 " +
-                    "AND o.alertEventId = :alertID " +
+                    "AND o.alertEventId in :alertEventId " +
                     "AND o.alertEventEffEndDate >= :alertDate " +
-                    "AND o.alertEventEffStartDate <= :alertDate ") })
+                    "AND o.alertEventEffStartDate <= :alertDate " +
+                    "ORDER BY o.alertEventStartDate DESC"),
+                @NamedQuery(name = "findAllActiveStationPNRAlerts", query = "select o from AlertEvents o WHERE o.alertTypeId = 3 " +
+                    "AND o.alertEventEffEndDate >= :alertDate " +
+                    "AND o.alertEventEffStartDate <= :alertDate " +
+                    "ORDER BY o.alertEventStartDate DESC")
+                })
 @Table(name = "ALERT_EVENTS", schema = "SCHEDLS") 
 //schema = "REP_IP"
 public class AlertEvents implements Serializable {
@@ -83,6 +89,13 @@ public class AlertEvents implements Serializable {
     private String alertEventUserNotes;
     @Column(name = "ALERT_TYPE_ID", nullable = false)
     private BigDecimal alertTypeId;
+    @Transient
+    private BigDecimal tmp_alertEventRoutesId;
+    @Transient
+    private String routeDirectionDetail1;
+    @Transient
+    private String routeDirectionDetail2;
+//    private Map<BigDecimal, String> routeDirectionDetail;
 
     public AlertEvents() {
     }
@@ -94,7 +107,9 @@ public class AlertEvents implements Serializable {
                        String alertEventGeneralDesc, BigDecimal alertEventId, String alertEventInfo,
                        String alertEventOperatorInfo, String alertEventReason, String alertEventRouteLnAffected,
                        Date alertEventStartDate, BigDecimal alertEventStartTimeType, String alertEventUpdatedBy,
-                       Date alertEventUpdatedDate, String alertEventUserNotes, BigDecimal alertTypeId) {
+                       Date alertEventUpdatedDate, String alertEventUserNotes, BigDecimal alertTypeId, 
+                       BigDecimal tmp_alertEventRoutesId, String routeDirectionDetail1, String routeDirectionDetail2) {
+        //Map<BigDecimal, String>
         this.alertCategoryDetail = alertCategoryDetail;
         this.alertCategoryId = alertCategoryId;
         this.alertEventCreatedBy = alertEventCreatedBy;
@@ -119,6 +134,9 @@ public class AlertEvents implements Serializable {
         this.alertEventUpdatedDate = alertEventUpdatedDate;
         this.alertEventUserNotes = alertEventUserNotes;
         this.alertTypeId = alertTypeId;
+        this.tmp_alertEventRoutesId = tmp_alertEventRoutesId;
+        this.routeDirectionDetail1 = routeDirectionDetail1;
+        this.routeDirectionDetail2 = routeDirectionDetail2;
     }
 
     public String getAlertCategoryDetail() {
@@ -312,4 +330,36 @@ public class AlertEvents implements Serializable {
     public void setAlertTypeId(BigDecimal alertTypeId) {
         this.alertTypeId = alertTypeId;
     }
+
+    public void setTmp_AlertEventRoutesId(BigDecimal tmp_alertEventRoutesId) {
+        this.tmp_alertEventRoutesId = tmp_alertEventRoutesId;
+    }
+
+    public BigDecimal getTmp_AlertEventRoutesId() {
+        return tmp_alertEventRoutesId;
+    }
+    
+    public void setRouteDirectionDetail1(String routeDirectionDetail1) {
+        this.routeDirectionDetail1 = routeDirectionDetail1;
+    }
+
+    public String getRouteDirectionDetail1() {
+        return routeDirectionDetail1;
+    }
+
+    public void setRouteDirectionDetail2(String routeDirectionDetail2) {
+        this.routeDirectionDetail2 = routeDirectionDetail2;
+    }
+
+    public String getRouteDirectionDetail2() {
+        return routeDirectionDetail2;
+    }
+
+    //    public void setRouteDirectionDetail(Map<BigDecimal, String> routeDirectionDetail) {
+//        this.routeDirectionDetail = routeDirectionDetail;
+//    }
+//
+//    public Map<BigDecimal, String> getRouteDirectionDetail() {
+//        return routeDirectionDetail;
+//    }
 }

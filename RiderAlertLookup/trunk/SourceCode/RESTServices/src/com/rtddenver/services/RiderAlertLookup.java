@@ -74,12 +74,12 @@ public class RiderAlertLookup {
      */
     @GET
     @Produces("application/json")
-    @Path("alerts/{alertID}/{route}")
-    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertID") String alertID, @PathParam("route") String route) {
+    @Path("alerts/{alertEventId}/{alertEventRoutesId}")
+    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertEventId") String alertEventId, @PathParam("alertEventRoutesId") String alertEventRoutesId) {
         ActiveAlertDTO ae = null;
         try{
-            System.out.println("alertID: " + alertID + " | route: " + route) ;
-            ae = this.riderAlertService.getActiveAlertByID(alertID, route);
+            //System.out.println("alertEventId: " + alertEventId + " | alertEventRoutesId: " + alertEventRoutesId) ;
+            ae = this.riderAlertService.getActiveAlertByID(alertEventId, alertEventRoutesId);
         }catch (Exception ex){
             System.out.println("Exception returned from RiderAlertLookup() > getAlertByID(): " + ex);
         }

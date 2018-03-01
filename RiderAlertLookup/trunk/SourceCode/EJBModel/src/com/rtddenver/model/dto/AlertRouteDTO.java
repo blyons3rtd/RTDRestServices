@@ -15,6 +15,9 @@ public class AlertRouteDTO implements Serializable{
     @XmlElement(name = "routeType")
     private List<RouteTypeDTO> routeType;
     
+    @XmlElement(name = "stationPNRType")
+    private List<StagingAlertDetailDTO> stationPNRType;
+    
     @XmlElement(name = "routeToAlertList")
     private List<StagingRouteDTO> routeToAlertList;
     
@@ -29,6 +32,17 @@ public class AlertRouteDTO implements Serializable{
     
     public AlertRouteDTO() {
         super();
+    }
+    
+    public void addStagingAlertDetailDTO(StagingAlertDetailDTO stagingAlertDetailDTO) {
+        if (this.stationPNRType == null) {
+            this.stationPNRType = new ArrayList<StagingAlertDetailDTO>();
+        }
+        this.stationPNRType.add(stagingAlertDetailDTO);
+    }
+    
+    public List<StagingAlertDetailDTO> getStagingAlertDetailDTO() {
+        return stationPNRType;
     }
     
     public AlertRouteDTO(List<RouteDTO> routeDTO) {

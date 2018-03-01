@@ -1,6 +1,6 @@
 package com.rtddenver.model.dto;
 
-import com.rtddenver.model.data.AlertEventRoutes;
+import com.rtddenver.model.data.AlertEventRoute;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +14,7 @@ public class RouteToAlertDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlElement(name = "route")
-    private Map<String, List<AlertEventRoutes>> routeToAlertMap;
+    private Map<String, List<AlertEventRoute>> routeToAlertMap;
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -23,7 +23,7 @@ public class RouteToAlertDTO implements Serializable {
         super();
     }
 
-    public void setRouteToAlertMap(Map<String, List<AlertEventRoutes>> routeToAlertMap) {
+    public void setRouteToAlertMap(Map<String, List<AlertEventRoute>> routeToAlertMap) {
         this.routeToAlertMap = routeToAlertMap;
     }
     

@@ -1,6 +1,6 @@
 package com.rtddenver.model.dto;
 
-import com.rtddenver.model.data.AlertEventRoutes;
+import com.rtddenver.model.data.AlertEventRoute;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,13 +15,13 @@ public class RouteDTO implements Serializable {
     private int alertEventId;
     
     @XmlElement(name = "routeList")
-    private List<AlertEventRoutes> routeList;
+    private List<AlertEventRoute> routeList;
         
     @XmlElement(name = "busList")
-    private List<AlertEventRoutes> busList;
+    private List<AlertEventRoute> busList;
     
     @XmlElement(name = "railList")
-    private List<AlertEventRoutes> railList;
+    private List<AlertEventRoute> railList;
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -33,27 +33,27 @@ public class RouteDTO implements Serializable {
         this.alertEventId = alertEventId;
     }
 
-    public void setRouteList(List<AlertEventRoutes> routeList) {
+    public void setRouteList(List<AlertEventRoute> routeList) {
         this.routeList = routeList;
     }
 
-    public List<AlertEventRoutes> getRouteList() {
+    public List<AlertEventRoute> getRouteList() {
         return routeList;
     }
 
-    public void setBusList(List<AlertEventRoutes> busList) {
+    public void setBusList(List<AlertEventRoute> busList) {
         this.busList = busList;
     }
 
-    public void setRailList(List<AlertEventRoutes> railList) {
+    public void setRailList(List<AlertEventRoute> railList) {
         this.railList = railList;
     }
 
-    public List<AlertEventRoutes> getBusList() {
+    public List<AlertEventRoute> getBusList() {
         return busList;
     }
 
-    public List<AlertEventRoutes> getRailList() {
+    public List<AlertEventRoute> getRailList() {
         return railList;
     }
 

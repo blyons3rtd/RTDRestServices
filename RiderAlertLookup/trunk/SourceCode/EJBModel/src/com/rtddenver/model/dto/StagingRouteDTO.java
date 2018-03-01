@@ -1,6 +1,6 @@
 package com.rtddenver.model.dto;
 
-import com.rtddenver.model.data.AlertEventRoutes;
+import com.rtddenver.model.data.AlertEventRoute;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class StagingRouteDTO implements Serializable {
     private String route;
     
     @XmlElement(name = "alertList")
-    private List<AlertEventRoutes> alertList;
+    private List<AlertEventRoute> alertList;
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -28,11 +28,9 @@ public class StagingRouteDTO implements Serializable {
         this.route = route;
     }
     
-    public void setAlertList(List<AlertEventRoutes> alertList) {
+    public void setAlertList(List<AlertEventRoute> alertList) {
         this.alertList = alertList;
     }
-    
-    
     
     public StagingRouteDTO(ErrorDTO error) {
         this.error = error;
