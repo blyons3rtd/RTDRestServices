@@ -2,7 +2,7 @@ package com.rtddenver.model.dto;
 
 import com.rtddenver.model.data.AlertEventRoutesDirection;
 
-import com.rtddenver.model.data.AlertEvents;
+import com.rtddenver.model.data.AlertEvent;
 
 import java.io.Serializable;
 
@@ -17,10 +17,10 @@ public class ActiveAlertDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlElement(name = "alertDetailList")
-    private List<StagingAlertDetailDTO> alertDetailList;
+    private List<StagingAlertDetailDTO> stagingAlertDetailList;
     
     @XmlElement(name = "activeAlertList")
-    private List<AlertEvents> activeAlertList;
+    private List<AlertEventDTO> activeAlertList;
 
 //    @XmlElement(name = "routesDirectionDetail")
 //    private List<AlertEventRoutesDirection> routesDirectionDetail;
@@ -31,39 +31,38 @@ public class ActiveAlertDTO implements Serializable {
     public ActiveAlertDTO() {
         super();
     }
-    
-    public ActiveAlertDTO(List<StagingAlertDetailDTO> stagingAlertDetailDTO) {
-        this.alertDetailList = stagingAlertDetailDTO;
-    }
-    
-    public void addStagingAlertDetailDTO(StagingAlertDetailDTO stagingAlertDetailDTO) {
-        if (this.alertDetailList == null) {
-            this.alertDetailList = new ArrayList<StagingAlertDetailDTO>();
-        }
-        this.alertDetailList.add(stagingAlertDetailDTO);
-    }
-    
-    public List<StagingAlertDetailDTO> getStagingAlertDetailDTO() {
-        return alertDetailList;
-    }
-    
-    public void setActiveAlertList(List<AlertEvents> activeAlertList) {
+
+    public ActiveAlertDTO(List<AlertEventDTO> activeAlertList) {
         this.activeAlertList = activeAlertList;
     }
-
-    public List<AlertEvents> getActiveAlertList() {
-        return activeAlertList;
-    }
-    
-//    public ActiveAlertDTO(List<AlertEvents> activeAlertList) {
-//        this.activeAlertList = activeAlertList;
+   
+//    public ActiveAlertDTO(List<StagingAlertDetailDTO> stagingAlertDetailDTO) {
+//        this.stagingAlertDetailList = stagingAlertDetailDTO;
 //    }
-    
-
     
     public ActiveAlertDTO(ErrorDTO error) {
         this.error = error;
     }
+
+    public void addStagingAlertDetailDTO(StagingAlertDetailDTO stagingAlertDetailDTO) {
+        if (this.stagingAlertDetailList == null) {
+            this.stagingAlertDetailList = new ArrayList<StagingAlertDetailDTO>();
+        }
+        this.stagingAlertDetailList.add(stagingAlertDetailDTO);
+    }
+    
+    public List<StagingAlertDetailDTO> getStagingAlertDetailDTO() {
+        return stagingAlertDetailList;
+    }
+    
+    public void setActiveAlertList(List<AlertEventDTO> activeAlertList) {
+        this.activeAlertList = activeAlertList;
+    }
+
+    public List<AlertEventDTO> getActiveAlertList() {
+        return activeAlertList;
+    }
+    
 
 //    public void addRoutesDirectionDTO(List<AlertEventRoutesDirection> rteDir) {
 //        this.routesDirectionDetail = rteDir;

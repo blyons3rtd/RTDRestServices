@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "routes")
 public class RouteDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+
+
     @XmlElement(name = "alertEventId")
     private int alertEventId;
     

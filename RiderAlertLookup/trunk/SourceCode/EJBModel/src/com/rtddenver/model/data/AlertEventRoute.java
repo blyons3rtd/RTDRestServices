@@ -2,6 +2,7 @@ package com.rtddenver.model.data;
 
 import java.io.Serializable;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,7 +29,6 @@ import javax.persistence.Transient;
                             "select o from AlertEventRoute o WHERE o.alertEventId in :alertID AND o.masterRoute = :masterRoute ORDER BY o.routeSequence")
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
-//schema = "REP_IP"
 public class AlertEventRoute implements Serializable {
     private static final long serialVersionUID = -5065925130746093504L;
     @Column(name = "ALERT_EVENT_ID")
@@ -77,27 +77,11 @@ public class AlertEventRoute implements Serializable {
     }
 
     /**
-     * setAlertEventId
-     * @param alertEventId int
-     */
-    public void setAlertEventId(int alertEventId) {
-        this.alertEventId = alertEventId;
-    }
-
-    /**
      * getAlertEventRoutesId
      * @return int
      */
     public int getAlertEventRoutesId() {
         return alertEventRoutesId;
-    }
-
-    /**
-     * setAlertEventRoutesId
-     * @param alertEventRoutesId int
-     */
-    public void setAlertEventRoutesId(int alertEventRoutesId) {
-        this.alertEventRoutesId = alertEventRoutesId;
     }
 
     /**
@@ -109,27 +93,11 @@ public class AlertEventRoute implements Serializable {
     }
 
     /**
-     * setMasterRoute
-     * @param masterRoute String
-     */
-    public void setMasterRoute(String masterRoute) {
-        this.masterRoute = masterRoute;
-    }
-
-    /**
      * getRouteId
      * @return String
      */
     public String getRouteId() {
         return routeId;
-    }
-
-    /**
-     * setRouteId
-     * @param routeId String
-     */
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
     }
 
     /**
@@ -141,14 +109,6 @@ public class AlertEventRoute implements Serializable {
     }
 
     /**
-     * setRouteSequence
-     * @param routeSequence int
-     */
-    public void setRouteSequence(int routeSequence) {
-        this.routeSequence = routeSequence;
-    }
-
-    /**
      * getRouteTypeName
      * @return String
      */
@@ -157,27 +117,11 @@ public class AlertEventRoute implements Serializable {
     }
 
     /**
-     * setRouteTypeName
-     * @param routeTypeName String
-     */
-    public void setRouteTypeName(String routeTypeName) {
-        this.routeTypeName = routeTypeName;
-    }
-
-    /**
      * setAlertURL
      * @param alertURL String
      */
     public void setAlertURL(String alertURL) {
         this.alertURL = alertURL;
-    }
-
-    /**
-     * getAlertURL
-     * @return String
-     */
-    public String getAlertURL() {
-        return alertURL;
     }
 
     //***********************************************************

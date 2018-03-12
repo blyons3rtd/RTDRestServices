@@ -1,7 +1,7 @@
 package com.rtddenver.model.dto;
 
 import com.rtddenver.model.data.AlertEventRoutesDirection;
-import com.rtddenver.model.data.AlertEvents;
+import com.rtddenver.model.data.AlertEvent;
 
 import java.io.Serializable;
 
@@ -15,7 +15,7 @@ public class StagingAlertDetailDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @XmlElement(name = "alertDetail")
-    private List<AlertEvents> alertDetail;
+    private List<AlertEvent> alertDetail;
     
     @XmlElement(name = "routeDirectionDetail")
     private List<AlertEventRoutesDirection> routesDirectionList;
@@ -27,11 +27,11 @@ public class StagingAlertDetailDTO implements Serializable {
         super();
     }
     
-    public void setAlertDetail(List<AlertEvents> alertDetail) {
+    public void setAlertDetail(List<AlertEvent> alertDetail) {
         this.alertDetail = alertDetail;
     }
 
-    public List<AlertEvents> getAlertDetail() {
+    public List<AlertEvent> getAlertDetail() {
         return alertDetail;
     }
     

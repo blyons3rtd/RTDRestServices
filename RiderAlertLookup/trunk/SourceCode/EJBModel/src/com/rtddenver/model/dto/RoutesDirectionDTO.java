@@ -1,7 +1,7 @@
 package com.rtddenver.model.dto;
 
 import com.rtddenver.model.data.AlertEventRoutesDirection;
-import com.rtddenver.model.data.AlertEvents;
+import com.rtddenver.model.data.AlertEvent;
 
 import java.io.Serializable;
 import java.util.List;
