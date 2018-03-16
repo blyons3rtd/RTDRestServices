@@ -1,12 +1,7 @@
 package com.rtddenver.model.dto;
 
-import com.rtddenver.model.data.AlertEventRoutesDirection;
-
-import com.rtddenver.model.data.AlertEvent;
-
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -16,14 +11,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ActiveAlertDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @XmlElement(name = "alertDetailList")
-    private List<StagingAlertDetailDTO> stagingAlertDetailList;
-    
     @XmlElement(name = "activeAlertList")
     private List<AlertEventDTO> activeAlertList;
-
-//    @XmlElement(name = "routesDirectionDetail")
-//    private List<AlertEventRoutesDirection> routesDirectionDetail;
+    
+    @XmlElement(name = "activeStationPNRAlertsList")
+    private List<AlertEventDTO> activeStationPNRAlertsList;
     
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
@@ -35,24 +27,9 @@ public class ActiveAlertDTO implements Serializable {
     public ActiveAlertDTO(List<AlertEventDTO> activeAlertList) {
         this.activeAlertList = activeAlertList;
     }
-   
-//    public ActiveAlertDTO(List<StagingAlertDetailDTO> stagingAlertDetailDTO) {
-//        this.stagingAlertDetailList = stagingAlertDetailDTO;
-//    }
     
     public ActiveAlertDTO(ErrorDTO error) {
         this.error = error;
-    }
-
-    public void addStagingAlertDetailDTO(StagingAlertDetailDTO stagingAlertDetailDTO) {
-        if (this.stagingAlertDetailList == null) {
-            this.stagingAlertDetailList = new ArrayList<StagingAlertDetailDTO>();
-        }
-        this.stagingAlertDetailList.add(stagingAlertDetailDTO);
-    }
-    
-    public List<StagingAlertDetailDTO> getStagingAlertDetailDTO() {
-        return stagingAlertDetailList;
     }
     
     public void setActiveAlertList(List<AlertEventDTO> activeAlertList) {
@@ -63,8 +40,11 @@ public class ActiveAlertDTO implements Serializable {
         return activeAlertList;
     }
     
+    public void setActiveStationPNRAlertsList(List<AlertEventDTO> activeStationPNRAlertsList) {
+        this.activeStationPNRAlertsList = activeStationPNRAlertsList;
+    }
 
-//    public void addRoutesDirectionDTO(List<AlertEventRoutesDirection> rteDir) {
-//        this.routesDirectionDetail = rteDir;
-//    }
+    public List<AlertEventDTO> getActiveStationPNRAlertsList() {
+        return activeStationPNRAlertsList;
+    }
 }

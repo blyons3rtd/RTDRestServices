@@ -1,16 +1,17 @@
 package com.rtddenver.model.data;
 
+import com.rtddenver.model.dto.AlertEventRouteDTO;
+
 import java.io.Serializable;
-
-import java.math.BigDecimal;
-
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,15 +26,19 @@ import javax.persistence.Transient;
 */
 //***********************************************************
 @Entity
-@NamedQueries({ @NamedQuery(name = "findAllActiveAlerts",
+@NamedQueries({ 
+                //Get active alerts for bus & rail
+                @NamedQuery(name = "findAllActiveAlerts",
                             query =
-                            "select o from AlertEvent o WHERE o.alertTypeId = 1 " +
-                            "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventId DESC"),
+                            "select o from AlertEvent o WHERE o.alertTypeId = 1 " + 
+                            "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventStartDate DESC"),
+                //Get active alert by ID
                 @NamedQuery(name = "findActiveAlertByID",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 1 " +
-                            "AND o.alertEventId in :alertEventId AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate " +
+                            "AND o.alertEventId = :alertEventId AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate " +
                             "ORDER BY o.alertEventStartDate DESC"),
+                //Get active alerts for Station/PNR
                 @NamedQuery(name = "findAllActiveStationPNRAlerts",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 3 " +
@@ -98,11 +103,11 @@ public class AlertEvent implements Serializable {
     @Column(name = "ALERT_TYPE_ID")
     private int alertTypeId = 0;
     @Transient
-    private int tmp_alertEventRoutesId = 0;
+    private String alertType;
     @Transient
-    private String routeDirectionDetail1 = null;
+    private List<String> routeLnAffected;
     @Transient
-    private String routeDirectionDetail2 = null;
+    private List<AlertEventRouteDTO> alertRoutesList;
 
     /**
      * AlertEvent
@@ -116,7 +121,24 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertCategoryDetail() {
+        switch(this.alertTypeId){
+            case 3:
+                switch(this.alertCategoryId){
+                    case 1:
+                        alertCategoryDetail = "Elevator outage at " + this.alertCategoryDetail;
+                        break;
+                    default:
+                        alertCategoryDetail = this.alertCategoryDetail;
+                }
+                break;
+            default:
+                alertCategoryDetail = this.alertCategoryDetail;
+        }
         return alertCategoryDetail;
+    }
+    
+    public void setAlertCategoryDetail(String alertCategoryDetail) {
+        this.alertCategoryDetail = alertCategoryDetail;
     }
 
     /**
@@ -301,51 +323,45 @@ public class AlertEvent implements Serializable {
         return alertTypeId;
     }
 
-    /**
-     * getTmp_alertEventRoutesId
-     * @return int
-     */
-    public int getTmp_alertEventRoutesId() {
-        return tmp_alertEventRoutesId;
+    @PostLoad
+    public void findAlertType() {
+        switch(this.alertTypeId){
+            case 1:
+                alertType = "Rider Alert"; 
+                break;
+            case 3:
+                alertType = "Station/Park-n-Ride"; 
+                break;
+            default:
+                alertType = Integer.toString(this.alertTypeId);
+        }
     }
-
+    
     /**
-     * getRouteDirectionDetail1
+     * getAlertType
      * @return String
      */
-    public String getRouteDirectionDetail1() {
-        return routeDirectionDetail1;
+    public String getAlertType() {
+        return alertType;
     }
 
     /**
-     * getRouteDirectionDetail2
+     * getRouteLnAffected
      * @return String
      */
-    public String getRouteDirectionDetail2() {
-        return routeDirectionDetail2;
+    public List<String> getRouteLnAffected() {
+        return routeLnAffected;
     }
-
+    
     /**
-     * setTmp_alertEventRoutesId
-     * @param int tmp_alertEventRoutesId
+     * getAlertRoutesList
+     * @return List
      */
-    public void setTmp_alertEventRoutesId(int tmp_alertEventRoutesId) {
-        this.tmp_alertEventRoutesId = tmp_alertEventRoutesId;
+    public List<AlertEventRouteDTO> getAlertRoutesList() {
+        return alertRoutesList;
     }
-
-    /**
-     * setRouteDirectionDetail1
-     * @param String routeDirectionDetail1
-     */
-    public void setRouteDirectionDetail1(String routeDirectionDetail1) {
-        this.routeDirectionDetail1 = routeDirectionDetail1;
-    }
-
-    /**
-     * setRouteDirectionDetail2
-     * @param String routeDirectionDetail2
-     */
-    public void setRouteDirectionDetail2(String routeDirectionDetail2) {
-        this.routeDirectionDetail2 = routeDirectionDetail2;
+    
+    public void setAlertRoutesList(List<AlertEventRouteDTO> alertRoutesList) {
+        this.alertRoutesList = alertRoutesList;
     }
 }

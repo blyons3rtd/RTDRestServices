@@ -9,52 +9,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "routes")
 public class RouteDTO implements Serializable {
-
-
-    @XmlElement(name = "alertEventId")
-    private int alertEventId;
-    
-    @XmlElement(name = "routeList")
-    private List<AlertEventRoute> routeList;
+    private static final long serialVersionUID = 1L;
         
-    @XmlElement(name = "busList")
-    private List<AlertEventRoute> busList;
-    
-    @XmlElement(name = "railList")
-    private List<AlertEventRoute> railList;
-    
+    @XmlElement(name = "alertRoutes")
+    private List<AlertEventRoute> alertRoutes;
+
     @XmlElement(name = "Error")
     private ErrorDTO error = null;
     
     public RouteDTO() {
         super();
     }
-    public void setAlertEventId(int alertEventId) {
-        this.alertEventId = alertEventId;
+
+    public void setAlertRoutes(List<AlertEventRoute> alertRoutes) {
+        this.alertRoutes = alertRoutes;
     }
 
-    public void setRouteList(List<AlertEventRoute> routeList) {
-        this.routeList = routeList;
-    }
-
-    public List<AlertEventRoute> getRouteList() {
-        return routeList;
-    }
-
-    public void setBusList(List<AlertEventRoute> busList) {
-        this.busList = busList;
-    }
-
-    public void setRailList(List<AlertEventRoute> railList) {
-        this.railList = railList;
-    }
-
-    public List<AlertEventRoute> getBusList() {
-        return busList;
-    }
-
-    public List<AlertEventRoute> getRailList() {
-        return railList;
+    public List<AlertEventRoute> getAlertRoutes() {
+        return alertRoutes;
     }
 
     public void setError(ErrorDTO error) {

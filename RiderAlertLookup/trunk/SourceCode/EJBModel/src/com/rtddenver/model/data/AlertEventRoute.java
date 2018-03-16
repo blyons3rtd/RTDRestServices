@@ -1,13 +1,18 @@
 package com.rtddenver.model.data;
 
+import com.rtddenver.model.dto.AlertEventDTO;
+import com.rtddenver.model.dto.AlertEventRoutesDirectionDTO;
+
 import java.io.Serializable;
 
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 
 import javax.persistence.Transient;
@@ -24,9 +29,12 @@ import javax.persistence.Transient;
 @NamedQueries({ @NamedQuery(name = "findAllRoutes",
                             query =
                             "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList ORDER BY o.routeSequence"),
-                @NamedQuery(name = "findRouteByID",
+                @NamedQuery(name = "findRouteByAlertEventID",
                             query =
-                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertID AND o.masterRoute = :masterRoute ORDER BY o.routeSequence")
+                            "select o from AlertEventRoute o WHERE o.alertEventId = :alertEventId ORDER BY o.routeSequence"),
+                @NamedQuery(name = "findRouteByRouteID",
+                            query =
+                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList AND (o.routeId = :routeId OR o.masterRoute = :routeId) ORDER BY o.routeSequence")
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
 public class AlertEventRoute implements Serializable {
@@ -45,27 +53,17 @@ public class AlertEventRoute implements Serializable {
     @Column(name = "ROUTE_TYPE_NAME")
     private String routeTypeName = null;
     @Transient
-    private String alertURL = null;
+    private String routeType = null;
+    @Transient
+    private List<AlertEventRoutesDirectionDTO> routesDirectionList;
+    @Transient
+    private List<AlertEventDTO> activeAlertList;
 
     /**
      * AlertEventRoute
      */
     public AlertEventRoute() {
         super();
-    }
-    
-    /**
-     * AlertEventRoute
-     * @param Builder
-     */
-    private AlertEventRoute(Builder builder) {
-        this.alertEventId = builder.alertEventId;
-        this.alertEventRoutesId = builder.alertEventRoutesId;
-        this.masterRoute = builder.masterRoute;
-        this.routeId = builder.routeId;
-        this.routeSequence = builder.routeSequence;
-        this.routeTypeName = builder.routeTypeName;
-        this.alertURL = builder.alertURL;
     }
 
     /**
@@ -115,110 +113,48 @@ public class AlertEventRoute implements Serializable {
     public String getRouteTypeName() {
         return routeTypeName;
     }
+    
+    @PostLoad
+    public void findRouteType() {
+        switch(this.routeTypeName.toUpperCase()){
+            case "LIGHT RAIL":
+            case "COMMUTER RAIL":
+                routeType = "Rail";
+                break;
+            default:
+                routeType = "Bus";
+        }
+    }
+    
+    /**
+     * getRouteType
+     * @return String
+     */
+    public String getRouteType() {
+        return routeType;
+    }
 
     /**
-     * setAlertURL
-     * @param alertURL String
+     * getRoutesDirectionList
+     * @return List
      */
-    public void setAlertURL(String alertURL) {
-        this.alertURL = alertURL;
+    public List<AlertEventRoutesDirectionDTO> getRoutesDirectionList() {
+        return routesDirectionList;
+    }
+    
+    public void setRoutesDirectionList(List<AlertEventRoutesDirectionDTO> routesDirectionList) {
+        this.routesDirectionList = routesDirectionList;
     }
 
-    //***********************************************************
-    /* Description: Builder pattern
-    /* AlertEventRoute a = new AlertEventRoute.Builder().alertEventId(1).alertEventRoutesId(2).masterRoute("0L").build();
-    /*
-    /* @author Van Tran
-    /* @version 1.0, 2/28/2018
+    /**
+     * getActiveAlertList
+     * @return List
      */
-    //***********************************************************
-    public static class Builder {
-        private int alertEventId = 0;
-        private int alertEventRoutesId = 0;
-        private String masterRoute = null;
-        private String routeId = null;
-        private int routeSequence = 0;
-        private String routeTypeName = null;
-        private String alertURL = null;
-
-        /**
-         * Builder
-         */
-        public Builder() {
-        }
-        
-        /**
-         * alertEventRoutesId
-         * @param alertEventRoutesId int
-         * @return Builder
-         */
-        public Builder alertEventId(int alertEventId) {
-            this.alertEventId = alertEventId;
-            return this;
-        }
-
-        /**
-         * alertEventRoutesId
-         * @param alertEventRoutesId int
-         * @return Builder
-         */
-        public Builder alertEventRoutesId(int alertEventRoutesId) {
-            this.alertEventRoutesId = alertEventRoutesId;
-            return this;
-        }
-
-        /**
-         * masterRoute
-         * @param masterRoute String
-         * @return Builder
-         */
-        public Builder masterRoute(String masterRoute) {
-            this.masterRoute = masterRoute;
-            return this;
-        }
-
-        /**
-         * routeId
-         * @param routeId String
-         * @return Builder
-         */
-        public Builder routeId(String routeId) {
-            this.routeId = routeId;
-            return this;
-        }
-
-        /**
-         * routeSequence
-         * @param routeSequence int
-         * @return Builder
-         */
-        public Builder routeSequence(int routeSequence) {
-            this.routeSequence = routeSequence;
-            return this;
-        }
-
-        /**
-         * routeTypeName
-         * @param routeTypeName String
-         * @return Builder
-         */
-        public Builder routeTypeName(String routeTypeName) {
-            this.routeTypeName = routeTypeName;
-            return this;
-        }
-
-        /**
-         * alertURL
-         * @param alertURL String
-         * @return Builder
-         */
-        public Builder alertURL(String alertURL) {
-            this.alertURL = alertURL;
-            return this;
-        }
-
-        public AlertEventRoute build() {
-            return new AlertEventRoute(this);
-        }
+    public List<AlertEventDTO> getActiveAlertList() {
+        return activeAlertList;
     }
+    
+    public void setActiveAlertList(List<AlertEventDTO> activeAlertList) {
+        this.activeAlertList = activeAlertList;
+    }  
 }

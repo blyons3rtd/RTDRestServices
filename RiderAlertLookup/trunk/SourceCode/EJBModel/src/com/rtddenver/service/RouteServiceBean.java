@@ -55,7 +55,7 @@ public class RouteServiceBean implements RouteServiceLocal {
         } else {
             aer.forEach(route -> { busRailList.add(route); });
             dto = new RouteDTO();
-            dto.setBusList(busRailList);
+            dto.setAlertRoutes(busRailList);
         }
 
         if (aer != null) {

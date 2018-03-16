@@ -35,7 +35,7 @@ public class RiderAlertLookup {
     }
 
     /**
-     *
+     * Get all active alerts
      * @return
      */
     @GET
@@ -52,7 +52,25 @@ public class RiderAlertLookup {
     }
     
     /**
-     *
+     * Get active alert by ID
+     * @return
+     */
+    @GET
+    @Produces("application/json")
+    @Path("alerts/{alertEventId}")
+    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertEventId") String alertEventId) {
+        ActiveAlertDTO ae = null;
+        try{
+            //System.out.println("alertEventId: " + alertEventId) ;
+            ae = this.riderAlertService.getActiveAlertByID(alertEventId);
+        }catch (Exception ex){
+            System.out.println("Exception returned from RiderAlertLookup() > getAlertByID(): " + ex);
+        }
+        return ae;
+    }
+    
+    /**
+     * Get all routes associated to active alerts
      * @return
      */
     @GET
@@ -69,20 +87,19 @@ public class RiderAlertLookup {
     }
     
     /**
-     *
+     * Get alert route by ID
      * @return
      */
     @GET
     @Produces("application/json")
-    @Path("alerts/{alertEventId}/{alertEventRoutesId}")
-    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertEventId") String alertEventId, @PathParam("alertEventRoutesId") String alertEventRoutesId) {
-        ActiveAlertDTO ae = null;
+    @Path("routes/{routeId}")
+    public AlertRouteDTO getAlertRouteByID(@Encoded @PathParam("routeId") String routeId) {
+        AlertRouteDTO ar = null;
         try{
-            //System.out.println("alertEventId: " + alertEventId + " | alertEventRoutesId: " + alertEventRoutesId) ;
-            ae = this.riderAlertService.getActiveAlertByID(alertEventId, alertEventRoutesId);
-        }catch (Exception ex){
-            System.out.println("Exception returned from RiderAlertLookup() > getAlertByID(): " + ex);
+            ar = this.riderAlertService.getAlertRouteByID(routeId);
+        }catch(Exception ex){
+            System.out.println("Exception returned from RiderAlertLookup() > getAlertRouteByID(): " + ex); 
         }
-        return ae;
+        return ar;
     }
 }
