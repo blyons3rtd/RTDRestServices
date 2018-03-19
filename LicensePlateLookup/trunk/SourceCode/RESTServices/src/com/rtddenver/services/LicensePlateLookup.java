@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/plates")
+@Path("v1/plate")
 public class LicensePlateLookup {
 
     //@EJB(name="LicensePlateService", beanInterface=com.rtddenver.model.facade.LicensePlateServiceLocal.class, beanName="EJBModel.jar#LicensePlateService")

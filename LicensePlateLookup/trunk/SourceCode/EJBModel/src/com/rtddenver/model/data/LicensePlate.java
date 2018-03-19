@@ -31,6 +31,9 @@ public class LicensePlate implements Serializable {
     @Column(name = "IN_DISTRICT")
     private Long inDistrict = null;
     
+    @Column(name = "GEOCODED")
+    private Long geocoded = null;
+    
     @Column(name = "PLATE_NUMBER")
     @Id 
     private String plateNumber = null;
@@ -55,5 +58,13 @@ public class LicensePlate implements Serializable {
      */
     public String getPlateNumber() {
         return this.plateNumber;
+    }
+    
+    /**
+     * getGeocoded
+     * @return Long
+     */
+    public Long getGeocoded() {
+        return this.geocoded;
     }
 }

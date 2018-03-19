@@ -24,9 +24,12 @@ public class LicensePlateDTO implements Serializable {
     private String plateNumber = null;
 
     @XmlElement(name = "InDistrict")
-    private String inDistrict = null;
+    private Long inDistrict = null;
 
-    @XmlElement(name = "Reason")
+    @XmlElement(name = "Geocoded")
+    private Long geocoded = null;
+    
+    @XmlElement(name = "Response")
     private String reason = null;
 
     @XmlElement(name = "Error")
@@ -44,26 +47,20 @@ public class LicensePlateDTO implements Serializable {
      * @param plateNumber String
      * @param inDistrict long
      */
-    public LicensePlateDTO(String plateNumber, long inDistrict) {
+    public LicensePlateDTO(String plateNumber, long inDistrict, long geocoded) {
         this.plateNumber = plateNumber;
-        this.inDistrict = Boolean.toString(inDistrict == 1);
-        if (inDistrict != 1) {
-            this.reason = "Not registered In-District";
-        }
-    }
-
-    /**
-     * LicensePlateDTO
-     * @param plateNumber String
-     * @param inDistrict long
-     * @param licensePlateFound boolean
-     */
-    public LicensePlateDTO(String plateNumber, long inDistrict, boolean licensePlateFound) {
-        this(plateNumber, inDistrict);
-        if (!licensePlateFound) {
-            this.reason = "Plate number not found";
+        this.inDistrict = inDistrict;
+        this.geocoded = geocoded;
+        if (inDistrict == 0) {
+            this.reason = "Out of District";
+        } else if (inDistrict == 1) {
+            if (geocoded == 3) {
+                this.reason = "Provisionally In District";
+            } else {
+                this.reason = "In District";
+            }
         } else {
-            this.reason = null;
+            this.reason = "Inconclusive. Plate could not be found. Call 303-299-2900";
         }
     }
 
