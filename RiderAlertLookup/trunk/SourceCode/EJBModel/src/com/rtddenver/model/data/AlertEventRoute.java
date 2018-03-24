@@ -34,7 +34,7 @@ import javax.persistence.Transient;
                             "select o from AlertEventRoute o WHERE o.alertEventId = :alertEventId ORDER BY o.routeSequence"),
                 @NamedQuery(name = "findRouteByRouteID",
                             query =
-                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList AND (o.routeId = :routeId OR o.masterRoute = :routeId) ORDER BY o.routeSequence")
+                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList AND (o.routeId = :masterRoute OR o.masterRoute = :masterRoute) ORDER BY o.routeSequence")
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
 public class AlertEventRoute implements Serializable {

@@ -26,7 +26,8 @@ public class RiderAlertLookup {
          beanName = "EJBModel.jar#RouteService")
     private RouteServiceLocal geocoderService;
 
-
+    String strSlash = "/";
+    
     /**
      * RiderAlertLookup
      */
@@ -92,11 +93,11 @@ public class RiderAlertLookup {
      */
     @GET
     @Produces("application/json")
-    @Path("routes/{routeId}")
-    public AlertRouteDTO getAlertRouteByID(@Encoded @PathParam("routeId") String routeId) {
+    @Path("routes/{masterRoute}")
+    public AlertRouteDTO getAlertRouteByID(@Encoded @PathParam("masterRoute") String masterRoute) {
         AlertRouteDTO ar = null;
         try{
-            ar = this.riderAlertService.getAlertRouteByID(routeId);
+            ar = this.riderAlertService.getAlertRouteByID(masterRoute);
         }catch(Exception ex){
             System.out.println("Exception returned from RiderAlertLookup() > getAlertRouteByID(): " + ex); 
         }

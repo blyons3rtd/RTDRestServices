@@ -16,8 +16,7 @@ import javax.persistence.Transient;
                             "WHERE o.alertEventRoutesId = :alertEventRoutesId " +
                             "AND LENGTH(o.directionAlert) > 0 " +
                             "ORDER BY o.directionName") })
-@Table(name = "ALERT_EVENT_ROUTES_DIRECTION", schema = "SCHEDLS") 
-//schema = "REP_IP"
+@Table(name = "ALERT_EVENT_ROUTES_DIRECTION", schema = "SCHEDLS")
 public class AlertEventRoutesDirection implements Serializable {
     private static final long serialVersionUID = 7733162965875549370L;
     @Id

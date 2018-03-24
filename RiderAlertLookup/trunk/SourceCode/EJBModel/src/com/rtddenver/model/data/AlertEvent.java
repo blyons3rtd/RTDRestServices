@@ -1,8 +1,13 @@
 package com.rtddenver.model.data;
 
+import com.rtddenver.model.dto.AlertCategoryDTO;
 import com.rtddenver.model.dto.AlertEventRouteDTO;
 
 import java.io.Serializable;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -51,63 +56,37 @@ public class AlertEvent implements Serializable {
     private String alertCategoryDetail = null;
     @Column(name = "ALERT_CATEGORY_ID")
     private int alertCategoryId = 0;
-    @Column(name = "ALERT_EVENT_CREATED_BY")
-    private String alertEventCreatedBy = null;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "ALERT_EVENT_CREATED_DATE")
-    private Date alertEventCreatedDate = null;
-    @Column(name = "ALERT_EVENT_DISPLAY_FLAG")
-    private int alertEventDisplayFlag = 0;
     @Temporal(TemporalType.DATE)
     @Column(name = "ALERT_EVENT_EFF_END_DATE")
     private Date alertEventEffEndDate = null;
     @Temporal(TemporalType.DATE)
     @Column(name = "ALERT_EVENT_EFF_START_DATE")
     private Date alertEventEffStartDate = null;
-    @Column(name = "ALERT_EVENT_EMAIL_BLAST")
-    private int alertEventEmailBlast = 0;
-    @Column(name = "ALERT_EVENT_EMAIL_INT_FLAG")
-    private int alertEventEmailIntFlag = 0;
-    @Column(name = "ALERT_EVENT_EMAIL_TOPIC")
-    private String alertEventEmailTopic = null;
-    @Temporal(TemporalType.DATE)
     @Column(name = "ALERT_EVENT_END_DATE")
-    private Date alertEventEndDate = null;
+    private String alertEventEndDate = null;
     @Column(name = "ALERT_EVENT_END_TIME_TYPE")
     private int alertEventEndTimeType = 0;
-    @Column(name = "ALERT_EVENT_GENERAL_DESC")
-    private String alertEventGeneralDesc = null;
     @Id
     @Column(name = "ALERT_EVENT_ID")
     private int alertEventId = 0;
     @Column(name = "ALERT_EVENT_INFO")
     private String alertEventInfo = null;
-    @Column(name = "ALERT_EVENT_OPERATOR_INFO")
-    private String alertEventOperatorInfo = null;
-    @Column(name = "ALERT_EVENT_REASON")
-    private String alertEventReason = null;
     @Column(name = "ALERT_EVENT_ROUTE_LN_AFFECTED")
     private String alertEventRouteLnAffected = null;
-    @Temporal(TemporalType.DATE)
     @Column(name = "ALERT_EVENT_START_DATE")
-    private Date alertEventStartDate = null;
+    private String alertEventStartDate = null;
     @Column(name = "ALERT_EVENT_START_TIME_TYPE")
     private int alertEventStartTimeType;
-    @Column(name = "ALERT_EVENT_UPDATED_BY")
-    private String alertEventUpdatedBy = null;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "ALERT_EVENT_UPDATED_DATE")
-    private Date alertEventUpdatedDate = null;
-    @Column(name = "ALERT_EVENT_USER_NOTES")
-    private String alertEventUserNotes = null;
     @Column(name = "ALERT_TYPE_ID")
     private int alertTypeId = 0;
     @Transient
     private String alertType;
     @Transient
-    private List<String> routeLnAffected;
+    private List<AlertCategoryDTO> alertCategory;
     @Transient
     private List<AlertEventRouteDTO> alertRoutesList;
+    @Transient
+    private String otherRouteLnAffected;
 
     /**
      * AlertEvent
@@ -150,29 +129,6 @@ public class AlertEvent implements Serializable {
     }
 
     /**
-     * @return
-     */
-    public String getAlertEventCreatedBy() {
-        return alertEventCreatedBy;
-    }
-
-    /**
-     * getAlertEventCreatedDate
-     * @return Date
-     */
-    public Date getAlertEventCreatedDate() {
-        return alertEventCreatedDate;
-    }
-
-    /**
-     * getAlertEventDisplayFlag
-     * @return int
-     */
-    public int getAlertEventDisplayFlag() {
-        return alertEventDisplayFlag;
-    }
-
-    /**
      * getAlertEventEffEndDate
      * @return Date
      */
@@ -189,35 +145,11 @@ public class AlertEvent implements Serializable {
     }
 
     /**
-     * getAlertEventEmailBlast
-     * @return int
-     */
-    public int getAlertEventEmailBlast() {
-        return alertEventEmailBlast;
-    }
-
-    /**
-     * getAlertEventEmailIntFlag
-     * @return int
-     */
-    public int getAlertEventEmailIntFlag() {
-        return alertEventEmailIntFlag;
-    }
-
-    /**
-     * getAlertEventEmailTopic
+     * getAlertEventEndDate
      * @return String
      */
-    public String getAlertEventEmailTopic() {
-        return alertEventEmailTopic;
-    }
-
-    /**
-     * getAlertEventEndDate
-     * @return Date
-     */
-    public Date getAlertEventEndDate() {
-        return alertEventEndDate;
+    public String getAlertEventEndDate() {
+        return parseDate(alertEventEndDate, alertEventEndTimeType);
     }
 
     /**
@@ -226,13 +158,6 @@ public class AlertEvent implements Serializable {
      */
     public int getAlertEventEndTimeType() {
         return alertEventEndTimeType;
-    }
-
-    /**
-     * @return
-     */
-    public String getAlertEventGeneralDesc() {
-        return alertEventGeneralDesc;
     }
 
     /**
@@ -252,35 +177,52 @@ public class AlertEvent implements Serializable {
     }
 
     /**
-     * getAlertEventOperatorInfo
-     * @return String
-     */
-    public String getAlertEventOperatorInfo() {
-        return alertEventOperatorInfo;
-    }
-
-    /**
-     * getAlertEventReason
-     * @return String
-     */
-    public String getAlertEventReason() {
-        return alertEventReason;
-    }
-
-    /**
      * getAlertEventRouteLnAffected
      * @return String
      */
     public String getAlertEventRouteLnAffected() {
         return alertEventRouteLnAffected;
     }
-
+    
     /**
      * getAlertEventStartDate
-     * @return Date
+     * @return String
      */
-    public Date getAlertEventStartDate() {
-        return alertEventStartDate;
+    public String getAlertEventStartDate() {
+        return parseDate(alertEventStartDate, alertEventStartTimeType);
+    }
+    
+    /**
+     * parseDate
+     * @param inputDate String, timeType int
+     * @return String
+     */
+    public String parseDate(String inputDate, int timeType) {
+        String outputDate = "";
+        try {
+            DateFormat outputDateFormat = new SimpleDateFormat("MMMMM dd, yyy");
+            DateFormat outputDateTimeFormat = new SimpleDateFormat("MMMMM dd, yyyy h:mma");
+            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            String tmpInputDate = inputDate;
+            Date date = inputFormat.parse(tmpInputDate);
+            
+            switch(timeType){
+                case 2:
+                    outputDate = outputDateFormat.format(date) + " TBD";
+                    break;
+                case 3:
+                    outputDate = outputDateTimeFormat.format(date);
+                    break;
+                default:
+                    outputDate = outputDateFormat.format(date);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println(ex);
+        }
+        return outputDate;
     }
 
     /**
@@ -292,37 +234,12 @@ public class AlertEvent implements Serializable {
     }
 
     /**
-     * getAlertEventUpdatedBy
-     * @return String
-     */
-    public String getAlertEventUpdatedBy() {
-        return alertEventUpdatedBy;
-    }
-
-    /**
-     * getAlertEventUpdatedDate
-     * @return Date
-     */
-    public Date getAlertEventUpdatedDate() {
-        return alertEventUpdatedDate;
-    }
-
-    /**
-     * getAlertEventUserNotes
-     * @return String
-     */
-    public String getAlertEventUserNotes() {
-        return alertEventUserNotes;
-    }
-
-    /**
      * getAlertTypeId
      * @return int
      */
     public int getAlertTypeId() {
         return alertTypeId;
     }
-
     @PostLoad
     public void findAlertType() {
         switch(this.alertTypeId){
@@ -346,14 +263,6 @@ public class AlertEvent implements Serializable {
     }
 
     /**
-     * getRouteLnAffected
-     * @return String
-     */
-    public List<String> getRouteLnAffected() {
-        return routeLnAffected;
-    }
-    
-    /**
      * getAlertRoutesList
      * @return List
      */
@@ -363,5 +272,29 @@ public class AlertEvent implements Serializable {
     
     public void setAlertRoutesList(List<AlertEventRouteDTO> alertRoutesList) {
         this.alertRoutesList = alertRoutesList;
+    }
+    
+    /**
+     * getAlertCategory
+     * @return List
+     */
+    public List<AlertCategoryDTO> getAlertCategory() {
+        return alertCategory;
+    }
+    
+    public void setAlertCategory(List<AlertCategoryDTO> alertCategory) {
+        this.alertCategory = alertCategory;
+    }
+
+    /**
+     * getOtherRouteLnAffected
+     * @return String
+     */
+    public String getOtherRouteLnAffected() {
+        return otherRouteLnAffected;
+    }
+
+    public void setOtherRouteLnAffected(String otherRouteLnAffected) {
+        this.otherRouteLnAffected = otherRouteLnAffected;
     }
 }
