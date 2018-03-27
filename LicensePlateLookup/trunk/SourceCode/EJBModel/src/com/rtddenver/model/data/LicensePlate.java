@@ -19,7 +19,7 @@ import javax.persistence.Table;
 //***********************************************************
 @Entity
 @NamedQueries({ @NamedQuery(name = "findByLicensePlateNumber",
-                            query = "SELECT o FROM LicensePlate o WHERE UPPER(o.plateNumber) = UPPER(:plateNumber)")
+                            query = "SELECT o FROM LicensePlate o WHERE o.plateNumber = UPPER(:plateNumber)")
                 })
 @Table(name = "LICENSE_PLATE_MASTER", schema = "CHK_PLT")
 @SuppressWarnings("oracle.jdeveloper.ejb.entity-class-auto-id-gen")
@@ -29,10 +29,10 @@ public class LicensePlate implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "IN_DISTRICT")
-    private Long inDistrict = null;
+    private int inDistrict = 0;
     
     @Column(name = "GEOCODED")
-    private Long geocoded = null;
+    private int geocoded = 0;
     
     @Column(name = "PLATE_NUMBER")
     @Id 
@@ -46,9 +46,9 @@ public class LicensePlate implements Serializable {
 
     /**
      * getInDistrict
-     * @return Long
+     * @return int
      */
-    public Long getInDistrict() {
+    public int getInDistrict() {
         return this.inDistrict;
     }
 
@@ -62,9 +62,9 @@ public class LicensePlate implements Serializable {
     
     /**
      * getGeocoded
-     * @return Long
+     * @return int
      */
-    public Long getGeocoded() {
+    public int getGeocoded() {
         return this.geocoded;
     }
 }

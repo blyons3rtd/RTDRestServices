@@ -16,8 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 //***********************************************************
 @XmlRootElement(name = "licensePlate")
 public class LicensePlateDTO implements Serializable {
-
-    @SuppressWarnings("compatibility:-4897277253218454610")
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "Plate")
@@ -28,7 +26,7 @@ public class LicensePlateDTO implements Serializable {
 
     @XmlElement(name = "Geocoded")
     private Long geocoded = null;
-    
+
     @XmlElement(name = "Response")
     private String reason = null;
 
@@ -45,30 +43,40 @@ public class LicensePlateDTO implements Serializable {
     /**
      * LicensePlateDTO
      * @param plateNumber String
-     * @param inDistrict long
+     * @param inDistrict int
+     * @param geocoded int
      */
-    public LicensePlateDTO(String plateNumber, long inDistrict, long geocoded) {
+    public LicensePlateDTO(String plateNumber, int inDistrict, int geocoded) {
         this.plateNumber = plateNumber;
-        this.inDistrict = inDistrict;
-        this.geocoded = geocoded;
-        if (inDistrict == 0) {
+        this.inDistrict = Long.valueOf(inDistrict);
+        this.geocoded = Long.valueOf(geocoded);
+
+        switch (inDistrict) {
+        case 0:
             this.reason = "Out of District";
-        } else if (inDistrict == 1) {
-            if (geocoded == 3) {
-                this.reason = "Provisionally In District";
-            } else {
-                this.reason = "In District";
+            break;
+        case 1:
+            {
+                if (this.geocoded == 3) {
+                    this.reason = "Provisionally In District";
+                } else {
+                    this.reason = "In District";
+                }
             }
-        } else {
-            this.reason = "Inconclusive. Plate could not be found. Call 303-299-2900";
+            break;
+        case -1:
+            this.reason = "License Plate Not Found";
+            break;
         }
     }
-
+    
     /**
      * LicensePlateDTO
+     * @param plateNumber String
      * @param error ErrorDTO
      */
-    public LicensePlateDTO(ErrorDTO error) {
+    public LicensePlateDTO(String plateNumber, ErrorDTO error) {
+        this.plateNumber = plateNumber;
         this.error = error;
     }
 }

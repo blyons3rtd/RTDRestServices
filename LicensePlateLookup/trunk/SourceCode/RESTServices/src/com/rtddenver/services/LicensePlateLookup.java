@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/plate")
+@Path("v1/plates")
 public class LicensePlateLookup {
 
     //@EJB(name="LicensePlateService", beanInterface=com.rtddenver.model.facade.LicensePlateServiceLocal.class, beanName="EJBModel.jar#LicensePlateService")
@@ -47,6 +47,6 @@ public class LicensePlateLookup {
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("{plateNumber}")
     public LicensePlateDTO getLicensePlate(@Encoded @PathParam("plateNumber") String plateNumber) {
-        return this.licensePlateService.getLicensePlate(plateNumber);
+        return this.licensePlateService.getLicensePlate(plateNumber); 
     }
 }
