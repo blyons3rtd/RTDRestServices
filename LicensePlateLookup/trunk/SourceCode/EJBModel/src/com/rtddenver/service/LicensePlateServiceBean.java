@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 //***********************************************************
 
 @Stateless(name = "LicensePlateService")
+@TransactionAttribute(value=TransactionAttributeType.NEVER)
 public class LicensePlateServiceBean implements LicensePlateServiceLocal {
 
     private static final Logger LOGGER = LogManager.getLogger(LicensePlateServiceBean.class.getName());
@@ -55,7 +56,6 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
      * @return LicensePlateDTO
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public LicensePlateDTO getLicensePlate(String plateNumber) {
         double start = System.currentTimeMillis();
         LicensePlateDTO dto = null;
@@ -73,7 +73,7 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
         }
 
         lp = em.createNamedQuery("findByLicensePlateNumber", LicensePlate.class)
-               .setParameter("plateNumber", plateNumber)
+               .setParameter("plateNumber", plateNumber.toUpperCase())
                .setMaxResults(1)
                .getResultList();
 

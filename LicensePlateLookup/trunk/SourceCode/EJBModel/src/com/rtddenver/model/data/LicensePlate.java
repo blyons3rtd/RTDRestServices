@@ -9,6 +9,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.ReadOnly;
+
 //***********************************************************
 /* Description:
 /*
@@ -18,14 +20,13 @@ import javax.persistence.Table;
  */ 
 //***********************************************************
 @Entity
+@ReadOnly
 @NamedQueries({ @NamedQuery(name = "findByLicensePlateNumber",
-                            query = "SELECT o FROM LicensePlate o WHERE o.plateNumber = UPPER(:plateNumber)")
+                            query = "SELECT o FROM LicensePlate o WHERE o.plateNumber = :plateNumber")
                 })
 @Table(name = "LICENSE_PLATE_MASTER", schema = "CHK_PLT")
-@SuppressWarnings("oracle.jdeveloper.ejb.entity-class-auto-id-gen")
 public class LicensePlate implements Serializable {
-    
-    @SuppressWarnings("compatibility:-3768384238986068035")
+ 
     private static final long serialVersionUID = 1L;
 
     @Column(name = "IN_DISTRICT")
