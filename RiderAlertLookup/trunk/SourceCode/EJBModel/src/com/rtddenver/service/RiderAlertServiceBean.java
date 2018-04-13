@@ -141,8 +141,10 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                 ;
             });
 
-            alertDTO.setAlertRoutesList(routes);
-
+            // stations are not tied to a route, so the list will be blank
+            if (routes.size() > 0) {
+                alertDTO.setAlertRoutesList(routes);
+            }
         }
 
         return alertDTO;
