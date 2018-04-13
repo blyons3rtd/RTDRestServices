@@ -1,21 +1,22 @@
 package com.rtddenver.model.data;
 
-import com.rtddenver.model.dto.AlertEventDTO;
-import com.rtddenver.model.dto.AlertEventRoutesDirectionDTO;
-
 import java.io.Serializable;
 
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.PostLoad;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import javax.persistence.Transient;
+
+import org.eclipse.persistence.annotations.ReadOnly;
 
 //***********************************************************
 /* Description:
@@ -26,24 +27,29 @@ import javax.persistence.Transient;
 */
 //***********************************************************
 @Entity
-@NamedQueries({ @NamedQuery(name = "findAllRoutes",
+@ReadOnly
+@NamedQueries({ @NamedQuery(name = "findRoutesWithActiveAlerts",
                             query =
-                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList ORDER BY o.routeSequence"),
-                @NamedQuery(name = "findRouteByAlertEventID",
+                            "SELECT o from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
+                            "ORDER BY o.routeSequence"),
+                @NamedQuery(name = "findRoutesWithActiveAlertsGroupByMasterRoute",
                             query =
-                            "select o from AlertEventRoute o WHERE o.alertEventId = :alertEventId ORDER BY o.routeSequence"),
-                @NamedQuery(name = "findRouteByRouteID",
+                            "SELECT o.masterRoute from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
+                            "GROUP BY o.masterRoute"),
+                @NamedQuery(name = "findRouteWithActiveAlertsByMasterRoute",
                             query =
-                            "select o from AlertEventRoute o WHERE o.alertEventId in :alertEventIDList AND (o.routeId = :masterRoute OR o.masterRoute = :masterRoute) ORDER BY o.routeSequence")
+                            "SELECT o from AlertEventRoute o WHERE o.masterRoute = :masterRoute " +
+                            "AND o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
+                            "ORDER BY o.routeSequence")
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
 public class AlertEventRoute implements Serializable {
     private static final long serialVersionUID = -5065925130746093504L;
-    @Column(name = "ALERT_EVENT_ID")
-    private int alertEventId = 0;
     @Id
     @Column(name = "ALERT_EVENT_ROUTES_ID")
-    private int alertEventRoutesId = 0;
+    private Integer alertEventRoutesId = null;
+    @Column(name = "ALERT_EVENT_ID")
+    private int alertEventId = 0;
     @Column(name = "MASTER_ROUTE")
     private String masterRoute = null;
     @Column(name = "ROUTE_ID")
@@ -52,12 +58,17 @@ public class AlertEventRoute implements Serializable {
     private int routeSequence = 0;
     @Column(name = "ROUTE_TYPE_NAME")
     private String routeTypeName = null;
+
+    @OneToMany (fetch=FetchType.LAZY)
+    @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
+    private List<AlertEventRouteDirection> alertRoutesDirection;
+    @ManyToOne (fetch=FetchType.LAZY)
+    @JoinColumn(name="ALERT_EVENT_ID", insertable=false, updatable=false)
+    private AlertEvent alert;
+
     @Transient
-    private String routeType = null;
-    @Transient
-    private List<AlertEventRoutesDirectionDTO> routesDirectionList;
-    @Transient
-    private List<AlertEventDTO> activeAlertList;
+    private String customRouteType = null;
+
 
     /**
      * AlertEventRoute
@@ -71,15 +82,15 @@ public class AlertEventRoute implements Serializable {
      * @return int
      */
     public int getAlertEventId() {
-        return alertEventId;
+        return this.alertEventId;
     }
 
     /**
      * getAlertEventRoutesId
-     * @return int
+     * @return Integer
      */
-    public int getAlertEventRoutesId() {
-        return alertEventRoutesId;
+    public Integer getAlertEventRoutesId() {
+        return this.alertEventRoutesId;
     }
 
     /**
@@ -87,7 +98,7 @@ public class AlertEventRoute implements Serializable {
      * @return String
      */
     public String getMasterRoute() {
-        return masterRoute;
+        return this.masterRoute;
     }
 
     /**
@@ -95,7 +106,7 @@ public class AlertEventRoute implements Serializable {
      * @return String
      */
     public String getRouteId() {
-        return routeId;
+        return this.routeId;
     }
 
     /**
@@ -103,7 +114,7 @@ public class AlertEventRoute implements Serializable {
      * @return int
      */
     public int getRouteSequence() {
-        return routeSequence;
+        return this.routeSequence;
     }
 
     /**
@@ -111,50 +122,39 @@ public class AlertEventRoute implements Serializable {
      * @return String
      */
     public String getRouteTypeName() {
-        return routeTypeName;
+        return this.routeTypeName;
     }
     
-    @PostLoad
-    public void findRouteType() {
+    /**
+     * getAlertRoutesDirection
+     * @return List<AlertEventRouteDirection>
+     */
+    public List<AlertEventRouteDirection> getAlertRoutesDirection() {
+        return this.alertRoutesDirection;
+    }
+
+    /**
+     * getCustomRouteType
+     * @return String
+     */
+    public AlertEvent getAlertEvent() {
+        return this.alert;
+    }
+
+    /**
+     * getCustomRouteType
+     * @return String
+     */
+    public String getCustomRouteType() {
         switch(this.routeTypeName.toUpperCase()){
             case "LIGHT RAIL":
             case "COMMUTER RAIL":
-                routeType = "Rail";
+                this.customRouteType = "Rail";
                 break;
             default:
-                routeType = "Bus";
+                this.customRouteType = "Bus";
         }
+        
+        return this.customRouteType;
     }
-    
-    /**
-     * getRouteType
-     * @return String
-     */
-    public String getRouteType() {
-        return routeType;
-    }
-
-    /**
-     * getRoutesDirectionList
-     * @return List
-     */
-    public List<AlertEventRoutesDirectionDTO> getRoutesDirectionList() {
-        return routesDirectionList;
-    }
-    
-    public void setRoutesDirectionList(List<AlertEventRoutesDirectionDTO> routesDirectionList) {
-        this.routesDirectionList = routesDirectionList;
-    }
-
-    /**
-     * getActiveAlertList
-     * @return List
-     */
-    public List<AlertEventDTO> getActiveAlertList() {
-        return activeAlertList;
-    }
-    
-    public void setActiveAlertList(List<AlertEventDTO> activeAlertList) {
-        this.activeAlertList = activeAlertList;
-    }  
 }

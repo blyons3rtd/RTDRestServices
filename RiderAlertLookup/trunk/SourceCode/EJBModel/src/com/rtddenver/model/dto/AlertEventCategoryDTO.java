@@ -4,7 +4,15 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class AlertCategoryDTO implements Serializable {
+//***********************************************************
+/* Description:
+/*
+/*
+/* @author Van Tran
+/* @version 1.0, 2/28/2018
+*/
+//***********************************************************
+public class AlertEventCategoryDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "alertCategory")
     private String alertCategoryShortDesc;
@@ -12,7 +20,7 @@ public class AlertCategoryDTO implements Serializable {
     /**
      * AlertCategoryDTO
      */
-    public AlertCategoryDTO() {
+    public AlertEventCategoryDTO() {
         super();
     }
     
@@ -20,10 +28,13 @@ public class AlertCategoryDTO implements Serializable {
      * AlertCategoryDTO
      * @param Builder builder
      */
-    public AlertCategoryDTO(Builder builder) {
+    public AlertEventCategoryDTO(Builder builder) {
         this.alertCategoryShortDesc = builder.alertCategoryShortDesc;
     }
 
+    /**
+     * Builder
+     */
     public static class Builder {
         private String alertCategoryShortDesc = null;
         
@@ -40,8 +51,8 @@ public class AlertCategoryDTO implements Serializable {
             return this;
         }
         
-        public AlertCategoryDTO build() {
-            return new AlertCategoryDTO(this);
+        public AlertEventCategoryDTO build() {
+            return new AlertEventCategoryDTO(this);
         }
     }
 }

@@ -1,16 +1,16 @@
 package com.rtddenver.service;
 
-import com.rtddenver.model.data.AlertCategory;
-import com.rtddenver.model.data.AlertEventRoute;
-import com.rtddenver.model.data.AlertEventRoutesDirection;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.data.AlertEvent;
-import com.rtddenver.model.dto.ActiveAlertDTO;
-import com.rtddenver.model.dto.AlertCategoryDTO;
+import com.rtddenver.model.data.AlertEventCategory;
+import com.rtddenver.model.data.AlertEventRoute;
+import com.rtddenver.model.data.AlertEventRouteDirection;
+import com.rtddenver.model.dto.ActiveAlertEventDTO;
+import com.rtddenver.model.dto.AlertEventCategoryDTO;
 import com.rtddenver.model.dto.AlertEventDTO;
 import com.rtddenver.model.dto.AlertEventRouteDTO;
-import com.rtddenver.model.dto.AlertEventRoutesDirectionDTO;
-import com.rtddenver.model.dto.AlertRouteDTO;
+import com.rtddenver.model.dto.AlertEventRouteDirectionDTO;
+import com.rtddenver.model.dto.ErrorDTO;
+import com.rtddenver.model.dto.RouteActiveAlertEventDTO;
 
 import java.time.LocalDate;
 
@@ -21,14 +21,23 @@ import javax.annotation.Resource;
 
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
+//***********************************************************
+/* Description:
+/*
+/*
+/* @author Van Tran
+/* @version 1.0, 2/28/2018
+*/
+//***********************************************************
 @Stateless(name = "RiderAlertService")
+@TransactionAttribute(value = TransactionAttributeType.NEVER)
 public class RiderAlertServiceBean implements RiderAlertServiceLocal {
 
     @Resource
@@ -37,397 +46,205 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
     @PersistenceContext(unitName = "riderAlertModel")
     private EntityManager em;
 
-    List<AlertEvent> alertList = null;
-    List<AlertCategory> acList = null;
-    List<AlertEventRoute> aerList = null;
-    List<AlertEventRoutesDirection> aerdList = null;
-    
+    /**
+     * RiderAlertServiceBean
+     */
     public RiderAlertServiceBean() {
         super();
     }
 
-    /*
-     * Get all active alerts
+    /**
+     * getActiveAlertEventList - Get all active alerts
+     * @return ActiveAlertEventDTO
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public ActiveAlertDTO getActiveAlertList() {
-        ActiveAlertDTO dtoAlert = null;
-        List<AlertEvent> aeStationPNRList = null;
-        List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>();
-        List<AlertEventDTO> station_alerts = new ArrayList<AlertEventDTO>();
+    public ActiveAlertEventDTO getActiveAlertEventList() {
+        ActiveAlertEventDTO dtoAlert = new ActiveAlertEventDTO();
+        List<AlertEvent> stationPNRList = null;
+        List<AlertEventDTO> stations = new ArrayList<AlertEventDTO>();
 
-        try {
-            // First, get active alerts for bus & rail...
-            alertList = this.getActiveAlerts();
-            if (alertList.size() == 0) {
-                ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
-                dtoAlert = new ActiveAlertDTO(error);
-            } else {
-                //Get all alert categories & set resultset into categories list
-                acList = this.getAlertCategory();
-                List<AlertCategory> categories = new ArrayList<AlertCategory>();
-                acList.forEach(cat -> {
-                        categories.add(cat);
-                    });
+        List<AlertEvent> activeAlerts = this.findActiveEventAlerts();
+        List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>(activeAlerts.size());
+        boolean noAlertsFound = false;
 
-                //Get alert detail of active alert
-                alertList.forEach(alert -> {
-                    
-                    //When alert type is 1 which is Rider Alert (bus & rail), get Alert Category Description based on alert category id
-                    if("1".equals(Integer.toString(alert.getAlertTypeId()))){
-                        //iterate through categories list to find a match alertCategoryId, pull alertCategoryShortDesc & append it to alert category detail of each alert
-                        categories.forEach(alertCat -> {
-                                String tmpAlertCategoryId = Integer.toString(alertCat.getAlertCategoryId());
-                                if(tmpAlertCategoryId.equals(Integer.toString(alert.getAlertCategoryId()))){
-                                    alert.setAlertCategoryDetail(alertCat.getAlertCategoryShortDesc() + (alert.getAlertCategoryDetail() != null ? alert.getAlertCategoryDetail() : ""));
-                                }
-                            });
-                    }
-                    // Iterate through the alert_event_id value and fetch routes for each
-                    aerList = this.getRouteByAlertEventID(alert.getAlertEventId());
-                    List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>();
-                    aerList.forEach(route -> {
-                            //Get direction details of each Route/Line affected based on alertEventRoutesId
-                            aerdList = getRoutesDirectionByID(route.getAlertEventRoutesId());
-                            List<AlertEventRoutesDirectionDTO> directions = new ArrayList<AlertEventRoutesDirectionDTO>();
-                            aerdList.forEach(direction -> {
-                                    //if alert category ID is NOT 7 (Service Changes), show direction name, else don't show direction name. 
-                                    direction.setDirectionAlert((!"7".equals(Integer.toString(alert.getAlertCategoryId())) ? direction.getDirectionName() + ": " : "") + direction.getDirectionAlert());
-                                    directions.add(this.createAlertEventRoutesDirectionDTO(direction));
-                                });
-                        route.setRoutesDirectionList(directions);
-                        routes.add(this.createAlertEventRouteDTO(route));
-                        });
-                    alert.setAlertRoutesList(routes);
-                    alerts.add(this.createAlertEventDTO(alert));
+        if (activeAlerts.size() == 0) {
+            noAlertsFound = true;
+        } else {
+            activeAlerts.forEach(alert -> {
+                AlertEventDTO alertDTO = this.createAlertEventDTO(alert);
+                List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>(alert.getAlertEventRoutes().size());
+                alert.getAlertEventRoutes().forEach(route -> {
+                    List<AlertEventRouteDirectionDTO> directions =
+                        new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
+                    route.getAlertRoutesDirection()
+                        .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
+                    AlertEventRouteDTO routeDTO = this.createAlertEventRouteDTO(route);
+                    routeDTO.setRoutesDirectionList(directions);
+                    routes.add(routeDTO);
+                    ;
                 });
 
-                // Next, get active alerts for Station/PNR...
-                aeStationPNRList = this.getActiveStationPNRAlerts();
-                aeStationPNRList.forEach(station_pnr -> {
-                    station_alerts.add(this.createAlertEventDTO(station_pnr));
-                });              
-                
-                dtoAlert = new ActiveAlertDTO();
-                dtoAlert.setActiveAlertList(alerts);
-                dtoAlert.setActiveStationPNRAlertsList(station_alerts);
-            }
-        } catch (Exception ex) {
-            System.out.println(ex);
-            if (em != null) {
-                em.clear();
-
-                try {
-                    em.close();
-                } catch (Exception e) {
-                    // do nothing
-                } finally {
-                    em = null;
-                }
-            }
-
-            if (alertList != null) {
-                alertList.clear();
-                alertList = null;
-            }
-
-            ErrorDTO error = new ErrorDTO("500", ex.getClass().getName(), ex.getMessage());
-            dtoAlert = new ActiveAlertDTO(error);
+                alertDTO.setAlertRoutesList(routes);
+                alerts.add(alertDTO);
+            });
+            dtoAlert.setActiveAlertList(alerts);
         }
+
+        if (activeAlerts != null) {
+            activeAlerts.clear();
+            activeAlerts = null;
+        }
+
+        // Next, get active alerts for Station/PNR...
+        stationPNRList = this.findStationsWithActiveEventAlerts();
+
+        if (stationPNRList.size() == 0 && noAlertsFound) {
+            ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
+            dtoAlert = new ActiveAlertEventDTO(error);
+        } else {
+            stationPNRList.forEach(station_pnr -> { stations.add(this.createAlertEventDTO(station_pnr)); });
+            dtoAlert.setActiveStationPNRAlertsList(stations);
+        }
+
+        if (stationPNRList != null) {
+            stationPNRList.clear();
+            stationPNRList = null;
+        }
+
         return dtoAlert;
     }
-    
-    /*
-     * Get active alert by ID
+
+    /**
+     * getAlertEventById - Get active alert by ID
+     * @param Integer alertEventId
+     * @return AlertEventDTO
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public ActiveAlertDTO getActiveAlertByID(String alertEventId) {
-        ActiveAlertDTO dtoAlertByID = null;
-        List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>();
+    public AlertEventDTO getAlertEventById(Integer alertEventId) {
+        AlertEventDTO alertDTO = null;
+        AlertEvent alert = null;
 
-        try {
-            // First, get active alert by ID
-            alertList = this.getAlertByID(Integer.parseInt(alertEventId));
-            if (alertList.size() == 0) {
-                ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
-                dtoAlertByID = new ActiveAlertDTO(error);
-            } else {
-                //Get all alert categories & set resultset into categories list
-                acList = this.getAlertCategory();
-                List<AlertCategory> categories = new ArrayList<AlertCategory>();
-                acList.forEach(cat -> {
-                        categories.add(cat);
-                    });
+        // First, get active alert by ID
+        alert = this.findAlertEventById(alertEventId);
+        if (alert == null) {
+            ErrorDTO error = new ErrorDTO("404", "No record found", "Alert " + alertEventId + " not found.");
+            alertDTO = new AlertEventDTO(error);
+        } else {
+            alertDTO = this.createAlertEventDTO(alert);
+            List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>(alert.getAlertEventRoutes().size());
+            alert.getAlertEventRoutes().forEach(route -> {
+                List<AlertEventRouteDirectionDTO> directions =
+                    new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
+                route.getAlertRoutesDirection()
+                    .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
+                AlertEventRouteDTO routeDTO = this.createAlertEventRouteDTO(route);
+                routeDTO.setRoutesDirectionList(directions);
+                routes.add(routeDTO);
+                ;
+            });
 
-                //Get alert detail of active alert
-                alertList.forEach(alert -> { 
-                    //When alert type is 1 which is Rider Alert (bus & rail), get Alert Category Description based on alert category id
-                    if("1".equals(Integer.toString(alert.getAlertTypeId()))){
-                        //iterate through categories list to find a match alertCategoryId, pull alertCategoryShortDesc & append it to alert category detail of each alert
-                        categories.forEach(alertCat -> {
-                                String tmpAlertCategoryId = Integer.toString(alertCat.getAlertCategoryId());
-                                if(tmpAlertCategoryId.equals(Integer.toString(alert.getAlertCategoryId()))){
-                                    alert.setAlertCategoryDetail(alertCat.getAlertCategoryShortDesc() + (alert.getAlertCategoryDetail() != null ? alert.getAlertCategoryDetail() : ""));
-                                }
-                            });
-                    }
-                    // Iterate through the alert_event_id value and fetch routes for each
-                    aerList = this.getRouteByAlertEventID(alert.getAlertEventId());
-                    List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>();
-                    aerList.forEach(route -> {
-                            //Get direction details of each Route/Line affected based on alertEventRoutesId
-                            aerdList = getRoutesDirectionByID(route.getAlertEventRoutesId());
-                            List<AlertEventRoutesDirectionDTO> directions = new ArrayList<AlertEventRoutesDirectionDTO>();
-                            aerdList.forEach(direction -> {
-                                    //if alert category ID is NOT 7 (Service Changes), show direction name, else don't show direction name. 
-                                    direction.setDirectionAlert((!"7".equals(Integer.toString(alert.getAlertCategoryId())) ? direction.getDirectionName() + ": " : "") + direction.getDirectionAlert());
-                                    directions.add(this.createAlertEventRoutesDirectionDTO(direction));
-                                });
-                        route.setRoutesDirectionList(directions);
-                        routes.add(this.createAlertEventRouteDTO(route));
-                        });
-                    alert.setAlertRoutesList(routes);
-                    alerts.add(this.createAlertEventDTO(alert));
-                });             
-                
-                dtoAlertByID = new ActiveAlertDTO();
-                dtoAlertByID.setActiveAlertList(alerts);
-            }
-        } catch (Exception ex) {
-            System.out.println(ex);
-            if (em != null) {
-                em.clear();
+            alertDTO.setAlertRoutesList(routes);
 
-                try {
-                    em.close();
-                } catch (Exception e) {
-                    // do nothing
-                } finally {
-                    em = null;
-                }
-            }
-
-            if (alertList != null) {
-                alertList.clear();
-                alertList = null;
-            }
-
-            ErrorDTO error = new ErrorDTO("500", ex.getClass().getName(), ex.getMessage());
-            dtoAlertByID = new ActiveAlertDTO(error);
         }
-        return dtoAlertByID;
-    }
-    
-    /*
-    * Get all routes associated to active alerts
-    */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public AlertRouteDTO getActiveAlertRoutes() {
-        AlertRouteDTO alertRouteDTO = null;
-        List<AlertEventRoute> aerList = null;
-        List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>();
-    
-        try {
-            // First, get active alerts for bus & rail...
-            alertList = this.getActiveAlerts();
-            if (alertList.size() == 0) {
-                ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
-                alertRouteDTO = new AlertRouteDTO(error);
-            } else {
-                //Get all alert categories & set resultset into categories list
-                acList = this.getAlertCategory();
-                List<AlertCategory> categories = new ArrayList<AlertCategory>();
-                acList.forEach(cat -> {
-                        categories.add(cat);
-                    });
 
-                //Get all active alerts & set resultset into aeList list
-                List<Integer> aeIdList = new ArrayList<Integer>();
-                List<AlertEvent> aeList = new ArrayList<AlertEvent>();
-                alertList.forEach(alert -> {
-                        // iterate through the alert_event_id values & set these as arrays of integer aeIdList 
-                        aeIdList.add(alert.getAlertEventId());
-                        //iterate through categories list to find a match alertCategoryId, pull alertCategoryShortDesc & append it to alert category detail of each alert
-                        categories.forEach(alertCat -> {
-                                String tmpAlertCategoryId = Integer.toString(alertCat.getAlertCategoryId());
-                                if(tmpAlertCategoryId.equals(Integer.toString(alert.getAlertCategoryId()))){
-                                    alert.setAlertCategoryDetail(alertCat.getAlertCategoryShortDesc() + (alert.getAlertCategoryDetail() != null ? alert.getAlertCategoryDetail() : ""));
-                                }
-                            });
-                        aeList.add(alert);
-                    });
-                // Next, iterate through the alert_event_id values and fetch routes for each
-                aerList = this.getAllRoutes(aeIdList);
-                aerList.forEach(route -> {
-                        //Get direction details of each Route/Line affected based on alertEventRoutesId
-                        aerdList = this.getRoutesDirectionByID(route.getAlertEventRoutesId());
-                        List<AlertEventRoutesDirectionDTO> directions = new ArrayList<AlertEventRoutesDirectionDTO>();
-                        aerdList.forEach(direction -> {
-                                //if alert category ID is NOT 7 (Service Changes), show direction name, else don't show direction name. 
-                                direction.setDirectionAlert((aerdList.size() > 1 ? direction.getDirectionName() + ": " : "") + direction.getDirectionAlert());
-                                directions.add(this.createAlertEventRoutesDirectionDTO(direction));
-                            });
-                        
-                        //iterate through aeList list to find a match alertEventId & add object to AlertEventDTO
-                        String tmpAlertEventId = Integer.toString(route.getAlertEventId());
-                        List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>();
-                        aeList.forEach(alert -> {
-                                if(tmpAlertEventId.equals(Integer.toString(alert.getAlertEventId()))){
-                                    alerts.add(this.createAlertEventDTO(alert));
-                                }
-                            });
-                       
-                        route.setActiveAlertList(alerts);
-                        route.setRoutesDirectionList(directions);
-                        routes.add(this.createAlertEventRouteDTO(route));
-                    });
-                alertRouteDTO = new AlertRouteDTO();
-                alertRouteDTO.setRoutesList(routes);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println(ex);
-            if (em != null) {
-                em.clear();
-        
-                try {
-                    em.close();
-                } catch (Exception e) {
-                    // do nothing
-                } finally {
-                    em = null;
-                }
-            }
-        
-            if (aerList != null) {
-                aerList.clear();
-                aerList = null;
-            }
-        
-            ErrorDTO error = new ErrorDTO("500", ex.getClass().getName(), ex.getMessage());
-            alertRouteDTO.setError(error);
-        }
-    
-        return alertRouteDTO;
-    }
-
-    /*
-     * Get alert route by ID
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public AlertRouteDTO getAlertRouteByID(String masterRoute) {
-        AlertRouteDTO alertRouteDTO = null;
-        List<AlertEventRoute> aerList = null;
-        List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>();
-    
-        try {
-            // First, get active alerts for bus & rail...
-            alertList = this.getActiveAlerts();
-            if (alertList.size() == 0) {
-                ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
-                alertRouteDTO = new AlertRouteDTO(error);
-            } else {
-                //Get all alert categories & set resultset into categories list
-                acList = this.getAlertCategory();
-                List<AlertCategory> categories = new ArrayList<AlertCategory>();
-                acList.forEach(cat -> {
-                        categories.add(cat);
-                    });
-
-                List<Integer> aeIdList = new ArrayList<Integer>();
-                List<AlertEvent> aeList = new ArrayList<AlertEvent>();
-                alertList.forEach(alert -> {
-                        // iterate through the alert_event_id values & set these as arrays of integer aeIdList 
-                        aeIdList.add(alert.getAlertEventId());
-                        //iterate through categories list to find a match alertCategoryId, pull alertCategoryShortDesc & append it to alert category detail of each alert
-                        categories.forEach(alertCat -> {
-                                String tmpAlertCategoryId = Integer.toString(alertCat.getAlertCategoryId());
-                                if(tmpAlertCategoryId.equals(Integer.toString(alert.getAlertCategoryId()))){
-                                    alert.setAlertCategoryDetail(alertCat.getAlertCategoryShortDesc() + (alert.getAlertCategoryDetail() != null ? alert.getAlertCategoryDetail() : ""));
-                                }
-                            });
-                        aeList.add(alert);
-                    });
-
-                // Next, iterate through the alert_event_id values and fetch routes for each
-                aerList = this.getRouteByRouteID(aeIdList, masterRoute.toUpperCase());
-                aerList.forEach(route -> {
-                        //Get direction details of each Route/Line affected based on alertEventRoutesId
-                        aerdList = getRoutesDirectionByID(route.getAlertEventRoutesId());
-                        List<AlertEventRoutesDirectionDTO> directions = new ArrayList<AlertEventRoutesDirectionDTO>();
-                        aerdList.forEach(direction -> {
-                                //if alert category ID is NOT 7 (Service Changes), show direction name, else don't show direction name. 
-                                direction.setDirectionAlert((aerdList.size() > 1 ? direction.getDirectionName() + ": " : "") + direction.getDirectionAlert());
-                                directions.add(this.createAlertEventRoutesDirectionDTO(direction));
-                            });
-                        
-                        //iterate through aeList list to find a match alertEventId & add object to AlertEventDTO
-                        String tmpAlertEventId = Integer.toString(route.getAlertEventId());
-                        List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>();
-                        aeList.forEach(alert -> {
-                                if(tmpAlertEventId.equals(Integer.toString(alert.getAlertEventId()))){
-                                    //Iterate thru list of routes/lines affected, set the list for other routes/lines affected except the current route/line being requested
-                                    String[] alertEventRouteLnAffectedArray = alert.getAlertEventRouteLnAffected().split(",");
-                                    String otherRouteLnAffectedList = "";
-                                    for (int i = 0; i < alertEventRouteLnAffectedArray.length; i++) {
-                                        if(!route.getRouteId().equalsIgnoreCase(alertEventRouteLnAffectedArray[i])){
-                                            otherRouteLnAffectedList += (otherRouteLnAffectedList.length() > 0 ? "," : "") + alertEventRouteLnAffectedArray[i];
-                                        }  
-                                    }
-                                    alert.setOtherRouteLnAffected(otherRouteLnAffectedList);
-                                    alerts.add(this.createAlertEventDTO(alert));
-                                }
-                            });
-                        
-                        route.setActiveAlertList(alerts);
-                        route.setRoutesDirectionList(directions);
-                        routes.add(this.createAlertEventRouteDTO(route));
-                    });
-                alertRouteDTO = new AlertRouteDTO();
-                alertRouteDTO.setRoutesList(routes);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println(ex);
-            if (em != null) {
-                em.clear();
-        
-                try {
-                    em.close();
-                } catch (Exception e) {
-                    // do nothing
-                } finally {
-                    em = null;
-                }
-            }
-        
-            if (aerList != null) {
-                aerList.clear();
-                aerList = null;
-            }
-        
-            ErrorDTO error = new ErrorDTO("500", ex.getClass().getName(), ex.getMessage());
-            alertRouteDTO.setError(error);
-        }
-    
-        return alertRouteDTO;
+        return alertDTO;
     }
     
     /**
-     *  getActiveAlerts
-     *  @return List<AlertEvent>
+     * getRoutesActiveAlerts
+     * @return RouteActiveAlertEventDTO
      */
-    private List<AlertEvent> getActiveAlerts() {
-        return em.createNamedQuery("findAllActiveAlerts", AlertEvent.class)
-                 .setParameter("alertDate", java.sql.Date.valueOf(LocalDate.now())).getResultList();
+    public RouteActiveAlertEventDTO getRoutesActiveAlerts() {
+
+        RouteActiveAlertEventDTO routeActiveAlertEventDTO = null;
+        List<AlertEventRouteDTO> routeList = new ArrayList<AlertEventRouteDTO>();
+        
+        
+        List<String> routesWithActiveAlertsGroupByMasetrRouteList = this.findRoutesWithActiveAlertsGroupByMasterRoute();
+
+
+        if (routesWithActiveAlertsGroupByMasetrRouteList.isEmpty()) {
+            ErrorDTO error = new ErrorDTO("404", "No records found", "No routes with active alerts were found.");
+            routeActiveAlertEventDTO = new RouteActiveAlertEventDTO(error);
+        } else {
+            routeActiveAlertEventDTO = new RouteActiveAlertEventDTO();
+            routesWithActiveAlertsGroupByMasetrRouteList.forEach(masterRoute -> {
+
+                List<AlertEventRoute> routeWithAlerts = this.findRouteWithActiveAlertsByMasterRoute(masterRoute);
+                List<AlertEventDTO> alertEventsDTO = new ArrayList<AlertEventDTO>();
+
+
+                AlertEventRouteDTO alertEventRouteDTO = new AlertEventRouteDTO();
+
+                routeWithAlerts.forEach(route -> {
+                    AlertEventDTO alert = this.createAlertEventDTO(route.getAlertEvent());
+                    alertEventRouteDTO.setDTOValues(this.createAlertEventRouteDTO(route));
+                    // get direction
+                    List<AlertEventRouteDirectionDTO> directions =
+                        new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
+                    route.getAlertRoutesDirection()
+                        .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
+                    alert.setRoutesDirectionList(directions);
+                    alertEventsDTO.add(alert);
+                });
+
+                alertEventRouteDTO.setActiveAlertList(alertEventsDTO);
+
+                routeList.add(alertEventRouteDTO);
+            });
+
+
+        }
+
+
+        routeActiveAlertEventDTO.setRoutesList(routeList);
+
+        return routeActiveAlertEventDTO;
     }
 
     /**
-     *  getActiveStationPNRAlerts
+     * getAlertEventRouteByMasterRoute
+     * @param masterRoute String
+     * @return AlertEventRouteDTO
+     */
+    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(String masterRoute) {
+        AlertEventRouteDTO alertEventRouteDTO = null;
+        List<AlertEventRoute> alertEventRouteList = null;
+
+        // get active alerts for specific master route
+        alertEventRouteList = this.findRouteWithActiveAlertsByMasterRoute(masterRoute);
+
+        if (alertEventRouteList.isEmpty()) {
+            ErrorDTO error = new ErrorDTO("404", "No record found", "Route " + masterRoute + " not found.");
+            alertEventRouteDTO = new AlertEventRouteDTO(error);
+        } else {
+            // get route info from 1st record
+            alertEventRouteDTO = this.createAlertEventRouteDTO(alertEventRouteList.get(0));
+            List<AlertEventDTO> alerts = new ArrayList<AlertEventDTO>(alertEventRouteList.size());
+            alertEventRouteList.forEach(route -> {
+                AlertEventDTO alert = this.createAlertEventDTO(route.getAlertEvent());
+
+                // get direction
+                List<AlertEventRouteDirectionDTO> directions =
+                    new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
+                route.getAlertRoutesDirection()
+                    .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
+
+                alert.setRoutesDirectionList(directions);
+                alerts.add(alert);
+
+            });
+
+            alertEventRouteDTO.setActiveAlertList(alerts);
+        }
+
+        return alertEventRouteDTO;
+    }
+
+    /**
+     *  findActiveEventAlerts
      *  @return List<AlertEvent>
      */
-    private List<AlertEvent> getActiveStationPNRAlerts() {
-        return em.createNamedQuery("findAllActiveStationPNRAlerts", AlertEvent.class)
+    private List<AlertEvent> findActiveEventAlerts() {
+        return em.createNamedQuery("findActiveEventAlerts", AlertEvent.class)
                  .setParameter("alertDate", java.sql
                                                 .Date
                                                 .valueOf(LocalDate.now()))
@@ -435,96 +252,75 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
     }
 
     /**
-     *  getAlertByID
-     *  @param String alertEventId
+     *  findStationsWithActiveEventAlerts
      *  @return List<AlertEvent>
      */
-    private List<AlertEvent> getAlertByID(int alertEventId) {
-        return em.createNamedQuery("findActiveAlertByID", AlertEvent.class)
-                 .setParameter("alertDate", java.sql.Date.valueOf(LocalDate.now()))
-                 .setParameter("alertEventId", alertEventId).getResultList();
-    }
-    
-    /**
-     *  getAllRoutes
-     *  @param List alertEventIDList
-     *  @return List<AlertEventRoute>
-     */
-    private List<AlertEventRoute> getAllRoutes(List<Integer> alertEventIDList) {
-        return em.createNamedQuery("findAllRoutes", AlertEventRoute.class)
-               .setParameter("alertEventIDList", alertEventIDList).getResultList();
-    }
-    
-    /**
-     *  getRouteByRouteID
-     *  @param List alertEventIDList
-     *  @param String masterRoute
-     *  @return List<AlertEventRoute>
-     */
-    private List<AlertEventRoute> getRouteByRouteID(List<Integer> alertEventIDList, String masterRoute) {
-        return em.createNamedQuery("findRouteByRouteID", AlertEventRoute.class)
-               .setParameter("alertEventIDList", alertEventIDList)
-               .setParameter("masterRoute", masterRoute).getResultList();
-    }
-    
-    /**
-     *  getRouteByAlertEventID
-     *  @param int alertEventId
-     *  @return List<AlertEventRoute>
-     */
-    private List<AlertEventRoute> getRouteByAlertEventID(int alertEventId) {
-        return em.createNamedQuery("findRouteByAlertEventID", AlertEventRoute.class)
-               .setParameter("alertEventId", alertEventId).getResultList();
-    }
-
-    /**
-     *  getRoutesDirectionByID
-     *  @param List<Integer> alertEventRoutesId
-     *  @return List<AlertEventRoutesDirection>
-     */
-    private List<AlertEventRoutesDirection> getRoutesDirectionByID(int alertEventRoutesId) {
-        return em.createNamedQuery("findRoutesDirectionByID", AlertEventRoutesDirection.class)
-                 .setParameter("alertEventRoutesId", alertEventRoutesId).getResultList();
-    }
-    
-    /**
-     *  getAlertCategoryByID
-     *  @param int alertCategoryId
-     *  @return List<AlertCategory>
-     */
-    private List<AlertCategory> getAlertCategoryByID(int alertCategoryId) {
-        return em.createNamedQuery("findAlertCategoryByID", AlertCategory.class)
-                 .setParameter("alertCategoryId", alertCategoryId).getResultList();
-    }
-    
-    /**
-     *  getAlertCategory
-     *  @return List<AlertCategory>
-     */
-    private List<AlertCategory> getAlertCategory() {
-        return em.createNamedQuery("findAlertCategories", AlertCategory.class).getResultList();
-    }  
-
-    /**
-     *  getActiveAlerts
-     *  @param int year
-     *  @param int month
-     *  @param int day
-     *  @return List<AlertEvent>
-     */
-    private List<AlertEvent> getActiveAlerts(int year, int month, int day) throws Exception {
-        return em.createNamedQuery("findAllActiveAlerts", AlertEvent.class)
+    private List<AlertEvent> findStationsWithActiveEventAlerts() {
+        return em.createNamedQuery("findActiveStationsWithActiveEventtAlerts", AlertEvent.class)
                  .setParameter("alertDate", java.sql
                                                 .Date
-                                                .valueOf(LocalDate.of(year, month, day)))
+                                                .valueOf(LocalDate.now()))
                  .getResultList();
     }
 
+    /**
+     *  findAlertEventById
+     *  @param int alertEventId
+     *  @return AlertEvent
+     */
+    private AlertEvent findAlertEventById(int alertEventId) {
+        return em.find(AlertEvent.class, alertEventId);
+    }
+
+    /**
+     *  findRouteWithActiveAlertsByMasterRoute
+     *  @param String masterRoute
+     *  @return List<AlertEventRoute>
+     */
+    private List<AlertEventRoute> findRouteWithActiveAlertsByMasterRoute(String masterRoute) {
+        return em.createNamedQuery("findRouteWithActiveAlertsByMasterRoute", AlertEventRoute.class)
+                 .setParameter("masterRoute", masterRoute)
+                 .setParameter("alertDate", java.sql
+                                                .Date
+                                                .valueOf(LocalDate.now()))
+                 .getResultList();
+    }
+
+    /**
+     *  findRoutesWithActiveAlerts
+     *  @return List<AlertEventRoute>
+     */
+    private List<AlertEventRoute> findRoutesWithActiveAlerts() {
+        return em.createNamedQuery("findRoutesWithActiveAlerts", AlertEventRoute.class)
+                 .setParameter("alertDate", java.sql
+                                                .Date
+                                                .valueOf(LocalDate.now()))
+                 .getResultList();
+    }
+
+    /**
+     *  findRoutesWithActiveEventAlertsGroupByMasetrRoute
+     *  @return List<AlertEventRoute>
+     */
+    private List findRoutesWithActiveAlertsGroupByMasterRoute() {
+        TypedQuery query =
+            em.createQuery("SELECT o.masterRoute from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate GROUP BY o.masterRoute",
+                           java.lang.String.class);
+        query.setParameter("alertDate", java.sql
+                                            .Date
+                                            .valueOf(LocalDate.now()));
+        return query.getResultList();
+    }
+
+   /**
+     * createAlertEventDTO
+     * @param alert AlertEvent
+     * @return AlertEventDTO
+     */
     private AlertEventDTO createAlertEventDTO(AlertEvent alert) {
         return new AlertEventDTO.Builder().alertEventId(alert.getAlertEventId())
-                                          .alertType(alert.getAlertType())
-                                          .alertCategory(alert.getAlertCategory())
-                                          .alertCategoryDetail(alert.getAlertCategoryDetail())
+                                          .alertType(alert.getCustomAlertType())
+                                          .alertCategoryDetail(alert.getCustomAlertCategoryDetail())
                                           .alertEventRouteLnAffected(alert.getAlertEventRouteLnAffected())
                                           .alertEventStartDate(alert.getAlertEventStartDate())
                                           .alertEventEndDate(alert.getAlertEventEndDate())
@@ -533,23 +329,37 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                                           .otherRouteLnAffected(alert.getOtherRouteLnAffected())
                                           .build();
     }
-    
+
+    /**
+     * createAlertEventRouteDTO
+     * @param alertRoute AlertEventRoute
+     * @return AlertEventRouteDTO
+     */
     private AlertEventRouteDTO createAlertEventRouteDTO(AlertEventRoute alertRoute) {
-            return new AlertEventRouteDTO.Builder().alertEventId(alertRoute.getAlertEventId())
-                                                   .alertEventRoutesId(alertRoute.getAlertEventRoutesId())
-                                                   .masterRoute(alertRoute.getMasterRoute())
-                                                   .routeId(alertRoute.getRouteId())
-                                                   .routeType(alertRoute.getRouteType())
-                                                   .routesDirectionList(alertRoute.getRoutesDirectionList())
-                                                   .activeAlertList(alertRoute.getActiveAlertList())
-                                                   .build();
+        return new AlertEventRouteDTO.Builder()
+               .masterRoute(alertRoute.getMasterRoute())
+               .routeId(alertRoute.getRouteId())
+               .routeType(alertRoute.getCustomRouteType())
+               .build();
     }
-    
-    private AlertEventRoutesDirectionDTO createAlertEventRoutesDirectionDTO(AlertEventRoutesDirection alertRouteDirection) {
-            return new AlertEventRoutesDirectionDTO.Builder().directionAlert(alertRouteDirection.getDirectionAlert()).build();
+
+    /**
+     * createAlertEventRoutesDirectionDTO
+     * @param alertRouteDirection AlertEventRouteDirection
+     * @return AlertEventRouteDirectionDTO
+     */
+    private AlertEventRouteDirectionDTO createAlertEventRoutesDirectionDTO(AlertEventRouteDirection alertRouteDirection) {
+        return new AlertEventRouteDirectionDTO.Builder().directionAlert(alertRouteDirection.getCustomDirectionAlert())
+               .build();
     }
-    
-    private AlertCategoryDTO createAlertCategoryDTO(AlertCategory alertCategory) {
-        return new AlertCategoryDTO.Builder().alertCategoryShortDesc(alertCategory.getAlertCategoryShortDesc()).build();
+
+    /**
+     * AlertEventCategoryDTO
+     * @param alertCategory AlertEventCategory
+     * @return AlertEventCategoryDTO
+     */
+    private AlertEventCategoryDTO createAlertCategoryDTO(AlertEventCategory alertCategory) {
+        return new AlertEventCategoryDTO.Builder().alertCategoryShortDesc(alertCategory.getAlertCategoryShortDesc())
+               .build();
     }
 }

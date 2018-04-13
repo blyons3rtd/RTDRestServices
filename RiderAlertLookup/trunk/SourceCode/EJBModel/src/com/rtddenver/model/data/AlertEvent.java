@@ -1,6 +1,5 @@
 package com.rtddenver.model.data;
 
-import com.rtddenver.model.dto.AlertCategoryDTO;
 import com.rtddenver.model.dto.AlertEventRouteDTO;
 
 import java.io.Serializable;
@@ -13,14 +12,19 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.PostLoad;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.eclipse.persistence.annotations.ReadOnly;
 
 //***********************************************************
 /* Description:
@@ -31,20 +35,14 @@ import javax.persistence.Transient;
 */
 //***********************************************************
 @Entity
+@ReadOnly
 @NamedQueries({ 
                 //Get active alerts for bus & rail
-                @NamedQuery(name = "findAllActiveAlerts",
+                @NamedQuery(name = "findActiveEventAlerts",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 1 " + 
                             "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventStartDate DESC"),
-                //Get active alert by ID
-                @NamedQuery(name = "findActiveAlertByID",
-                            query =
-                            "select o from AlertEvent o WHERE o.alertTypeId = 1 " +
-                            "AND o.alertEventId = :alertEventId AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate " +
-                            "ORDER BY o.alertEventStartDate DESC"),
-                //Get active alerts for Station/PNR
-                @NamedQuery(name = "findAllActiveStationPNRAlerts",
+                @NamedQuery(name = "findActiveStationsWithActiveEventtAlerts",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 3 " +
                             "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventStartDate DESC")
@@ -52,6 +50,9 @@ import javax.persistence.Transient;
 @Table(name = "ALERT_EVENTS", schema = "SCHEDLS")
 public class AlertEvent implements Serializable {
     private static final long serialVersionUID = -6202385501726449589L;
+    @Id
+    @Column(name = "ALERT_EVENT_ID")
+    private int alertEventId = 0;
     @Column(name = "ALERT_CATEGORY_DETAIL")
     private String alertCategoryDetail = null;
     @Column(name = "ALERT_CATEGORY_ID")
@@ -66,9 +67,6 @@ public class AlertEvent implements Serializable {
     private String alertEventEndDate = null;
     @Column(name = "ALERT_EVENT_END_TIME_TYPE")
     private int alertEventEndTimeType = 0;
-    @Id
-    @Column(name = "ALERT_EVENT_ID")
-    private int alertEventId = 0;
     @Column(name = "ALERT_EVENT_INFO")
     private String alertEventInfo = null;
     @Column(name = "ALERT_EVENT_ROUTE_LN_AFFECTED")
@@ -79,15 +77,23 @@ public class AlertEvent implements Serializable {
     private int alertEventStartTimeType;
     @Column(name = "ALERT_TYPE_ID")
     private int alertTypeId = 0;
+    
+    @OneToOne (fetch=FetchType.LAZY)
+    @JoinColumn(name="ALERT_CATEGORY_ID", insertable=false, updatable=false)
+    private AlertEventCategory alertCategory;
+    @OneToMany (fetch=FetchType.LAZY)
+    @JoinColumn(name="ALERT_EVENT_ID", insertable=false, updatable=false)
+    private List<AlertEventRoute> alertEventRoutes;
+
     @Transient
-    private String alertType;
+    private String customAlertType;
     @Transient
-    private List<AlertCategoryDTO> alertCategory;
+    private String customAlertCategoryDetail;
     @Transient
     private List<AlertEventRouteDTO> alertRoutesList;
     @Transient
     private String otherRouteLnAffected;
-
+    
     /**
      * AlertEvent
      */
@@ -100,32 +106,23 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertCategoryDetail() {
-        switch(this.alertTypeId){
-            case 3:
-                switch(this.alertCategoryId){
-                    case 1:
-                        alertCategoryDetail = "Elevator outage at " + this.alertCategoryDetail;
-                        break;
-                    default:
-                        alertCategoryDetail = this.alertCategoryDetail;
-                }
-                break;
-            default:
-                alertCategoryDetail = this.alertCategoryDetail;
-        }
         return alertCategoryDetail;
     }
-    
+
+    /**
+     * setAlertCategoryDetail
+     * @param alertCategoryDetail String
+     */
     public void setAlertCategoryDetail(String alertCategoryDetail) {
         this.alertCategoryDetail = alertCategoryDetail;
     }
 
     /**
-     * getAlertCategoryId
-     * @return int
+     * getAlertCategory
+     * @return AlertCategory
      */
-    public int getAlertCategoryId() {
-        return alertCategoryId;
+    public AlertEventCategory getAlertCategory() {
+        return this.alertCategory;
     }
 
     /**
@@ -133,7 +130,7 @@ public class AlertEvent implements Serializable {
      * @return Date
      */
     public Date getAlertEventEffEndDate() {
-        return alertEventEffEndDate;
+        return this.alertEventEffEndDate;
     }
 
     /**
@@ -141,7 +138,7 @@ public class AlertEvent implements Serializable {
      * @return Date
      */
     public Date getAlertEventEffStartDate() {
-        return alertEventEffStartDate;
+        return this.alertEventEffStartDate;
     }
 
     /**
@@ -149,7 +146,7 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertEventEndDate() {
-        return parseDate(alertEventEndDate, alertEventEndTimeType);
+        return this.parseDate(alertEventEndDate, alertEventEndTimeType);
     }
 
     /**
@@ -157,7 +154,7 @@ public class AlertEvent implements Serializable {
      * @return int
      */
     public int getAlertEventEndTimeType() {
-        return alertEventEndTimeType;
+        return this.alertEventEndTimeType;
     }
 
     /**
@@ -165,7 +162,7 @@ public class AlertEvent implements Serializable {
      * @return int
      */
     public int getAlertEventId() {
-        return alertEventId;
+        return this.alertEventId;
     }
 
     /**
@@ -173,7 +170,7 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertEventInfo() {
-        return alertEventInfo;
+        return this.alertEventInfo;
     }
 
     /**
@@ -181,7 +178,7 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertEventRouteLnAffected() {
-        return alertEventRouteLnAffected;
+        return this.alertEventRouteLnAffected;
     }
     
     /**
@@ -189,7 +186,7 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String getAlertEventStartDate() {
-        return parseDate(alertEventStartDate, alertEventStartTimeType);
+        return this.parseDate(alertEventStartDate, alertEventStartTimeType);
     }
     
     /**
@@ -240,52 +237,41 @@ public class AlertEvent implements Serializable {
     public int getAlertTypeId() {
         return alertTypeId;
     }
-    @PostLoad
-    public void findAlertType() {
-        switch(this.alertTypeId){
-            case 1:
-                alertType = "Rider Alert"; 
-                break;
-            case 3:
-                alertType = "Station/Park-n-Ride"; 
-                break;
-            default:
-                alertType = Integer.toString(this.alertTypeId);
-        }
-    }
     
     /**
-     * getAlertType
+     * getCustomAlertType
      * @return String
      */
-    public String getAlertType() {
-        return alertType;
+    public String getCustomAlertType() {
+        switch(this.alertTypeId){
+            case 1:
+                this.customAlertType = "Rider Alert"; 
+                break;
+            case 3:
+                this.customAlertType = "Station/Park-n-Ride"; 
+                break;
+            default:
+                this.customAlertType = Integer.toString(this.alertTypeId);
+        }
+        return this.customAlertType;
     }
 
     /**
      * getAlertRoutesList
-     * @return List
+     * @return List<AlertEventRouteDTO>
      */
     public List<AlertEventRouteDTO> getAlertRoutesList() {
         return alertRoutesList;
     }
     
+    /**
+     * setAlertRoutesLis
+     * @param alertRoutesList List<AlertEventRouteDTO>
+     */
     public void setAlertRoutesList(List<AlertEventRouteDTO> alertRoutesList) {
         this.alertRoutesList = alertRoutesList;
     }
     
-    /**
-     * getAlertCategory
-     * @return List
-     */
-    public List<AlertCategoryDTO> getAlertCategory() {
-        return alertCategory;
-    }
-    
-    public void setAlertCategory(List<AlertCategoryDTO> alertCategory) {
-        this.alertCategory = alertCategory;
-    }
-
     /**
      * getOtherRouteLnAffected
      * @return String
@@ -294,7 +280,53 @@ public class AlertEvent implements Serializable {
         return otherRouteLnAffected;
     }
 
+    /**
+     * setOtherRouteLnAffected
+     * @param otherRouteLnAffected String
+     */
     public void setOtherRouteLnAffected(String otherRouteLnAffected) {
         this.otherRouteLnAffected = otherRouteLnAffected;
+    }
+
+    /**
+     * getCustomAlertCategoryDetail
+     * @return String
+     */
+    public String getCustomAlertCategoryDetail() {
+        switch(this.alertTypeId){
+            case 1:
+            this.customAlertCategoryDetail =  this.alertCategory.getAlertCategoryShortDesc() + (this.alertCategoryDetail != null ? this.alertCategoryDetail : "");
+            
+            break;
+            case 3:
+                switch(this.alertCategory.getAlertCategoryId()){
+                    case 1:
+                        this.customAlertCategoryDetail = "Elevator outage at " + this.alertCategoryDetail;
+                        break;
+                    default:
+                        this.customAlertCategoryDetail = this.alertCategoryDetail;
+                }
+                break;
+            default:
+                this.customAlertCategoryDetail = this.alertCategoryDetail;
+        }
+        
+        return this.customAlertCategoryDetail;
+    }
+    
+    /**
+     * getAlertEventRoutes
+     * @return List<AlertEventRoute>
+     */
+    public List<AlertEventRoute> getAlertEventRoutes() {
+        return this.alertEventRoutes;
+    }
+
+    /**
+     * getAlertCategoryId
+     * @return int
+     */
+    public int getAlertCategoryId() {
+        return this.alertCategoryId;
     }
 }

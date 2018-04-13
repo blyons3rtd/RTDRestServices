@@ -10,6 +10,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.ReadOnly;
+
 //***********************************************************
 /* Description:
 /*
@@ -19,11 +21,14 @@ import javax.persistence.Table;
 */
 //***********************************************************
 @Entity
-@NamedQueries({ @NamedQuery(name = "findAlertCategories", query = "select o from AlertCategory o order by o.alertCategoryId"), 
-                @NamedQuery(name = "findAlertCategoryByID", query = "select o from AlertCategory o where o.alertCategoryId = :alertCategoryId")
+@ReadOnly
+@NamedQueries({ @NamedQuery(name = "findAlertCategories",
+                            query = "select o from AlertEventCategory o order by o.alertCategoryId"), 
+                @NamedQuery(name = "findAlertEventCategoryByID",
+                            query = "select o from AlertEventCategory o where o.alertCategoryId = :alertCategoryId")
                 })
 @Table(name = "ALERT_CATEGORY", schema = "SCHEDLS")
-public class AlertCategory implements Serializable {
+public class AlertEventCategory implements Serializable {
     private static final long serialVersionUID = -6710120066645450643L;
     @Id
     @Column(name = "ALERT_CATEGORY_ID", nullable = false)
@@ -34,7 +39,7 @@ public class AlertCategory implements Serializable {
     /**
      * AlertCategory
      */
-    public AlertCategory() {
+    public AlertEventCategory() {
         super();
     }
 
@@ -46,6 +51,9 @@ public class AlertCategory implements Serializable {
         return alertCategoryId;
     }
     
+    /**
+     * findAlertCategory
+     */
     @PostLoad
     public void findAlertCategory() {
         switch(this.alertCategoryId){

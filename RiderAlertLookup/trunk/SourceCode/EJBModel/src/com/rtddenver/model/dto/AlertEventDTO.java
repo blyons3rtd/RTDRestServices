@@ -1,17 +1,25 @@
 package com.rtddenver.model.dto;
 
 import java.io.Serializable;
+
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 
+//***********************************************************
+/* Description:
+/*
+/*
+/* @author Van Tran
+/* @version 1.0, 2/28/2018
+*/
+//***********************************************************
 public class AlertEventDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "alertEventId")
     private int alertEventId = 0;
     @XmlElement(name = "alertType")
-    private String alertType = null;
-    @XmlElement(name = "alertCategory")
-    private List<AlertCategoryDTO> alertCategory;
+    private String alertType;
     @XmlElement(name = "alertCategoryDetail")
     private String alertCategoryDetail = null;
     @XmlElement(name = "alertEventRouteLnAffected")
@@ -26,7 +34,12 @@ public class AlertEventDTO implements Serializable {
     private List<AlertEventRouteDTO> alertRoutesList;
     @XmlElement(name = "otherRouteLnAffected")
     private String otherRouteLnAffected;
-    
+    @XmlElement(name = "Error")
+    private ErrorDTO error = null;
+    @XmlElement(name = "routesDirectionList")
+    private List<AlertEventRouteDirectionDTO> routesDirectionList;
+
+   
     /**
      * AlertEventDTO
      */
@@ -36,12 +49,19 @@ public class AlertEventDTO implements Serializable {
 
     /**
      * AlertEventDTO
-     * @param Builder builder
+     * @param error ErrorDTO 
+     */
+    public AlertEventDTO(ErrorDTO error) {
+        this.error = error;
+    }
+
+    /**
+     * AlertEventDTO
+     * @param builder Builder
      */
     public AlertEventDTO(Builder builder) {
         this.alertEventId = builder.alertEventId;
         this.alertType = builder.alertType;
-        this.alertCategory = builder.alertCategory;
         this.alertCategoryDetail = builder.alertCategoryDetail;
         this.alertEventRouteLnAffected = builder.alertEventRouteLnAffected;
         this.alertEventStartDate = builder.alertEventStartDate;
@@ -51,11 +71,38 @@ public class AlertEventDTO implements Serializable {
         this.otherRouteLnAffected = builder.otherRouteLnAffected;
     }
 
+    /**
+     * setAlertRoutesList
+     * @param alertRoutesList List<AlertEventRouteDTO>
+     */
+    public void setAlertRoutesList(List<AlertEventRouteDTO> alertRoutesList) {
+        this.alertRoutesList = alertRoutesList;
+    }
+
+    /**
+     * setRoutesDirectionList
+     * @param routesDirectionList List<AlertEventRouteDirectionDTO>
+     */
+    public void setRoutesDirectionList(List<AlertEventRouteDirectionDTO> routesDirectionList) {
+        this.routesDirectionList = routesDirectionList;
+    }
+
+    /**
+     * getRoutesDirectionList
+     * @return List<AlertEventRouteDirectionDTO>
+     */
+    public List<AlertEventRouteDirectionDTO> getRoutesDirectionList() {
+        return this.routesDirectionList;
+    }
+
+    /**
+     * Builder
+     */
     public static class Builder {
         private static final long serialVersionUID = 1L;
         private int alertEventId = 0;
         private String alertType = null;
-        private List<AlertCategoryDTO> alertCategory;
+        private String alertCategory = null;
         private String alertCategoryDetail = null;
         private String alertEventRouteLnAffected = null;
         private String alertEventStartDate = null;
@@ -77,7 +124,7 @@ public class AlertEventDTO implements Serializable {
             return this;
         }
         
-        public Builder alertCategory(List<AlertCategoryDTO> alertCategory) {
+        public Builder alertCategory(String alertCategory) {
             this.alertCategory = alertCategory;
             return this;
         }

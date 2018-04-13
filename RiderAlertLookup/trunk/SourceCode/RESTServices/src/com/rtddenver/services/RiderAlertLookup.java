@@ -1,10 +1,11 @@
 package com.rtddenver.services;
 
-import com.rtddenver.model.dto.ActiveAlertDTO;
-import com.rtddenver.model.dto.AlertRouteDTO;
+import com.rtddenver.model.dto.ActiveAlertEventDTO;
+import com.rtddenver.model.dto.AlertEventDTO;
+import com.rtddenver.model.dto.AlertEventRouteDTO;
+import com.rtddenver.model.dto.RouteActiveAlertEventDTO;
 import com.rtddenver.service.RiderAlertServiceLocal;
 
-import com.rtddenver.service.RouteServiceLocal;
 import javax.ejb.EJB;
 
 import javax.ws.rs.Encoded;
@@ -22,11 +23,6 @@ public class RiderAlertLookup {
          beanName = "EJBModel.jar#RiderAlertService")
     private RiderAlertServiceLocal riderAlertService;
 
-    @EJB(name = "RouteService", beanInterface = com.rtddenver.service.RouteServiceLocal.class,
-         beanName = "EJBModel.jar#RouteService")
-    private RouteServiceLocal geocoderService;
-
-    String strSlash = "/";
     
     /**
      * RiderAlertLookup
@@ -36,71 +32,46 @@ public class RiderAlertLookup {
     }
 
     /**
-     * Get all active alerts
-     * @return
+     * getActiveAlertEventList
+     * @return ActiveAlertEventDTO
      */
     @GET
     @Produces("application/json")
     @Path("alerts")
-    public ActiveAlertDTO getActiveAlerts() {
-        ActiveAlertDTO aa = null;
-        try{
-            aa = this.riderAlertService.getActiveAlertList();
-        }catch(Exception ex){
-            System.out.println("Exception returned from RiderAlertLookup() > getActiveAlerts(): " + ex); 
-        }
-        return aa;
+    public ActiveAlertEventDTO getActiveAlertEventList() {
+        return this.riderAlertService.getActiveAlertEventList();
     }
     
     /**
-     * Get active alert by ID
-     * @return
+     * getAlertEventById
+     * @return AlertEventDTO
      */
-    @GET
+    @GET 
     @Produces("application/json")
     @Path("alerts/{alertEventId}")
-    public ActiveAlertDTO getAlertByID(@Encoded @PathParam("alertEventId") String alertEventId) {
-        ActiveAlertDTO ae = null;
-        try{
-            //System.out.println("alertEventId: " + alertEventId) ;
-            ae = this.riderAlertService.getActiveAlertByID(alertEventId);
-        }catch (Exception ex){
-            System.out.println("Exception returned from RiderAlertLookup() > getAlertByID(): " + ex);
-        }
-        return ae;
+    public AlertEventDTO getAlertEventById(@Encoded @PathParam("alertEventId") Integer alertEventId) {
+        return this.riderAlertService.getAlertEventById(alertEventId);
     }
     
     /**
-     * Get all routes associated to active alerts
-     * @return
+     * getRoutesWithActiveAlerts
+     * @return RouteActiveAlertEventDTO
      */
     @GET
     @Produces("application/json")
     @Path("routes")
-    public AlertRouteDTO getActiveAlertRoutes() {
-        AlertRouteDTO ar = null;
-        try{
-            ar = this.riderAlertService.getActiveAlertRoutes();
-        }catch(Exception ex){
-            System.out.println("Exception returned from RiderAlertLookup() > getActiveAlertRoutes(): " + ex); 
-        }
-        return ar;
+    public RouteActiveAlertEventDTO getRoutesWithActiveAlerts() {
+        return this.riderAlertService.getRoutesActiveAlerts();
     }
     
     /**
-     * Get alert route by ID
-     * @return
+     * getAlertEventRouteByID
+     * @return AlertRouteDTO
      */
     @GET
     @Produces("application/json")
     @Path("routes/{masterRoute}")
-    public AlertRouteDTO getAlertRouteByID(@Encoded @PathParam("masterRoute") String masterRoute) {
-        AlertRouteDTO ar = null;
-        try{
-            ar = this.riderAlertService.getAlertRouteByID(masterRoute);
-        }catch(Exception ex){
-            System.out.println("Exception returned from RiderAlertLookup() > getAlertRouteByID(): " + ex); 
-        }
-        return ar;
+    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(@Encoded @PathParam("masterRoute") String masterRoute) {
+        return this.riderAlertService.getAlertEventRouteByMasterRoute(masterRoute);
     }
 }
