@@ -34,11 +34,11 @@ import org.eclipse.persistence.annotations.ReadOnly;
 @Table(name = "ALERT_EVENT_ROUTES_DIRECTION", schema = "SCHEDLS")
 public class AlertEventRouteDirection implements Serializable {
     private static final long serialVersionUID = 7733162965875549370L;
+    @Id
     @Column(name = "ALERT_EVENT_ROUTES_ID", nullable = false)
     private int alertEventRoutesId;
     @Column(name = "DIRECTION_ALERT")
     private String directionAlert;
-    @Id
     @Column(name = "DIRECTION_ID", nullable = false)
     private BigDecimal directionId;
     @Column(name = "DIRECTION_NAME", nullable = false, length = 30)

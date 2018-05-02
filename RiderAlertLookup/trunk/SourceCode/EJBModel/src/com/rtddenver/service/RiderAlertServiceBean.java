@@ -131,14 +131,13 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             alertDTO = this.createAlertEventDTO(alert);
             List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>(alert.getAlertEventRoutes().size());
             alert.getAlertEventRoutes().forEach(route -> {
-                List<AlertEventRouteDirectionDTO> directions =
-                    new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
-                route.getAlertRoutesDirection()
-                    .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
+                List<AlertEventRouteDirectionDTO> directions = new ArrayList<AlertEventRouteDirectionDTO>();
+                route.getAlertRoutesDirection().forEach(direction -> { 
+                    directions.add(this.createAlertEventRoutesDirectionDTO(direction)); 
+                });
                 AlertEventRouteDTO routeDTO = this.createAlertEventRouteDTO(route);
                 routeDTO.setRoutesDirectionList(directions);
                 routes.add(routeDTO);
-                ;
             });
 
             // stations are not tied to a route, so the list will be blank
