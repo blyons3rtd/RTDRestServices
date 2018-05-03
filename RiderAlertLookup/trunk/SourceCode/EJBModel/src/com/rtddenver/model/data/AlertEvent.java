@@ -93,6 +93,8 @@ public class AlertEvent implements Serializable {
     private List<AlertEventRouteDTO> alertRoutesList;
     @Transient
     private String otherRouteLnAffected;
+    @Transient
+    private String customAlertCategoryShortDesc;
     
     /**
      * AlertEvent
@@ -295,7 +297,7 @@ public class AlertEvent implements Serializable {
     public String getCustomAlertCategoryDetail() {
         switch(this.alertTypeId){
             case 1:
-            this.customAlertCategoryDetail =  this.alertCategory.getAlertCategoryShortDesc() + (this.alertCategoryDetail != null ? this.alertCategoryDetail : "");
+            this.customAlertCategoryDetail =  this.getCustomAlertCategoryShortDesc() + (this.alertCategoryDetail != null ? this.alertCategoryDetail : "");
             
             break;
             case 3:
@@ -328,5 +330,26 @@ public class AlertEvent implements Serializable {
      */
     public int getAlertCategoryId() {
         return this.alertCategoryId;
+    }
+    
+    /**
+     * getCustomAlertCategoryShortDesc
+     * @return String
+     */
+    public String getCustomAlertCategoryShortDesc() {
+        switch(this.alertCategoryId){
+            case 2:
+            case 6:
+                customAlertCategoryShortDesc = this.alertCategory.getAlertCategoryShortDesc() + " for ";
+                break;
+            case 8:
+            case 7:
+                customAlertCategoryShortDesc = "";
+                break;
+            default:
+                customAlertCategoryShortDesc = this.alertCategory.getAlertCategoryShortDesc();
+        }
+        
+        return customAlertCategoryShortDesc;
     }
 }

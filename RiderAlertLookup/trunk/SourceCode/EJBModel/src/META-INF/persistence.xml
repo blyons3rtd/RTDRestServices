@@ -21,9 +21,9 @@
       <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@//et0101-vip.rtd-denver.com:5421/ecore01d"/>
       <property name="javax.persistence.jdbc.user" value="schedls_web"/>
       <property name="javax.persistence.jdbc.password" value="6C8A894C68FA59538338775B9F0C6434"/>
-      -->
       <property name="eclipselink.logging.level" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
+      -->
     </properties>
   </persistence-unit>
 </persistence>

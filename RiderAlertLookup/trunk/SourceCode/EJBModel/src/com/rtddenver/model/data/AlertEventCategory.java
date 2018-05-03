@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.PostLoad;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.ReadOnly;
@@ -49,25 +48,6 @@ public class AlertEventCategory implements Serializable {
      */
     public int getAlertCategoryId() {
         return alertCategoryId;
-    }
-    
-    /**
-     * findAlertCategory
-     */
-    @PostLoad
-    public void findAlertCategory() {
-        switch(this.alertCategoryId){
-            case 2:
-            case 6:
-                alertCategoryShortDesc = this.alertCategoryShortDesc + " for ";
-                break;
-            case 8:
-            case 7:
-                alertCategoryShortDesc = "";
-                break;
-            default:
-                alertCategoryShortDesc = this.alertCategoryShortDesc;
-        }
     }
 
     /**
