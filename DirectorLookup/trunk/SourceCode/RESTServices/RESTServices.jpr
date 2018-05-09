@@ -306,7 +306,7 @@
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
-            <value n="id" v="Spring.jar"/>
+            <value n="id" v="RtdLog4j.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
@@ -332,11 +332,11 @@
             </hash>
             <hash>
                <list n="classPath">
-                  <url path="../lib/spring.jar" jar-entry=""/>
+                  <url path="../lib/rtdLog4j.jar" jar-entry=""/>
                </list>
                <value n="deployedByDefault" v="true"/>
-               <value n="description" v="Spring.jar"/>
-               <value n="id" v="Spring.jar"/>
+               <value n="description" v="RtdLog4j.jar"/>
+               <value n="id" v="RtdLog4j.jar"/>
                <value n="locked" v="true"/>
             </hash>
          </list>
@@ -371,7 +371,7 @@
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
-            <value n="id" v="Spring.jar"/>
+            <value n="id" v="RtdLog4j.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>

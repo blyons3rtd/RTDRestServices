@@ -324,6 +324,14 @@
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
     </target>
+    <target name="useTestWSDL">
+        <echo>Copying Test version of whoismydirector.wsdl into META-INF...</echo>
+        <copy file="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl.test" tofile="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl" overwrite="true"></copy>
+    </target>
+    <target name="useProdWSDL">
+        <echo>Copying Prod version of whoismydirector.wsdl into META-INF...</echo>
+        <copy file="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl.prod" tofile="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl" overwrite="true"></copy>
+    </target>
     <!-- 
     Prompt user for override of existing file 
     -->
@@ -480,15 +488,15 @@
     <macrodef name="load.version.info">
         <sequential>
             <property file="${version.file}"/>
-            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" format="CHECKSUM"/>
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" />
             <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
             <echo>SHA1: ${sha1.number}</echo>
         </sequential>
     </macrodef>
-    <scriptdef name="propertyreset" language="javascript" description="Allows to assign @{property} new value">
+    <scriptdef name="propertyreset" language="javascript" src="setProperty.js" description="Allows to assign @{property} new value">
         <attribute name="name"/>
         <attribute name="value"/>
-        project.setProperty(attributes.get("name"), attributes.get("value"));
+        <!--project.setProperty(attributes.get("name"), attributes.get("value"));-->
     </scriptdef>
     <macrodef name="math">
         <attribute name="operation"/>

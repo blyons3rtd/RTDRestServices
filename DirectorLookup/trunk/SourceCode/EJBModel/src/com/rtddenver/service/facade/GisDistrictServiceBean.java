@@ -2,7 +2,7 @@ package com.rtddenver.service.facade;
 
 import com.google.gson.Gson;
 
-import com.rtd_denver.maps.District;
+import com.rtd_denver.gis.District;
 
 import com.rtddenver.model.dto.DistrictDTO;
 
@@ -28,11 +28,11 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     @Resource
     SessionContext sessionContext;
 
-    @WebServiceRef(wsdlLocation =
-                   "whoismydirector.wsdl") //"http://maps.rtd-denver.com/services/whoismydirector/district.asmx?WSDL")
+    @WebServiceRef(wsdlLocation = "whoismydirector.wsdl")
+    
     private District district;
 
-    private static final String districtSvc = "#%7Bhttp%3A%2F%2Fgis.rtd-denver.com%7DDistrict";
+    //private static final String districtSvc = "#%7Bhttp%3A%2F%2Fgis.rtd-denver.com%7DDistrict";
 
     public GisDistrictServiceBean() {
     }
