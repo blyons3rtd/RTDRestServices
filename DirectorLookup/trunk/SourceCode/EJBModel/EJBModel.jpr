@@ -321,6 +321,9 @@
          <value n="jpa-version" v="2.0"/>
          <value n="metamodel-generation-directory" v=""/>
          <hash n="src$META-INF$persistence.xml">
+            <hash n="DirectorLookup">
+               <value n="development-database" v="BoardDir"/>
+            </hash>
             <hash n="Model">
                <value n="development-database" v="LicencesPlateChecket"/>
             </hash>
