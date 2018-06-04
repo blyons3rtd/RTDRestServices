@@ -9,9 +9,7 @@ public interface GisDistrictServiceLocal {
     
     /**
      * getDistrictForAddress
-     * @param street
-     * @param city
-     * @param zip
+     * @param address
      * @return DistrictDTO
      */
     DistrictDTO getDistrictForAddress(String street, String city, String zip);

@@ -3,7 +3,7 @@
                   xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar http://xmlns.oracle.com/weblogic/weblogic-ejb-jar/1.5/weblogic-ejb-jar.xsd"
                   xmlns="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar">
   <weblogic-enterprise-bean>
-    <ejb-name>DirectorService</ejb-name>
+    <ejb-name>BoardDirector</ejb-name>
     <stateless-session-descriptor>
       <stateless-clustering>
         <home-is-clusterable>false</home-is-clusterable>

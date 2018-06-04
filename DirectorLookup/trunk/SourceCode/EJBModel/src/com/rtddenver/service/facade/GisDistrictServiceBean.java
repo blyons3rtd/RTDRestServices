@@ -41,15 +41,19 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     public DistrictDTO getDistrictForAddress(String street, String city, String zip) {
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("GisDistrictServiceBean.getDistrictForAddress() street:" + street + ", city:" + city +
-                         ", zip:" + zip);
+            LOGGER.debug("GisDistrictServiceBean.getDistrictForAddress() address:" + street + ", " + city + ", " + zip);
         }
-
+        
         DistrictDTO dto = null;
         try {
-            street = street.replaceAll("%20", " ");
+            street = street.replaceAll("%20", " ");  // Convert HTML encoded space characters
+            //dto = testDto(street, city, zip);  // Used to bypass the GIS service call for test purposes
+            district = new District();
+            
+            // TODO - Look for GIS to replace the current Soap svc with a new REST svc
             String json = district.getDistrictSoap().getDistrict(street, city, zip);
             dto = new Gson().fromJson(json, DistrictDTO.class);
+            
         } catch (Exception e) {
             LOGGER.error("Error querying and processing entity bean: " + e);
             e.printStackTrace();
@@ -58,5 +62,15 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
 
         return dto;
     }
+    
+    // Test method
+    private DistrictDTO testDto(String street, String city, String zip) {
+        DistrictDTO dto = new DistrictDTO();
+        dto.setAddress(street + ", " + city + ", " + zip);
+        dto.setMessage("");
+        dto.setValue("Z");
+        return dto;
+    }
+    
 
 }

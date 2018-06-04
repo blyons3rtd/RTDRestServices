@@ -64,7 +64,8 @@ public class BoardDirector implements Serializable {
      * @return
      */
     public String getDirectorFullName() {
-        return directorLastName + ", " + directorFirstName;    
+        return directorFirstName + " " + directorLastName;
+        //return directorLastName + ", " + directorFirstName;
     }
     
     public String getDirectorFirstName() {

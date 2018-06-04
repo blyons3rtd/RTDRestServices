@@ -82,9 +82,9 @@ public class DirectorLookup {
             if (distDto != null) {
                 if (distDto.getMessage() != null && !"".equals(distDto.getMessage().trim())) {
                     if (distDto.getMessage().contains("error")) {
-                        err = new ErrorDTO("500", distDto.getMessage(), "Internal GIS Service error");
+                        err = new ErrorDTO(500, 1999, distDto.getMessage(), "Internal GIS Service error. Retry query.");
                     } else if (distDto.getMessage().contains("Address Could Not Be Located")) {
-                        err = new ErrorDTO("400", distDto.getMessage(), "Address not found in RTD service area");
+                        err = new ErrorDTO(400, 1502, distDto.getMessage(), "Address not found in RTD service area");
                     }
                     dirDto = new DirectorDTO(err);
                 } else {
@@ -94,8 +94,8 @@ public class DirectorLookup {
             } else {
                 LOGGER.warn("No reponse from GIS Service. Internal Service error.");
                 err =
-                    new ErrorDTO("500", "No reponse from GIS Service",
-                                 "Internal Service error. Input received: " + street);
+                    new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street, 
+                                 "No reponse from GIS Service. Retry query.");
                 dirDto = new DirectorDTO(err);
             }
         }

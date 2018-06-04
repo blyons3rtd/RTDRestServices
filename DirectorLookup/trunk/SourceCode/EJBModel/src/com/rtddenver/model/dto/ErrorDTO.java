@@ -24,10 +24,10 @@ public class ErrorDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name="status")
-    private String status = null;
+    private int status = 0;
 
     @XmlElement(name="code")
-    private String code = null;
+    private int code = 0;
    
     @XmlElement(name="detail")
     private String detail = null;
@@ -55,19 +55,20 @@ public class ErrorDTO implements Serializable {
      * @param detail String
      * @param message String
      */
-    public ErrorDTO(String code, String detail, String message) {
+    public ErrorDTO(int status, int code, String detail, String message) {
         this();
+        this.status = status;
         this.code = code;
         this.detail = detail;
         this.message = message;
     }
 
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
