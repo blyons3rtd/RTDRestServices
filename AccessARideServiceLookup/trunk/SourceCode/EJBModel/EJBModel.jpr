@@ -168,7 +168,7 @@
             <value n="name" v="localhost"/>
             <value n="remoteDebuggingProfiling" v="true"/>
             <url n="runDirectoryURL" path="../"/>
-            <url n="targetURL" path="src/com/rtddenver/service/facade/DistrictServiceBean.java"/>
+            <value n="targetURL"/>
          </hash>
       </hash>
       <list n="runConfigurationList">

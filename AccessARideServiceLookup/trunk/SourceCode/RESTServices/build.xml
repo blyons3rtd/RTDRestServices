@@ -96,6 +96,7 @@
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
             <fileset dir="${dist.dir}" includes="**/*"/>
+            <fileset dir="${classes.dir}" includes="**/*"/>
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">

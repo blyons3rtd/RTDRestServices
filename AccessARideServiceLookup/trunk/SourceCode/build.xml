@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="all" basedir=".">
+<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="" basedir=".">
     <!--
     This is the ant build file for the Application-level 
     -->
@@ -10,6 +10,7 @@
     <property name="modelArchive" value="EJBModel.jar"/>
     <property name="servicesArchive" value="RESTServices.war"/>
     <property name="applicationArchive" value="${project.name}.ear"/>
+    <property name="environment" value=""/>
     <!-- Build timestamp -->
     <tstamp>
         <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
@@ -105,7 +106,7 @@
             <include name="**/*.sva"/>
             <include name="**/*.tag"/>
             <include name="**/*.tld"/>
-            <include name="**/*.wsdl"/>
+            <!--<include name="**/*.wsdl"/>-->
             <include name="**/*.xcfg"/>
             <include name="**/*.xlf"/>
             <include name="**/*.xml"/>
@@ -169,7 +170,7 @@
     <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
         <echo message="Build complete"></echo>
     </target>
-    <target name="createEARCert" depends="inc.build, setProd, all">
+    <target name="createEARCert" depends="inc.build, setTest, all">
         <echo>Creating EAR for CERT...</echo>
         <property name="deploy.dir" value="${cert.dir}"/>
         <condition property="properlyCalled">
@@ -178,7 +179,7 @@
         <antcall target="createEAR"/>
     </target>
     <!-- PROD Version -->
-    <target name="createEARProd" depends="check4CertArchive">
+    <target name="createEARProd" depends="setProd, check4CertArchive">
         <fail unless="certArchiveExists"
               message="*** Deploy failed!  No CERT archive available to create PROD version."/>
         <echo>Creating EAR for PROD...</echo>
@@ -191,18 +192,13 @@
         <unzip src="${cert.dir}/${applicationArchive}" dest="${build.dir}"/>
         <!-- Over-write files with corresponding PROD versions -->
         <echo>Over-writing some files with their PROD version...</echo>
-        <copy file="${web.content}/WEB-INF/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+        
+        <copy file="./public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
             <filterset>
                 <filter token="log_basedir" value="${prod.log.basedir}"/>
             </filterset>
             <filterset>
                 <filter token="log_level" value="${prod.log.level}"/>
-            </filterset>
-        </copy>
-        <copy file="${web.content}/WEB-INF/classes/struts.xml" tofile="${build.dir}/WEB-INF/classes/struts.xml"
-              overwrite="true">
-            <filterset>
-                <filter token="true_or_false" value="${prod.struts.devMode}"/>
             </filterset>
         </copy>
         <echo>Creating PROD EAR...</echo>
@@ -321,11 +317,19 @@
         <property name="javac.debug" value="${dev.javac.debug}"/>
         <property name="log.level" value="${dev.log.level}"/>
         <property name="log.basedir" value="${dev.log.basedir}"/>
+        <property name="ada.url" value="${cert.ada.url}"/>
+    </target>
+    <target name="setTest">
+        <property name="javac.debug" value="${prod.javac.debug}"/>
+        <property name="log.level" value="${prod.log.level}"/>
+        <property name="log.basedir" value="${prod.log.basedir}"/>
+        <property name="ada.url" value="${cert.ada.url}"/>
     </target>
     <target name="setProd">
         <property name="javac.debug" value="${prod.javac.debug}"/>
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
+        <property name="ada.url" value="${prod.ada.url}"/>
     </target>
     <!-- 
     Prompt user for override of existing file 
@@ -483,16 +487,18 @@
     <macrodef name="load.version.info">
         <sequential>
             <property file="${version.file}"/>
-            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" format="CHECKSUM"/>
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA"/>
             <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
             <echo>SHA1: ${sha1.number}</echo>
         </sequential>
     </macrodef>
-    <scriptdef name="propertyreset" language="javascript" description="Allows to assign @{property} new value">
+    
+    <scriptdef name="propertyreset" language="javascript" src="setProperty.js" description="Allows to assign @{property} new value">
         <attribute name="name"/>
         <attribute name="value"/>
-        project.setProperty(attributes.get("name"), attributes.get("value"));
+        <!--project.setProperty(attributes.get("name"), attributes.get("value"));-->
     </scriptdef>
+    
     <macrodef name="math">
         <attribute name="operation"/>
         <attribute name="operator1"/>

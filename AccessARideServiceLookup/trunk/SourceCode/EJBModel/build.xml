@@ -74,6 +74,7 @@
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
             <fileset dir="${dist.dir}" includes="**/*"/>
+            <fileset dir="${classes.dir}" includes="**/*"/>
         </delete>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
@@ -122,6 +123,13 @@
                 <filter token="log_level" value="${log.level}"/>
             </filterset>
         </copy>
+        <echo>Setting value in properties.xml...  adaRestSvcURL:${ada.url}}</echo>
+        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/properties.xml" tofile="${build.dir}/properties.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="ada_url" value="${ada.url}"/>
+            </filterset>
+        </copy>
     </target>
     <!-- 
         Create JAR file 
@@ -138,6 +146,7 @@
                 <include name="com/rtddenver/**"/>
                 <include name="META-INF/**"/>
                 <include name="log4j.xml"/>
+                <include name="properties.xml"/>
             </fileset>
         </jar>
     </target>

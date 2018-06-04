@@ -1,10 +1,8 @@
 package com.rtddenver.services;
 
 import com.rtddenver.model.dto.DistrictDTO;
-import com.rtddenver.model.dto.GeoCodeAddressDTO;
 
-import com.rtddenver.service.facade.DistrictServiceLocal;
-import com.rtddenver.service.facade.GeoCoderServiceLocal;
+import com.rtddenver.service.facade.AdaRestServiceLocal;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,59 +33,40 @@ import org.apache.log4j.Logger;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1/address")
+@Path("v1/addresses")
 @Produces("application/json")
 public class AccessARideLookup {
 
     private static final Logger LOGGER = LogManager.getLogger(AccessARideLookup.class.getName());
-    
-    @EJB(name = "DistrictService", beanInterface = com.rtddenver.service.facade.DistrictServiceLocal.class,
-         beanName = "EJBModel.jar#DistrictService")
-    //@EJB
-    private DistrictServiceLocal districtService;
 
-    @EJB(name = "GeoCoderService", beanInterface = com.rtddenver.service.facade.GeoCoderServiceLocal.class,
-         beanName = "EJBModel.jar#GeoCoderService")
+    @EJB(name = "AdaRestService", beanInterface = com.rtddenver.service.facade.AdaRestServiceLocal.class,
+         beanName = "EJBModel.jar#AdaRestService")
     //@EJB
-    private GeoCoderServiceLocal geocoderService;
+    private AdaRestServiceLocal adaRestService;
 
 
     public AccessARideLookup() {
         super();
     }
 
-    @AccessTimeout(value = 30, unit = TimeUnit.SECONDS)
+    @AccessTimeout(value = 60, unit = TimeUnit.SECONDS)
     @GET
     @Produces("application/json")
-    @Path("{street}/{city}/{zip}/{departureDay}/{departureTime}")
+    @Path("{street},{city},{zip},{departureDay},{departureTime}")
     public DistrictDTO getAccessARideInfo(@Encoded @PathParam("street") String street,
-                                             @PathParam("city") String city, @PathParam("zip") String zip,
-                                             @PathParam("departureDay") String departureDay,
-                                             @PathParam("departureTime") String departureTime) {
-        int options = 1;
-        boolean returnInWGS84 = true;
+                                          @Encoded @PathParam("city") String city, 
+                                          @PathParam("zip") String zip,
+                                          @PathParam("departureDay") String departureDay,
+                                          @PathParam("departureTime") String departureTime) {
+
         DistrictDTO districtDTO = null;
 
-        if(LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
-                           departureTime);
+                         departureTime);
         }
 
-        GeoCodeAddressDTO geocodeDTO =
-            this.geocoderService.getGeoCodeAddress(street, city, zip, options, returnInWGS84);
-
-        if (geocodeDTO.isError()) {
-            // Error handling
-            districtDTO = new DistrictDTO(geocodeDTO.getError());
-        } else {
-            if (!geocodeDTO.isError()) {
-                double lon = geocodeDTO.getX();
-                double lat = geocodeDTO.getY();
-                districtDTO = this.districtService.getAdaOnDayTimeLoc(departureDay, departureTime, lon, lat);
-            } else {
-                districtDTO = new DistrictDTO(geocodeDTO.getError());
-            }
-        }
+        districtDTO = this.adaRestService.getAdaAvailability(street, city, zip, departureDay, departureTime);
 
         return districtDTO;
     }
