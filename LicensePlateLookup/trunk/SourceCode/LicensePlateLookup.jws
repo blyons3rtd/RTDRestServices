@@ -109,8 +109,13 @@
                   </hash>
                </list>
             </hash>
+            <value n="platformType" v="WEBLOGIC"/>
+            <value n="platformVersion" v="12.0.0.0"/>
             <value n="profileClass" v="oracle.jdeveloper.deploy.ear.EarProfile"/>
             <value n="profileName" v="LicensePlateLookup"/>
+            <hash n="properties">
+               <value n="" v=""/>
+            </hash>
          </hash>
       </hash>
       <list n="profileList">

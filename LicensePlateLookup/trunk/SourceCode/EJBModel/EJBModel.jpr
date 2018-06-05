@@ -139,6 +139,14 @@
                      <hash n="filters">
                         <list n="rules">
                            <hash>
+                              <value n="pattern" v="build.properties"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="build.xml"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
                               <value n="pattern" v="**"/>
                               <value n="type" v="0"/>
                            </hash>

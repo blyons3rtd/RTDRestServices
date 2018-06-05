@@ -1,7 +1,6 @@
 package com.rtddenver.service;
 
 import com.rtddenver.model.data.LicensePlate;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.dto.LicensePlateDTO;
 
 import java.util.List;
@@ -62,14 +61,14 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
         List<LicensePlate> lp = null;
 
         if (plateNumber == null || plateNumber.trim().isEmpty()) {
-            return new LicensePlateDTO(plateNumber, new ErrorDTO("400", "Invalid license plate", "License plate is null or empty"));
+            return new LicensePlateDTO(400, "1600", "Invalid license plate", "License plate is null or empty");
         }
 
         Pattern p = Pattern.compile("[^A-Za-z0-9]");
         Matcher m = p.matcher(plateNumber);
 
         if (m.find()) {
-            return new LicensePlateDTO(plateNumber, new ErrorDTO("400", "Invalid license plate", "Invalid characters found in license plate"));
+            return new LicensePlateDTO(400, "1610", "Invalid license plate", "Invalid characters found in license plate");
         }
 
         lp = em.createNamedQuery("findByLicensePlateNumber", LicensePlate.class)
@@ -79,7 +78,8 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
 
         if (lp.size() == 0) {
             // No rows returned
-            dto = new LicensePlateDTO(plateNumber, -1, -1);
+            //dto = new LicensePlateDTO(plateNumber, -1, -1);
+            return new LicensePlateDTO(404, "1700", "Invalid license plate", "License Plate Not Found");
         } else {
             dto = new LicensePlateDTO(lp.get(0).getPlateNumber(), lp.get(0).getInDistrict(), lp.get(0).getGeocoded());
         }
