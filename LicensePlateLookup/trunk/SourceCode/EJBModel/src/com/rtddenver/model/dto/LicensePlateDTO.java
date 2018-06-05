@@ -32,19 +32,19 @@ public class LicensePlateDTO implements Serializable {
     private String reason = null;
 
     @XmlElement(name = "status")
-    private Integer status = null;
+    private Integer errorStatus = null;
 
     @XmlElement(name = "code")
-    private String code = null;
+    private String errorCode = null;
 
     @XmlElement(name = "detail")
-    private String detail = null;
+    private String errorDetail = null;
 
     @XmlElement(name = "message")
-    private String message = null;
+    private String errorMessage = null;
 
     @XmlElement(name = "time")
-    private String time = null;
+    private String errorTime = null;
     
     /**
      * LicensePlateDTO
@@ -54,7 +54,7 @@ public class LicensePlateDTO implements Serializable {
         java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
         sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
         java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
-        this.time = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
+        this.errorTime = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
     }
 
     /**
@@ -89,24 +89,24 @@ public class LicensePlateDTO implements Serializable {
     
     /**
      * LicensePlateDTO
-     * @param status int
-     * @param code String
-     * @param detail String
-     * @param message String
+     * @param errorStatus int
+     * @param errorCode String
+     * @param errorDetail String
+     * @param errorMessage String
      */
     public LicensePlateDTO(int status, String code, String detail, String message) {
         this();
-        this.status = status;
-        this.code = code;
-        this.detail = detail;
-        this.message = message;
+        this.errorStatus = status;
+        this.errorCode = code;
+        this.errorDetail = detail;
+        this.errorMessage = message;
     }
     
     /**
-     * getStatus
+     * getErrorStatus
      * @return Integer
      */
-    public Integer getStatus() {
-        return this.status;
+    public Integer getErrorStatus() {
+        return this.errorStatus;
     }
 }

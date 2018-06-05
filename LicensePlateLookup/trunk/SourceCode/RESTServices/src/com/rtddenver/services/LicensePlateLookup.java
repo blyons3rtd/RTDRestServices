@@ -57,18 +57,26 @@ public class LicensePlateLookup {
     @Path("{plateNumber}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public LicensePlateDTO getLicensePlate(@Encoded @PathParam("plateNumber") String plateNumber, @Context final HttpServletResponse response) {
-        LicensePlateDTO dto = this.licensePlateService.getLicensePlate(plateNumber);
+        LicensePlateDTO dto = null;
+        try {
+            dto = this.licensePlateService.getLicensePlate(plateNumber);
+        } catch (Exception e) {
+            dto = new LicensePlateDTO(500, "1950", "Unknown Server Error", e.getMessage());
+            LOGGER.error("Error in LicensePlateLookup.getLicensePlate - calling session ejb", e);
+        }
     
         int status = 0;
-        if (dto.getStatus() != null) {
-            // 400
-            if (dto.getStatus() == 400) {
+        if (dto.getErrorStatus() != null) {
+            switch (dto.getErrorStatus()) {
+            case 400:
                 status = Response.Status.BAD_REQUEST.getStatusCode();
-            } else if (dto.getStatus() == 404) {
+                break;
+            case 404:
                 status = Response.Status.NOT_FOUND.getStatusCode();
-            } else if (dto.getStatus() == 500) {
-                // 500 error
+                break;
+            case 500:
                 status = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+                break;
             }
             
             try {
@@ -77,7 +85,7 @@ public class LicensePlateLookup {
                 response.getOutputStream().close();
                 response.flushBuffer();
             } catch (IOException e) {
-                LOGGER.error("Error in LicensePlateLookup.getLicensePlate", e);
+                LOGGER.error("Error in LicensePlateLookup.getLicensePlate - setting response", e);
             }
         }
 

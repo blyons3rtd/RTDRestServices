@@ -11,5 +11,5 @@ public interface LicensePlateServiceLocal {
      * @param plateNumber String
      * @return LicensePlateDTO
      */
-    abstract LicensePlateDTO getLicensePlate(String plateNumber);
+    abstract LicensePlateDTO getLicensePlate(String plateNumber) throws Exception;
 }

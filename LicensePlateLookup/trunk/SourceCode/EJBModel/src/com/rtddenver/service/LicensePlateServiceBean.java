@@ -55,8 +55,8 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
      * @return LicensePlateDTO
      */
     @Override
-    public LicensePlateDTO getLicensePlate(String plateNumber) {
-        double start = System.currentTimeMillis();
+    public LicensePlateDTO getLicensePlate(String plateNumber) throws Exception {
+        //double start = System.currentTimeMillis();
         LicensePlateDTO dto = null;
         List<LicensePlate> lp = null;
 
@@ -89,7 +89,7 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal {
             lp = null;
         }
 
-        LOGGER.info("Transaction - Plate:" + plateNumber + " Time(s):" + ((double) System.currentTimeMillis() - start) / (1000.0d));
+        //LOGGER.info("Transaction - Plate:" + plateNumber + " Time(s):" + ((double) System.currentTimeMillis() - start) / (1000.0d));
         return dto;
     }
 }
