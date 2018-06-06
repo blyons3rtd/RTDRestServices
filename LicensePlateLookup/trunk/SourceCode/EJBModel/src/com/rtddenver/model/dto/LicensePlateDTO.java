@@ -60,6 +60,8 @@ public class LicensePlateDTO implements Serializable {
      * @param geocoded int
      */
     public LicensePlateDTO(String plateNumber, int inDistrict, int geocoded) {
+        this();
+        
         this.plateNumber = plateNumber;
         this.inDistrict = Long.valueOf(inDistrict);
         this.geocoded = Long.valueOf(geocoded);
