@@ -28,12 +28,14 @@ import org.eclipse.persistence.annotations.ReadOnly;
                 })
 @Table(name = "ALERT_CATEGORY", schema = "SCHEDLS")
 public class AlertEventCategory implements Serializable {
-    private static final long serialVersionUID = -6710120066645450643L;
+    @SuppressWarnings("compatibility:4116331868676440644")
+    private static final long serialVersionUID = -5024742746122753676L;
+
     @Id
-    @Column(name = "ALERT_CATEGORY_ID", nullable = false)
-    private int alertCategoryId;
+    @Column(name = "ALERT_CATEGORY_ID")
+    private int alertCategoryId = 0;
     @Column(name = "ALERT_CATEGORY_SHORT_DESC")
-    private String alertCategoryShortDesc;
+    private String alertCategoryShortDesc = null;
 
     /**
      * AlertCategory

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 //***********************************************************
 /* Description:
@@ -14,20 +15,25 @@ import javax.xml.bind.annotation.XmlElement;
 /* @version 1.0, 2/28/2018
 */
 //***********************************************************
-public class AlertEventRouteDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+@XmlRootElement(name = "alertEventRoute")
+public class AlertEventRouteDTO extends Error implements Serializable {
+    @SuppressWarnings("compatibility:-6777267865955981041")
+    private static final long serialVersionUID = -2528409613740348776L;
+
     @XmlElement(name = "masterRoute")
     private String masterRoute = null;
+    
     @XmlElement(name = "routeId")
     private String routeId = null;
+    
     @XmlElement(name = "routeType")
     private String routeType = null;
+    
     @XmlElement(name = "routesDirectionList")
-    private List<AlertEventRouteDirectionDTO> routesDirectionList;
+    private List<AlertEventRouteDirectionDTO> routesDirectionList = null;
+    
     @XmlElement(name = "activeAlertList")
-    private List<AlertEventDTO> activeAlertList;
-    @XmlElement(name = "Error")
-    private ErrorDTO error = null;
+    private List<AlertEventDTO> activeAlertList = null;
     
     /**
      * AlertEventRouteDTO
@@ -38,12 +44,15 @@ public class AlertEventRouteDTO implements Serializable {
     
     /**
      * AlertEventRouteDTO
-     * @param ErrorDTO error
+     * param status Integer
+     * @param code String
+     * @param detail String
+     * @param message String
      */
-    public AlertEventRouteDTO(ErrorDTO error) {
-        this.error = error;
+    public AlertEventRouteDTO(Integer status, String code, String detail, String message) {
+        super(status, code, detail, message);
     }
-    
+ 
     /**
      * setDTOValues
      * @param dto
@@ -59,7 +68,6 @@ public class AlertEventRouteDTO implements Serializable {
      * @param Builder builder
      */
     public AlertEventRouteDTO(Builder builder) {
-        //this.alertEventRoutesId = builder.alertEventRoutesId;
         this.masterRoute = builder.masterRoute;
         this.routeId = builder.routeId;
         this.routeType = builder.routeType;

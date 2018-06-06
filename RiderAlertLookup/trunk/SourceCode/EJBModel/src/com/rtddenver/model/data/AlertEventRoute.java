@@ -44,7 +44,9 @@ import org.eclipse.persistence.annotations.ReadOnly;
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "SCHEDLS")
 public class AlertEventRoute implements Serializable {
-    private static final long serialVersionUID = -5065925130746093504L;
+    @SuppressWarnings("compatibility:-6057906969190255096")
+    private static final long serialVersionUID = -8754009577974458970L;
+
     @Id
     @Column(name = "ALERT_EVENT_ROUTES_ID")
     private Integer alertEventRoutesId = null;
@@ -61,10 +63,10 @@ public class AlertEventRoute implements Serializable {
 
     @OneToMany (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
-    private List<AlertEventRouteDirection> alertRoutesDirection;
+    private List<AlertEventRouteDirection> alertRoutesDirection = null;
     @ManyToOne (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ID", insertable=false, updatable=false)
-    private AlertEvent alert;
+    private AlertEvent alert = null;
 
     @Transient
     private String customRouteType = null;

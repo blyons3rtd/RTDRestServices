@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 //***********************************************************
 /* Description:
@@ -14,31 +15,40 @@ import javax.xml.bind.annotation.XmlElement;
 /* @version 1.0, 2/28/2018
 */
 //***********************************************************
-public class AlertEventDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+@XmlRootElement(name = "alertEvent")
+public class AlertEventDTO extends Error implements Serializable {
+    @SuppressWarnings("compatibility:-6957427777127909931")
+    private static final long serialVersionUID = -4529906424785384877L;
+
     @XmlElement(name = "alertEventId")
-    private int alertEventId = 0;
+    private Integer alertEventId = null;
+    
     @XmlElement(name = "alertType")
-    private String alertType;
+    private String alertType = null;
+    
     @XmlElement(name = "alertCategoryDetail")
     private String alertCategoryDetail = null;
+    
     @XmlElement(name = "alertEventRouteLnAffected")
     private String alertEventRouteLnAffected = null;
+    
     @XmlElement(name = "alertEventStartDate")
     private String alertEventStartDate = null;
+    
     @XmlElement(name = "alertEventEndDate")
     private String alertEventEndDate = null;
+    
     @XmlElement(name = "alertEventInfo")
     private String alertEventInfo = null;
+    
     @XmlElement(name = "alertRoutesList")
-    private List<AlertEventRouteDTO> alertRoutesList;
+    private List<AlertEventRouteDTO> alertRoutesList = null;
+    
     @XmlElement(name = "otherRouteLnAffected")
-    private String otherRouteLnAffected;
-    @XmlElement(name = "Error")
-    private ErrorDTO error = null;
+    private String otherRouteLnAffected = null;
+    
     @XmlElement(name = "routesDirectionList")
-    private List<AlertEventRouteDirectionDTO> routesDirectionList;
-
+    private List<AlertEventRouteDirectionDTO> routesDirectionList = null;
    
     /**
      * AlertEventDTO
@@ -49,10 +59,13 @@ public class AlertEventDTO implements Serializable {
 
     /**
      * AlertEventDTO
-     * @param error ErrorDTO 
+     * param status Integer
+     * @param code String
+     * @param detail String
+     * @param message String
      */
-    public AlertEventDTO(ErrorDTO error) {
-        this.error = error;
+    public AlertEventDTO(Integer status, String code, String detail, String message) {
+        super(status, code, detail, message);
     }
 
     /**

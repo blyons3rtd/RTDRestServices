@@ -88,6 +88,7 @@
    </hash>
    <hash n="oracle.ide.model.TechnologyScopeConfiguration">
       <list n="technologyScope">
+         <string v="Ant"/>
          <string v="Database"/>
          <string v="EJB"/>
          <string v="JSP"/>
@@ -156,6 +157,14 @@
                      <value n="displayName" v="WEB-INF/classes"/>
                      <hash n="filters">
                         <list n="rules">
+                           <hash>
+                              <value n="pattern" v="build.properties"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="build.xml"/>
+                              <value n="type" v="1"/>
+                           </hash>
                            <hash>
                               <value n="pattern" v="**"/>
                               <value n="type" v="0"/>
@@ -228,7 +237,63 @@
             <value n="id" v="JSP Runtime"/>
             <value n="isJDK" v="false"/>
          </hash>
+         <hash>
+            <value n="id" v="Hibernate-validator-6.0.10.Final.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Log4j-1.2.15.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Logger.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="RtdLog4j.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
       </list>
+      <hash n="internalDefinitions">
+         <list n="libraryDefinitions">
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/hibernate-validator-6.0.10.Final.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Hibernate-validator-6.0.10.Final.jar"/>
+               <value n="id" v="Hibernate-validator-6.0.10.Final.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/log4j-1.2.15.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Log4j-1.2.15.jar"/>
+               <value n="id" v="Log4j-1.2.15.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/logger.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Logger.jar"/>
+               <value n="id" v="Logger.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="../lib/rtdLog4j.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="RtdLog4j.jar"/>
+               <value n="id" v="RtdLog4j.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+         </list>
+      </hash>
       <list n="libraryReferences">
          <hash>
             <value n="id" v="Java EE"/>
@@ -244,6 +309,22 @@
          </hash>
          <hash>
             <value n="id" v="JSP Runtime"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Hibernate-validator-6.0.10.Final.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Log4j-1.2.15.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Logger.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="RtdLog4j.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>

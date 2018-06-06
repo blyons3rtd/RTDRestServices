@@ -33,21 +33,22 @@ import org.eclipse.persistence.annotations.ReadOnly;
                             "ORDER BY o.directionName") })
 @Table(name = "ALERT_EVENT_ROUTES_DIRECTION", schema = "SCHEDLS")
 public class AlertEventRouteDirection implements Serializable {
-    private static final long serialVersionUID = 7733162965875549370L;
+    @SuppressWarnings("compatibility:1924203674063957519")
+    private static final long serialVersionUID = 8097255506880411562L;
 
     @Id    
     @Column(name = "DIRECTION_ALERT")
-    private String directionAlert;
-    @Column(name = "DIRECTION_ID", nullable = false)
-    private BigDecimal directionId;
-    @Column(name = "ALERT_EVENT_ROUTES_ID", nullable = false)
-    private int alertEventRoutesId;
-    @Column(name = "DIRECTION_NAME", nullable = false, length = 30)
-    private String directionName;
+    private String directionAlert = null;
+    @Column(name = "DIRECTION_ID")
+    private BigDecimal directionId = null;
+    @Column(name = "ALERT_EVENT_ROUTES_ID")
+    private int alertEventRoutesId = 0;
+    @Column(name = "DIRECTION_NAME")
+    private String directionName = null;
 
     @ManyToOne (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
-    private AlertEventRoute alertEventRoute;
+    private AlertEventRoute alertEventRoute = null;
 
     @Transient
     private String customDirectionName = null;

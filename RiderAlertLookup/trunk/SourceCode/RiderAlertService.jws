@@ -2,6 +2,8 @@
 <jws:workspace xmlns:jws="http://xmlns.oracle.com/ide/project">
    <hash n="adrs-workspace-properties">
       <value n="adrs-instance-binding" v="DefaultServer"/>
+      <value n="deploy-timeout" v="0"/>
+      <value n="runtime-application-name" v="RiderAlertService"/>
    </hash>
    <value n="appTemplateId" v="bc4jdtRestApplicationTemplate"/>
    <hash n="component-versions">
@@ -67,6 +69,10 @@
                      <hash n="filters">
                         <list n="rules">
                            <hash>
+                              <value n="pattern" v="META-INF/RiderAlertDS-jdbc.xml"/>
+                              <value n="type" v="1"/>
+                           </hash>
+                           <hash>
                               <value n="pattern" v="META-INF/cwallet.sso"/>
                               <value n="type" v="1"/>
                            </hash>
@@ -87,6 +93,22 @@
                      <value n="displayName" v="Application Libraries"/>
                      <hash n="filters">
                         <list n="rules">
+                           <hash>
+                              <value n="pattern" v="hibernate-validator-6.0.10.Final.jar"/>
+                              <value n="type" v="0"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="log4j-1.2.15.jar"/>
+                              <value n="type" v="0"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="logger.jar"/>
+                              <value n="type" v="0"/>
+                           </hash>
+                           <hash>
+                              <value n="pattern" v="rtdLog4j.jar"/>
+                              <value n="type" v="0"/>
+                           </hash>
                            <hash>
                               <value n="pattern" v="**"/>
                               <value n="type" v="1"/>
@@ -112,6 +134,66 @@
          <string v="RiderAlert"/>
       </list>
    </hash>
+   <hash n="oracle.jdeveloper.model.ApplicationLibraries">
+      <hash n="internalDefinitions">
+         <list n="libraryDefinitions">
+            <hash>
+               <list n="classPath">
+                  <url path="lib/hibernate-validator-6.0.10.Final.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Hibernate-validator-6.0.10.Final.jar"/>
+               <value n="id" v="Hibernate-validator-6.0.10.Final.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/log4j-1.2.15.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Log4j-1.2.15.jar"/>
+               <value n="id" v="Log4j-1.2.15.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/logger.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Logger.jar"/>
+               <value n="id" v="Logger.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/rtdLog4j.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="RtdLog4j.jar"/>
+               <value n="id" v="RtdLog4j.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+         </list>
+      </hash>
+      <list n="libraryReferences">
+         <hash>
+            <value n="id" v="Hibernate-validator-6.0.10.Final.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Log4j-1.2.15.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Logger.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="RtdLog4j.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+      </list>
+   </hash>
    <hash n="oracle.jdeveloper.model.PathsConfiguration">
       <hash n="ApplicationSrcContentSet">
          <list n="pattern-filters">
@@ -121,6 +203,14 @@
             <url path="src/"/>
          </list>
       </hash>
+   </hash>
+   <hash n="oracle.mds.internal.dt.ide.CustOptions">
+      <list n="customizationLibraries">
+         <hash/>
+      </list>
+   </hash>
+   <hash n="ResourceBundleOptions">
+      <list n="RegisteredResourceBundles"/>
    </hash>
    <hash n="Weblogic JDBC">
       <value n="Weblogic-JDBC-Auto-Sync-Key" v="false"/>

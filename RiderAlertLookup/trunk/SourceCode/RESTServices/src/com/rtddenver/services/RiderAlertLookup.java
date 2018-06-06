@@ -6,21 +6,31 @@ import com.rtddenver.model.dto.AlertEventRouteDTO;
 import com.rtddenver.model.dto.RouteActiveAlertEventDTO;
 import com.rtddenver.service.RiderAlertServiceLocal;
 
+import java.io.IOException;
+
 import javax.ejb.EJB;
+
+import javax.servlet.http.HttpServletResponse;
 
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 @javax.enterprise.context.RequestScoped
 @Path("v1")
-@Produces("application/json")
 public class RiderAlertLookup {
-
-    @EJB(name = "RiderAlertService", beanInterface = com.rtddenver.service.RiderAlertServiceLocal.class,
-         beanName = "EJBModel.jar#RiderAlertService")
+    private static final Logger LOGGER = LogManager.getLogger(RiderAlertLookup.class.getName());
+    
+    //@EJB(name = "RiderAlertService", beanInterface = com.rtddenver.service.RiderAlertServiceLocal.class, beanName = "EJBModel.jar#RiderAlertService")
+    @EJB
     private RiderAlertServiceLocal riderAlertService;
 
     
@@ -36,10 +46,23 @@ public class RiderAlertLookup {
      * @return ActiveAlertEventDTO
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("alerts")
-    public ActiveAlertEventDTO getActiveAlertEventList() {
-        return this.riderAlertService.getActiveAlertEventList();
+    public ActiveAlertEventDTO getActiveAlertEventList(@Context final HttpServletResponse response) {
+        ActiveAlertEventDTO dto = null;
+        
+        try {
+            dto = this.riderAlertService.getActiveAlertEventList();
+        } catch (Exception e) {
+            dto = new ActiveAlertEventDTO(500, "1950", "Unknown Server Error", e.getMessage());
+            LOGGER.error("Error in RiderAlertLookup.getAlertEventById - calling session ejb", e);
+        }
+        
+        if (dto.getErrorStatus() != null) {
+            this.processErrorresponse(response, dto.getErrorStatus());
+        }
+        
+        return dto;
     }
     
     /**
@@ -47,10 +70,23 @@ public class RiderAlertLookup {
      * @return AlertEventDTO
      */
     @GET 
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("alerts/{alertEventId}")
-    public AlertEventDTO getAlertEventById(@Encoded @PathParam("alertEventId") Integer alertEventId) {
-        return this.riderAlertService.getAlertEventById(alertEventId);
+    public AlertEventDTO getAlertEventById(@Encoded @PathParam("alertEventId") Integer alertEventId, @Context final HttpServletResponse response) {
+        AlertEventDTO dto = null;
+       
+        try {
+            dto = this.riderAlertService.getAlertEventById(alertEventId);
+        } catch (Exception e) {
+            dto = new AlertEventDTO(500, "1950", "Unknown Server Error", e.getMessage());
+            LOGGER.error("Error in RiderAlertLookup.getAlertEventById - calling session ejb", e);
+        }
+       
+        if (dto.getErrorStatus() != null) {
+            this.processErrorresponse(response, dto.getErrorStatus());
+        }
+        
+        return dto;
     }
     
     /**
@@ -58,10 +94,23 @@ public class RiderAlertLookup {
      * @return RouteActiveAlertEventDTO
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("routes")
-    public RouteActiveAlertEventDTO getRoutesWithActiveAlerts() {
-        return this.riderAlertService.getRoutesActiveAlerts();
+    public RouteActiveAlertEventDTO getRoutesWithActiveAlerts(@Context final HttpServletResponse response) {
+        RouteActiveAlertEventDTO dto = null;
+        
+        try {
+            dto = this.riderAlertService.getRoutesActiveAlerts();
+        } catch (Exception e) {
+            dto = new RouteActiveAlertEventDTO(500, "1950", "Unknown Server Error", e.getMessage());
+            LOGGER.error("Error in RiderAlertLookup.RouteActiveAlertEventDTO - calling session ejb", e);
+        }
+        
+        if (dto.getErrorStatus() != null) {
+            this.processErrorresponse(response, dto.getErrorStatus());
+        }
+        
+        return dto;
     }
     
     /**
@@ -69,9 +118,53 @@ public class RiderAlertLookup {
      * @return AlertRouteDTO
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("routes/{masterRoute}")
-    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(@Encoded @PathParam("masterRoute") String masterRoute) {
-        return this.riderAlertService.getAlertEventRouteByMasterRoute(masterRoute);
+    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(@Encoded @PathParam("masterRoute") String masterRoute, @Context final HttpServletResponse response) {
+        AlertEventRouteDTO dto = null;
+        
+        try {
+            dto = this.riderAlertService.getAlertEventRouteByMasterRoute(masterRoute);
+        } catch (Exception e) {
+            dto = new AlertEventRouteDTO(500, "1950", "Unknown Server Error", e.getMessage());
+            LOGGER.error("Error in RiderAlertLookup.RouteActiveAlertEventDTO - calling session ejb", e);
+        }
+        
+        if (dto.getErrorStatus() != null) {
+            this.processErrorresponse(response, dto.getErrorStatus());
+        }
+        
+        return dto;
+    }
+
+
+    /**
+     * processErrorresponse
+     * @param response HttpServletResponse
+     * @param errorStatus int
+     */
+    private void processErrorresponse(final HttpServletResponse response, int errorStatus) {
+        int responseStatus = 0;
+
+        switch (errorStatus) {
+        case 400:
+            responseStatus = Response.Status.BAD_REQUEST.getStatusCode();
+            break;
+        case 404:
+            responseStatus = Response.Status.NOT_FOUND.getStatusCode();
+            break;
+        case 500:
+            responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+            break;
+        }
+
+        try {
+            response.setStatus(responseStatus);
+            response.setContentType(MediaType.APPLICATION_JSON + ";charset=utf-8");
+            response.getOutputStream().close();
+            response.flushBuffer();
+        } catch (IOException e) {
+            LOGGER.error("Error in RiderAlertLookup.processErrorresponse - setting response code", e);
+        }
     }
 }

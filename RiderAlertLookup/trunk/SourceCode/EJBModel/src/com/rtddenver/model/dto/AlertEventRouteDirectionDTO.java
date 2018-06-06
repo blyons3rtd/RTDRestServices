@@ -3,6 +3,7 @@ package com.rtddenver.model.dto;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 //***********************************************************
 /* Description:
@@ -12,10 +13,13 @@ import javax.xml.bind.annotation.XmlElement;
 /* @version 1.0, 2/28/2018
 */
 //***********************************************************
+@XmlRootElement(name = "alertEventRouteDirection")
 public class AlertEventRouteDirectionDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("compatibility:-2580534037567124319")
+    private static final long serialVersionUID = -5699414863292894568L;
+
     @XmlElement(name = "directionAlert")
-    private String directionAlert;
+    private String directionAlert = null;
 
     /**
      * AlertEventRouteDirectionDTO

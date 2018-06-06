@@ -15,18 +15,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 /* @version 1.0, 2/28/2018
 */
 //***********************************************************
-@XmlRootElement(name = "alertEvents")
-public class ActiveAlertEventDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+@XmlRootElement(name = "activeAlertEvent")
+public class ActiveAlertEventDTO extends Error implements Serializable {
+    @SuppressWarnings("compatibility:-6078465124647831274")
+    private static final long serialVersionUID = 5386397361097295927L;
+
     @XmlElement(name = "activeAlertList")
-    private List<AlertEventDTO> activeAlertList;
+    private List<AlertEventDTO> activeAlertList = null;
     
     @XmlElement(name = "activeStationPNRAlertsList")
-    private List<AlertEventDTO> activeStationPNRAlertsList;
-    
-    @XmlElement(name = "Error")
-    private ErrorDTO error = null;
+    private List<AlertEventDTO> activeStationPNRAlertsList = null;
     
     /**
      * ActiveAlertEventDTO
@@ -37,10 +35,13 @@ public class ActiveAlertEventDTO implements Serializable {
 
     /**
      * ActiveAlertEventDTO
-     * @param error ErrorDTO
+     * param status Integer
+     * @param code String
+     * @param detail String
+     * @param message String
      */
-    public ActiveAlertEventDTO(ErrorDTO error) {
-        this.error = error;
+    public ActiveAlertEventDTO(Integer status, String code, String detail, String message) {
+        super(status, code, detail, message);
     }
     
     /**

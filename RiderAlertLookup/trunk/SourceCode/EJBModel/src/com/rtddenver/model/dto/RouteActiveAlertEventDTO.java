@@ -16,16 +16,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 */
 //***********************************************************
 @XmlRootElement(name = "alertEventRoutes")
-public class RouteActiveAlertEventDTO implements Serializable{
-    @SuppressWarnings("compatibility:398784096148769172")
-    private static final long serialVersionUID = 1L;   
-    
-    @XmlElement(name = "activeRoutesList")
-    private List<AlertEventRouteDTO> activeRoutesList;
+public class RouteActiveAlertEventDTO extends Error implements Serializable{
+    @SuppressWarnings("compatibility:3914784784351126239")
+    private static final long serialVersionUID = -4692786631415492754L;
 
-    @XmlElement(name = "Error")
-    private ErrorDTO error = null;
-    
+    @XmlElement(name = "activeRoutesList")
+    private List<AlertEventRouteDTO> activeRoutesList = null;
+
     /**
      * RouteActiveAlertEventDTO
      */
@@ -35,10 +32,13 @@ public class RouteActiveAlertEventDTO implements Serializable{
     
     /**
      * RouteActiveAlertEventDTO
-     * @param error ErrorDTO
+     * param status Integer
+     * @param code String
+     * @param detail String
+     * @param message String
      */
-    public RouteActiveAlertEventDTO(ErrorDTO error) {
-        this.error = error;
+    public RouteActiveAlertEventDTO(Integer status, String code, String detail, String message) {
+        super(status, code, detail, message);
     }
     
     /**

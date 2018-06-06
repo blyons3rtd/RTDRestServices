@@ -3,6 +3,7 @@ package com.rtddenver.model.dto;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 //***********************************************************
 /* Description:
@@ -12,10 +13,13 @@ import javax.xml.bind.annotation.XmlElement;
 /* @version 1.0, 2/28/2018
 */
 //***********************************************************
+@XmlRootElement(name = "alertEventCategory")
 public class AlertEventCategoryDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("compatibility:6314655571106031074")
+    private static final long serialVersionUID = -6862477427915516806L;
+
     @XmlElement(name = "alertCategory")
-    private String alertCategoryShortDesc;
+    private String alertCategoryShortDesc = null;
     
     /**
      * AlertCategoryDTO

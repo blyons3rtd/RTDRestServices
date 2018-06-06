@@ -9,7 +9,6 @@ import com.rtddenver.model.dto.AlertEventCategoryDTO;
 import com.rtddenver.model.dto.AlertEventDTO;
 import com.rtddenver.model.dto.AlertEventRouteDTO;
 import com.rtddenver.model.dto.AlertEventRouteDirectionDTO;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.model.dto.RouteActiveAlertEventDTO;
 
 import java.time.LocalDate;
@@ -56,8 +55,9 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
     /**
      * getActiveAlertEventList - Get all active alerts
      * @return ActiveAlertEventDTO
+     * @throws Exception
      */
-    public ActiveAlertEventDTO getActiveAlertEventList() {
+    public ActiveAlertEventDTO getActiveAlertEventList() throws Exception {
         ActiveAlertEventDTO dtoAlert = new ActiveAlertEventDTO();
         List<AlertEvent> stationPNRList = null;
         List<AlertEventDTO> stations = new ArrayList<AlertEventDTO>();
@@ -98,8 +98,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
         stationPNRList = this.findStationsWithActiveEventAlerts();
 
         if (stationPNRList.size() == 0 && noAlertsFound) {
-            ErrorDTO error = new ErrorDTO("404", "No records found", "Currently there are no active alerts.");
-            dtoAlert = new ActiveAlertEventDTO(error);
+            dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active alerts.");
         } else {
             stationPNRList.forEach(station_pnr -> { stations.add(this.createAlertEventDTO(station_pnr)); });
             dtoAlert.setActiveStationPNRAlertsList(stations);
@@ -117,16 +116,16 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      * getAlertEventById - Get active alert by ID
      * @param Integer alertEventId
      * @return AlertEventDTO
+     * @throws Exception
      */
-    public AlertEventDTO getAlertEventById(Integer alertEventId) {
+    public AlertEventDTO getAlertEventById(Integer alertEventId) throws Exception {
         AlertEventDTO alertDTO = null;
         AlertEvent alert = null;
 
         // First, get active alert by ID
         alert = this.findAlertEventById(alertEventId);
         if (alert == null) {
-            ErrorDTO error = new ErrorDTO("404", "No record found", "Alert " + alertEventId + " not found.");
-            alertDTO = new AlertEventDTO(error);
+            alertDTO = new AlertEventDTO(404, "1700", "Not found", "Alert " + alertEventId + " not found.");
         } else {
             alertDTO = this.createAlertEventDTO(alert);
             List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>(alert.getAlertEventRoutes().size());
@@ -152,8 +151,9 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
     /**
      * getRoutesActiveAlerts
      * @return RouteActiveAlertEventDTO
+     * @throws Exception
      */
-    public RouteActiveAlertEventDTO getRoutesActiveAlerts() {
+    public RouteActiveAlertEventDTO getRoutesActiveAlerts() throws Exception {
 
         RouteActiveAlertEventDTO routeActiveAlertEventDTO = null;
         List<AlertEventRouteDTO> routeList = new ArrayList<AlertEventRouteDTO>();
@@ -163,8 +163,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
 
 
         if (routesWithActiveAlertsGroupByMasetrRouteList.isEmpty()) {
-            ErrorDTO error = new ErrorDTO("404", "No records found", "No routes with active alerts were found.");
-            routeActiveAlertEventDTO = new RouteActiveAlertEventDTO(error);
+            routeActiveAlertEventDTO = new RouteActiveAlertEventDTO(404, "1700", "Not found", "No routes with active alerts were found.");
         } else {
             routeActiveAlertEventDTO = new RouteActiveAlertEventDTO();
             routesWithActiveAlertsGroupByMasetrRouteList.forEach(masterRoute -> {
@@ -191,13 +190,9 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
 
                 routeList.add(alertEventRouteDTO);
             });
-
-
         }
 
-
         routeActiveAlertEventDTO.setRoutesList(routeList);
-
         return routeActiveAlertEventDTO;
     }
 
@@ -205,8 +200,9 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      * getAlertEventRouteByMasterRoute
      * @param masterRoute String
      * @return AlertEventRouteDTO
+     * @throws Exception
      */
-    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(String masterRoute) {
+    public AlertEventRouteDTO getAlertEventRouteByMasterRoute(String masterRoute) throws Exception {
         AlertEventRouteDTO alertEventRouteDTO = null;
         List<AlertEventRoute> alertEventRouteList = null;
 
@@ -214,8 +210,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
         alertEventRouteList = this.findRouteWithActiveAlertsByMasterRoute(masterRoute);
 
         if (alertEventRouteList.isEmpty()) {
-            ErrorDTO error = new ErrorDTO("404", "No record found", "Route " + masterRoute + " not found.");
-            alertEventRouteDTO = new AlertEventRouteDTO(error);
+            alertEventRouteDTO = new AlertEventRouteDTO(404, "1700", "Not found", "Route " + masterRoute + " not found.");
         } else {
             // get route info from 1st record
             alertEventRouteDTO = this.createAlertEventRouteDTO(alertEventRouteList.get(0));
