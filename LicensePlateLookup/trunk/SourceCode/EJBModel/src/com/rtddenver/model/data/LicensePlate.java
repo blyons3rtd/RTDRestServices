@@ -26,23 +26,22 @@ import org.eclipse.persistence.annotations.ReadOnly;
                 })
 @Table(name = "LICENSE_PLATE_MASTER", schema = "CHK_PLT")
 public class LicensePlate implements Serializable {
- 
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("compatibility:-45716201554151264")
+    private static final long serialVersionUID = -6476394450503874613L;
 
-    @Column(name = "IN_DISTRICT")
-    private int inDistrict = 0;
-    
-    @Column(name = "GEOCODED")
-    private int geocoded = 0;
-    
     @Column(name = "PLATE_NUMBER")
     @Id 
     private String plateNumber = null;
+    @Column(name = "IN_DISTRICT")
+    private int inDistrict = 0;
+    @Column(name = "GEOCODED")
+    private int geocoded = 0;
 
     /**
      * LicensePlate
      */
     public LicensePlate() {
+        super();
     }
 
     /**

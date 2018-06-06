@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 //***********************************************************
 @XmlRootElement(name = "licensePlate")
 public class LicensePlateDTO implements Serializable {
-    @SuppressWarnings("compatibility:3698552885640760980")
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("compatibility:-642269197534760378")
+    private static final long serialVersionUID = 4974752520351643708L;
 
     @XmlElement(name = "Plate")
     private String plateNumber = null;
@@ -51,10 +51,6 @@ public class LicensePlateDTO implements Serializable {
      */
     public LicensePlateDTO() {
         super();
-        java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
-        sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
-        java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
-        this.errorTime = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
     }
 
     /**
@@ -96,10 +92,16 @@ public class LicensePlateDTO implements Serializable {
      */
     public LicensePlateDTO(int status, String code, String detail, String message) {
         this();
+        
+        java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
+        sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
+        java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
+       
         this.errorStatus = status;
         this.errorCode = code;
         this.errorDetail = detail;
         this.errorMessage = message;
+        this.errorTime = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
     }
     
     /**
