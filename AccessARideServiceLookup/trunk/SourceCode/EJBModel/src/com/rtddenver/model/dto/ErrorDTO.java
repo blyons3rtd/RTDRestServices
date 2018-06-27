@@ -34,6 +34,9 @@ public class ErrorDTO implements Serializable {
     
     @XmlElement(name="time")
     private String time = null;
+    
+    @XmlElement(name="more_info")
+    private String moreInfo = null;
    
     /**
      * ErrorDTO
@@ -48,16 +51,38 @@ public class ErrorDTO implements Serializable {
 
     /**
      * ErrorDTO
-     * @param code String
-     * @param detail String
-     * @param message String
+     * @param status
+     * @param code
+     * @param detail
+     * @param message
+     * @param moreInfo
      */
-    public ErrorDTO(int status, int code, String detail, String message) {
+    public ErrorDTO(int status, int code, String detail, String message, String moreInfo) {
         this();
         this.status = status;
         this.code = code;
         this.detail = detail;
         this.message = message;
+        this.moreInfo = moreInfo;
+    }
+    
+    /**
+     * ErrorDTO
+     * @param status
+     * @param code
+     * @param detail
+     * @param message
+     * @param moreInfo
+     * @param time
+     */
+    public ErrorDTO(int status, int code, String detail, String message, String moreInfo, String time) {
+        this();
+        this.status = status;
+        this.code = code;
+        this.detail = detail;
+        this.message = message;
+        this.moreInfo = moreInfo;
+        this.time = time;
     }
 
     public int getStatus() {
@@ -78,5 +103,9 @@ public class ErrorDTO implements Serializable {
 
     public String getTime() {
         return time;
+    }
+    
+    public String getMoreInfo() {
+        return moreInfo;
     }
 }

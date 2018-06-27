@@ -115,7 +115,7 @@
             </fileset>
         </copy>
         <echo>Setting values in log4j.xml...  log_basedir:${log.basedir}, application_name:${project.name}, log_level:${log.level}</echo>
-        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/log4j.xml"
+        <copy file="${basedir}/../RESTServices/config/log4j.xml" tofile="${build.dir}/log4j.xml"
               overwrite="true">
             <filterset>
                 <filter token="log_basedir" value="${log.basedir}"/>
@@ -124,7 +124,7 @@
             </filterset>
         </copy>
         <echo>Setting value in properties.xml...  adaRestSvcURL:${ada.url}}</echo>
-        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/properties.xml" tofile="${build.dir}/properties.xml"
+        <copy file="${basedir}/../RESTServices/config/properties.xml" tofile="${build.dir}/properties.xml"
               overwrite="true">
             <filterset>
                 <filter token="ada_url" value="${ada.url}"/>

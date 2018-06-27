@@ -148,7 +148,7 @@
             </fileset>
         </copy>
         <echo>Setting values in log4j.xml...  log_basedir:${log.basedir}, application_name:${project.name}, log_level:${log.level}</echo>
-        <copy file="${basedir}/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml"
+        <copy file="${basedir}/config/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml"
               overwrite="true">
             <filterset>
                 <filter token="log_basedir" value="${log.basedir}"/>
