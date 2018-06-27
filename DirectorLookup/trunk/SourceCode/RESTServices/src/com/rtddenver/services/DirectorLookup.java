@@ -12,11 +12,15 @@ import java.util.concurrent.TimeUnit;
 import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+
+import javax.ws.rs.core.Context;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -64,7 +68,7 @@ public class DirectorLookup {
     @Produces("application/json")
     @Path("addresses/{street},{city},{zip}")
     public DirectorDTO getDirector(@Encoded @PathParam("street") String street, @PathParam("city") String city,
-                                   @PathParam("zip") String zip) {
+                                   @PathParam("zip") String zip, @Context final HttpServletResponse response) {
         DirectorDTO dirDto = null;
         DistrictDTO distDto = null;
         ErrorDTO err = null;
@@ -80,22 +84,17 @@ public class DirectorLookup {
             distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
 
             if (distDto != null) {
-                if (distDto.getMessage() != null && !"".equals(distDto.getMessage().trim())) {
-                    if (distDto.getMessage().contains("error")) {
-                        err = new ErrorDTO(500, 1999, distDto.getMessage(), "Internal GIS Service error. Retry query.");
-                    } else if (distDto.getMessage().contains("Address Could Not Be Located")) {
-                        err = new ErrorDTO(400, 1502, distDto.getMessage(), "Address not found in RTD service area");
-                    }
-                    dirDto = new DirectorDTO(err);
+                if (distDto.getErrorDto() != null) {
+                    dirDto = new DirectorDTO(distDto.getErrorDto());
                 } else {
-                    String distr = distDto.getValue();
+                    String distr = distDto.getDistrict();
                     dirDto = this.directorService.getDirectorByDistrict(distr);
                 }
             } else {
                 LOGGER.warn("No reponse from GIS Service. Internal Service error.");
                 err =
-                    new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street, 
-                                 "No reponse from GIS Service. Retry query.");
+                    new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street,
+                                 "No reponse from GIS Service. Retry query.", "");
                 dirDto = new DirectorDTO(err);
             }
         }

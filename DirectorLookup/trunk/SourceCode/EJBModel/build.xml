@@ -128,6 +128,13 @@
                 <filter token="log_level" value="${log.level}"/>
             </filterset>
         </copy>
+        <echo>Setting values in properties.xml...  gis_svc_url:${gis.svc.url}</echo>
+        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/properties.xml" tofile="${build.dir}/properties.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="gis_svc_url" value="${gis.svc.url}"/>
+            </filterset>
+        </copy>
     </target>
     <!-- 
         Create JAR file 
@@ -145,6 +152,7 @@
                 <include name="com/rtddenver/**"/>
                 <include name="META-INF/**"/>
                 <include name="log4j.xml"/>
+                <include name="properties.xml"/>
             </fileset>
         </jar>
     </target>

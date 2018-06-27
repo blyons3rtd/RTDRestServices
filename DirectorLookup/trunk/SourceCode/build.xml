@@ -102,7 +102,6 @@
             <include name="**/*.sva"/>
             <include name="**/*.tag"/>
             <include name="**/*.tld"/>
-            <include name="**/*.wsdl"/>
             <include name="**/*.xcfg"/>
             <include name="**/*.xlf"/>
             <include name="**/*.xml"/>
@@ -194,6 +193,11 @@
             </filterset>
             <filterset>
                 <filter token="log_level" value="${prod.log.level}"/>
+            </filterset>
+        </copy>
+        <copy file="${web.content}/WEB-INF/properties.xml" tofile="${build.dir}/WEB-INF/classes/properties.xml" overwrite="true">
+            <filterset>
+                <filter token="svc_url" value="${prod.gis.svc.url}"/>
             </filterset>
         </copy>
         <copy file="${web.content}/WEB-INF/classes/struts.xml" tofile="${build.dir}/WEB-INF/classes/struts.xml"
@@ -318,19 +322,13 @@
         <property name="javac.debug" value="${dev.javac.debug}"/>
         <property name="log.level" value="${dev.log.level}"/>
         <property name="log.basedir" value="${dev.log.basedir}"/>
+        <property name="gis.svc.url" value="${dev.gis.svc.url}"/>
     </target>
     <target name="setProd">
         <property name="javac.debug" value="${prod.javac.debug}"/>
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
-    </target>
-    <target name="useTestWSDL">
-        <echo>Copying Test version of whoismydirector.wsdl into META-INF...</echo>
-        <copy file="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl.test" tofile="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl" overwrite="true"></copy>
-    </target>
-    <target name="useProdWSDL">
-        <echo>Copying Prod version of whoismydirector.wsdl into META-INF...</echo>
-        <copy file="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl.prod" tofile="${basedir}\EJBModel\src\META-INF\whoismydirector.wsdl" overwrite="true"></copy>
+        <property name="gis.svc.url" value="${prod.gis.svc.url}"/>
     </target>
     <!-- 
     Prompt user for override of existing file 
