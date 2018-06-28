@@ -65,4 +65,12 @@ public class DirectorDTO implements Serializable {
     public ErrorDTO getError() {
         return error;
     }
+    
+    public boolean isError() {
+        if (this.error != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

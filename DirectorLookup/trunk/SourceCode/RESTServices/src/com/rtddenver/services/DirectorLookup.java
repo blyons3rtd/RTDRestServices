@@ -7,6 +7,8 @@ import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.service.facade.BoardDirectorLocal;
 import com.rtddenver.service.facade.GisDistrictServiceLocal;
 
+import java.io.IOException;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.AccessTimeout;
@@ -14,13 +16,21 @@ import javax.ejb.EJB;
 
 import javax.servlet.http.HttpServletResponse;
 
+import javax.validation.constraints.NotNull;
+
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.Produces;
 
 import javax.ws.rs.core.Context;
+
+import javax.ws.rs.core.MediaType;
+
+import javax.ws.rs.core.Response;
+
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -57,18 +67,19 @@ public class DirectorLookup {
     }
 
     /**
-     * getDirectorForAddress
+     *
      * @param street
      * @param city
      * @param zip
-     * @return Response
+     * @param response
+     * @return DirectorDTO
      */
     @AccessTimeout(value = 30, unit = TimeUnit.SECONDS)
     @GET
     @Produces("application/json")
-    @Path("addresses/{street},{city},{zip}")
-    public DirectorDTO getDirector(@Encoded @PathParam("street") String street, @PathParam("city") String city,
-                                   @PathParam("zip") String zip, @Context final HttpServletResponse response) {
+    @Path("addresses")
+    public DirectorDTO getDirector(@Encoded @NotNull @QueryParam("street") String street, @NotNull @QueryParam("city") String city,
+                                   @NotNull @QueryParam("zip") String zip, @Context final HttpServletResponse response) {
         DirectorDTO dirDto = null;
         DistrictDTO distDto = null;
         ErrorDTO err = null;
@@ -77,29 +88,91 @@ public class DirectorLookup {
             LOGGER.debug("Input received: " + street + ", " + city + ", " + zip);
         }
 
-        if (street.equalsIgnoreCase("refresh") && city.equalsIgnoreCase("the") && zip.equalsIgnoreCase("map")) {
-            dirDto = this.directorService.getDirectorByDistrict("refresh");
-        } else {
+        err = validateEntries(street, city, zip);
 
-            distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
+        if (err == null) {
 
-            if (distDto != null) {
-                if (distDto.getErrorDto() != null) {
-                    dirDto = new DirectorDTO(distDto.getErrorDto());
-                } else {
-                    String distr = distDto.getDistrict();
-                    dirDto = this.directorService.getDirectorByDistrict(distr);
-                }
+            if (street.equalsIgnoreCase("refresh") && city.equalsIgnoreCase("the") && zip.equalsIgnoreCase("map")) {
+                dirDto = this.directorService.getDirectorByDistrict("refresh");
             } else {
-                LOGGER.warn("No reponse from GIS Service. Internal Service error.");
-                err =
-                    new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street,
-                                 "No reponse from GIS Service. Retry query.", "");
-                dirDto = new DirectorDTO(err);
+
+                distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
+
+                if (distDto != null) {
+                    if (distDto.getErrorDto() != null) {
+                        dirDto = new DirectorDTO(distDto.getErrorDto());
+                    } else {
+                        String distr = distDto.getDistrict();
+                        dirDto = this.directorService.getDirectorByDistrict(distr);
+                    }
+                } else {
+                    LOGGER.warn("No reponse from GIS Service. Internal Service error.");
+                    err =
+                        new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street,
+                                     "No reponse from GIS Service. Retry query.", "");
+                    dirDto = new DirectorDTO(err);
+                }
+            }
+        } else {
+            dirDto = new DirectorDTO(err);
+        }
+
+        int status = 0;
+        if (dirDto.isError()) {
+            switch (dirDto.getError().getStatus()) {
+            case 400:
+                status = Response.Status
+                                 .BAD_REQUEST
+                                 .getStatusCode();
+                break;
+            case 404:
+                status = Response.Status
+                                 .NOT_FOUND
+                                 .getStatusCode();
+                break;
+            case 500:
+                status = Response.Status
+                                 .INTERNAL_SERVER_ERROR
+                                 .getStatusCode();
+                break;
+            }
+
+            try {
+                response.setStatus(status);
+                response.setContentType(MediaType.APPLICATION_JSON + ";charset=utf-8");
+                response.getOutputStream().close();
+                response.flushBuffer();
+            } catch (IOException e) {
+                LOGGER.error("Error in LicensePlateLookup.getLicensePlate - setting response", e);
             }
         }
 
         return dirDto;
     }
 
+    private ErrorDTO validateEntries(String street, String city, String zip) {
+        //LOGGER.info("Validating entries...");
+        ErrorDTO dto = null;
+        String detail = "";
+        String msg = "";
+        boolean err = false;
+
+        if (street == null || "".equals(street.trim())) {
+            detail = "Street cannot be empty/null ";
+            err = true;
+        }
+        if (city == null || "".equals(city.trim())) {
+            detail = detail + "City cannot be empty/null ";
+            err = true;
+        }
+        if (zip == null || "".equals(zip.trim())) {
+            detail = detail + "Zipcode cannot be empty/null ";
+            err = true;
+        }
+        if (err) {
+            msg = "Bad Request";
+            dto = new ErrorDTO(400, 1610, detail, msg, "");
+        }
+        return dto;
+    }
 }

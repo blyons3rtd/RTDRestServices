@@ -117,7 +117,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     }
 
     private ErrorDTO validateEntries(String street, String city, String zip) {
-        LOGGER.info("Validating entries...");
+        //LOGGER.info("Validating entries...");
         ErrorDTO dto = null;
         String detail = "";
         String msg = "";
@@ -145,7 +145,9 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     }
 
     private DistrictDTO parseJsonMessage(String jsonStr) {
-        LOGGER.info("Parsing JSON string... \n" + jsonStr);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Parsing JSON string... \n" + jsonStr);
+        }
         JsonParser jsonParser = new JsonParser();
         JsonObject jo = (JsonObject) jsonParser.parse(jsonStr);
         DistrictDTO dto = null;
@@ -158,7 +160,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
                 int status = 0, code = 0;
                 String detail = "", message = "", moreInfo = "", time = "";
                 try {
-                    LOGGER.info("JsonObject:" + jo.toString());
+                    //LOGGER.info("JsonObject:" + jo.toString());
                     // DistrictDTO(String address, String city, String district, String desc, String lat, String lng, String zipcode)
                     if (jo.get("code") != null && !jo.get("code").isJsonNull())
                         code = jo.get("code").getAsInt();
@@ -183,7 +185,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
             } else {
                 String address = "", city = "", district = "", desc = "", lat = "", lng = "", zipcode = "";
                 try {
-                    LOGGER.info("JsonObject:" + jo.toString());
+                    //LOGGER.info("JsonObject:" + jo.toString());
                     // DistrictDTO(String address, String city, String district, String desc, String lat, String lng, String zipcode)
                     if (jo.get("address") != null && !jo.get("address").isJsonNull())
                         address = jo.get("address").getAsString();
