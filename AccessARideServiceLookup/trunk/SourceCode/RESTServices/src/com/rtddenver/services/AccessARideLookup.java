@@ -68,7 +68,7 @@ public class AccessARideLookup {
     @Produces("application/json")
     @Path("addresses")
     public DistrictDTO getAccessARideInfo(@Encoded @NotNull @QueryParam("street") String street,
-                                          @NotNull @QueryParam("city") String city, 
+                                          @Encoded @NotNull @QueryParam("city") String city, 
                                           @NotNull @QueryParam("zip") String zip,
                                           @NotNull @QueryParam("departureDay") String departureDay,
                                           @NotNull @QueryParam("departureTime") String departureTime,
