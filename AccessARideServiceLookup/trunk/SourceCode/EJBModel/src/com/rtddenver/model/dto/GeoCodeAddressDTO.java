@@ -2,8 +2,6 @@ package com.rtddenver.model.dto;
 
 import java.io.Serializable;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -29,9 +27,25 @@ public class GeoCodeAddressDTO implements Serializable {
     @XmlElement(name = "Y")
     private double y = 0;
     
-    @XmlElement(name = "Error")
-    private ErrorDTO error = null;
+    @XmlElement(name="status")
+    private int status = 0;
+
+    @XmlElement(name="code")
+    private int code = 0;
     
+    @XmlElement(name="detail")
+    private String detail = null;
+    
+    @XmlElement(name = "message")
+    private String message = "";
+    
+    @XmlElement(name="time")
+    private String time = null;
+    
+    @XmlElement (name="more_info")
+    private String moreInfo = null;
+    
+    private boolean isError = false;
     
     public GeoCodeAddressDTO() {
         super();
@@ -61,23 +75,32 @@ public class GeoCodeAddressDTO implements Serializable {
         return y;
     }
 
-    /**
-     * GeoCodeAddressDTO
-     * @param error ErrorDTO
-     */
-    public GeoCodeAddressDTO(ErrorDTO error) {
-        this.error = error;
+    public boolean isError() {
+        return isError;
     }
 
-    public ErrorDTO getError() {
-        return error;
+    public int getStatus() {
+        return status;
     }
-    
-    public boolean isError() {
-        if (this.error != null) {
-            return true;
-        }
-        return false;
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getMoreInfo() {
+        return moreInfo;
     }
 
 

@@ -2,7 +2,6 @@ package com.rtddenver.services;
 
 import com.rtddenver.model.dto.DistrictDTO;
 
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.service.facade.AdaRestServiceLocal;
 
 import java.io.IOException;
@@ -75,25 +74,24 @@ public class AccessARideLookup {
                                           @Context final HttpServletResponse response) {
 
         DistrictDTO districtDTO = null;
-        ErrorDTO err = null;
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
                          departureTime);
         }
         
-        err = validateEntries(street, city, zip, departureDay, departureTime);
+        districtDTO = validateEntries(street, city, zip, departureDay, departureTime);
 
-        if (err == null) {
-            districtDTO = this.adaRestService.getAdaAvailability(street, city, zip, departureDay, departureTime);
+        if (districtDTO == null) {
+            districtDTO = this.adaRestService.getAdaAvailability(street, city, zip, departureDay, departureTime.toUpperCase());
         }
         else {
-            districtDTO = new DistrictDTO(err);
+            // Return error
         }
         
         int status = 0;
         if (districtDTO.isError()) {
-            switch (districtDTO.getError().getStatus()) {
+            switch (districtDTO.getStatusAsInt()) {
             case 400:
                 status = Response.Status.BAD_REQUEST.getStatusCode();
                 break;
@@ -118,12 +116,12 @@ public class AccessARideLookup {
         return districtDTO;
     }
 
-    private ErrorDTO validateEntries(String street, String city, String zip, String departureDay,
+    private DistrictDTO validateEntries(String street, String city, String zip, String departureDay,
                                      String departureTime) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Validating entries...");
         }
-        ErrorDTO dto = null;
+        DistrictDTO dto = null;
         String detail = "";
         String msg = "";
         boolean err = false;
@@ -154,7 +152,7 @@ public class AccessARideLookup {
         }
         if (err) {
             msg = "Bad Request";
-            dto = new ErrorDTO(400, 1610, detail, msg, "");
+            dto = new DistrictDTO(400, 1610, detail, msg, "");
         }
         return dto;
     }
@@ -162,6 +160,7 @@ public class AccessARideLookup {
     private boolean validateTime(String time) {
         // Validates time is in a format expected by the GIS service.
         // 12hr format
+        time = time.toUpperCase();
         String TIMEHOURS_PATTERN = "(1[012]|[1-9]):[0-5][0-9](AM|PM)";;
         Pattern pattern = Pattern.compile(TIMEHOURS_PATTERN);
         Matcher matcher = pattern.matcher(time);

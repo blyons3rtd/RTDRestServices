@@ -59,9 +59,6 @@
         <echo>Calling EJBModel ant build...</echo>
         <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml">
             <property name="javac.debug" value="${javac.debug}"/>
-            <property name="log.level" value="${log.level}"/>
-            <property name="log.basedir" value="${log.basedir}"/>
-            <property name="project.name" value="${project.name}"/>
         </ant>
         <echo message="Done"></echo>
     </target>
@@ -154,6 +151,15 @@
           buildAppMinor - Increments the minor release number. Resets the build increment to 1.
           buildApp      - Increments the build number. This is the default build target.
         -->
+    <!-- Local DEV Version -->
+    <target name="createEARLocal" depends="inc.build, setLocal, all">
+        <echo>Creating EAR for Local DEV...</echo>
+        <property name="deploy.dir" value="${dist.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
     <!-- DEV Version -->
     <target name="createEARDev" depends="inc.build, setDev, all">
         <echo>Creating EAR for DEV...</echo>
@@ -170,7 +176,7 @@
     <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
         <echo message="Build complete"></echo>
     </target>
-    <target name="createEARCert" depends="inc.build, setTest, all">
+    <target name="createEARCert" depends="inc.build, setCert, all">
         <echo>Creating EAR for CERT...</echo>
         <property name="deploy.dir" value="${cert.dir}"/>
         <condition property="properlyCalled">
@@ -248,7 +254,7 @@
         Deploy to WebLogic
         -->
     <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic"
-            depends="createEARDev, check4Archive">
+            depends="setDev, createEARDev, check4Archive">
         <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
         <property name="deploy.admin.user" value="${local.admin.user}"/>
         <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
@@ -260,7 +266,7 @@
         <echo message="Done"></echo>
     </target>
     <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic"
-            depends="createEARCert">
+            depends="setCert, createEARCert">
         <!--<fail unless="certArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARCert"/>-->
         <property name="deploy.admin.user" value="${cert.admin.user}"/>
         <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
@@ -273,7 +279,7 @@
     </target>
     <!-- -->
     <target name="deployProd" description="Deploys the application archive to the PROD instance of Weblogic"
-            depends="check4CertArchive">
+            depends="setProd, check4CertArchive">
         <fail unless="certArchiveExists" message="*** Deploy failed!  No CERT archive available to deploy."/>
         <property name="deploy.admin.user" value="${prod.admin.user}"/>
         <property name="deploy.admin.pswd" value="${prod.admin.pswd}"/>
@@ -313,23 +319,29 @@
         </condition>
         <echo message="Done"></echo>
     </target>
+    <target name="setLocal">
+        <property name="javac.debug" value="${local.javac.debug}"/>
+        <property name="log.level" value="${local.log.level}"/>
+        <property name="log.basedir" value="${local.log.basedir}"/>
+        <property name="ada.svc.url" value="${local.ada.svc.url}"/>
+    </target>
     <target name="setDev">
         <property name="javac.debug" value="${dev.javac.debug}"/>
         <property name="log.level" value="${dev.log.level}"/>
         <property name="log.basedir" value="${dev.log.basedir}"/>
-        <property name="ada.url" value="${cert.ada.url}"/>
+        <property name="ada.svc.url" value="${dev.ada.svc.url}"/>
     </target>
-    <target name="setTest">
-        <property name="javac.debug" value="${prod.javac.debug}"/>
-        <property name="log.level" value="${prod.log.level}"/>
-        <property name="log.basedir" value="${prod.log.basedir}"/>
-        <property name="ada.url" value="${cert.ada.url}"/>
+    <target name="setCert">
+        <property name="javac.debug" value="${cert.javac.debug}"/>
+        <property name="log.level" value="${cert.log.level}"/>
+        <property name="log.basedir" value="${cert.log.basedir}"/>
+        <property name="ada.svc.url" value="${cert.ada.svc.url}"/>
     </target>
     <target name="setProd">
         <property name="javac.debug" value="${prod.javac.debug}"/>
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
-        <property name="ada.url" value="${prod.ada.url}"/>
+        <property name="ada.svc.url" value="${prod.ada.svc.url}"/>
     </target>
     <!-- 
     Prompt user for override of existing file 

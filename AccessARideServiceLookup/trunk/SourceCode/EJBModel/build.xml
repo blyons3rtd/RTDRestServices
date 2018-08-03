@@ -123,11 +123,11 @@
                 <filter token="log_level" value="${log.level}"/>
             </filterset>
         </copy>
-        <echo>Setting value in properties.xml...  adaRestSvcURL:${ada.url}}</echo>
+        <echo>Setting value in properties.xml...  adaRestSvcURL:${ada.svc.url}</echo>
         <copy file="${basedir}/../RESTServices/config/properties.xml" tofile="${build.dir}/properties.xml"
               overwrite="true">
             <filterset>
-                <filter token="ada_url" value="${ada.url}"/>
+                <filter token="ada_svc_url" value="${ada.svc.url}"/>
             </filterset>
         </copy>
     </target>
