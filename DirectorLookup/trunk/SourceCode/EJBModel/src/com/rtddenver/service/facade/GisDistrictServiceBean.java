@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import com.rtddenver.model.dto.DistrictDTO;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.util.StackTraceUtil;
 
 import java.io.BufferedReader;
@@ -39,11 +38,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
 
     // The URL assigned is a default. The build process will assign the appropriate URL for dev/cert and prod.
     // This assigned value gets set in the properties.xml file.
-    private String gisRestUrl = "http://gis-app-c01.rtd-denver.com/:8080/DistrictRESTful/api/v1/district/getDistrict";
-
-    //private District district;
-
-    //private static final String districtSvc = "#%7Bhttp%3A%2F%2Fgis.rtd-denver.com%7DDistrict";
+    private String districtRestUrl = "http://localhost:7001/DistrictLookup/api/v1/district/addresses";
 
     public GisDistrictServiceBean() {
     }
@@ -60,13 +55,13 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
 
         try {
 
-            gisRestUrl = propertiesBean.getProperties().getProperty("gisRestSvcURL");
-            ErrorDTO errorDTO = validateEntries(street, city, zip);
+            districtRestUrl = propertiesBean.getProperties().getProperty("DistrictSvcURL");
+            dto = validateEntries(street, city, zip);
 
-            if (errorDTO == null) {
+            if (dto == null) {
                 street = street.replaceAll("%20", " "); // Convert HTML encoded space characters
                 String params = assembleParameters(street, city, zip);
-                URL url = new URL((gisRestUrl + params));
+                URL url = new URL((districtRestUrl + params));
                 LOGGER.info("Assembled service URL: " + url.toString());
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -74,10 +69,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
 
                 if (conn.getResponseCode() != 200) {
                     LOGGER.error(conn.getResponseCode());
-                    errorDTO =
-                        new ErrorDTO(conn.getResponseCode(), 1999, "Error calling GIS Get District service",
+                    dto = new DistrictDTO(conn.getResponseCode(), 1999, "Error calling GIS Get District service",
                                      "Unexpected error occurred. Retry query.", "");
-                    dto = new DistrictDTO(errorDTO);
                 } else {
                     BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
                     String jsonStr = "";
@@ -88,15 +81,14 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
                     dto = parseJsonMessage(jsonStr);
                 }
             } else {
-                dto = new DistrictDTO(errorDTO);
+                // Will return an error
             }
 
         } catch (Exception e) {
             LOGGER.error("Error querying and processing entity bean: " + e);
             e.printStackTrace();
             //int status, String code, String detail, String message, String moreInfo
-            ErrorDTO error = new ErrorDTO(500, 1502, e.getMessage(), "Error calling GISDistrictService", "");
-            dto = new DistrictDTO(error);
+            dto = new DistrictDTO(500, 1502, e.getMessage(), "Error calling GISDistrictService", "");
         }
 
         return dto;
@@ -116,9 +108,9 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         return paramStr;
     }
 
-    private ErrorDTO validateEntries(String street, String city, String zip) {
+    private DistrictDTO validateEntries(String street, String city, String zip) {
         //LOGGER.info("Validating entries...");
-        ErrorDTO dto = null;
+        DistrictDTO dto = null;
         String detail = "";
         String msg = "";
         boolean err = false;
@@ -139,7 +131,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
             err = true;
         }
         if (err) {
-            dto = new ErrorDTO(400, 1610, detail, msg, "");
+            dto = new DistrictDTO(400, 1610, detail, msg, "");
         }
         return dto;
     }
@@ -155,32 +147,29 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         {"address":"3126 e 134th circle","city":"thornton","desc":null,"district":"K","lat":"39.9355078","lng":"-104.9479889","zipcode":"80241"}
          */
         if (jo != null && !jo.isJsonNull()) {
-            if (jo.get("status") != null && !jo.get("status").isJsonNull()) {
+            if (jo.get("errorCode") != null && !jo.get("errorCode").isJsonNull()) {
                 LOGGER.info("Received an error from the GIS service");
                 int status = 0, code = 0;
                 String detail = "", message = "", moreInfo = "", time = "";
                 try {
                     //LOGGER.info("JsonObject:" + jo.toString());
                     // DistrictDTO(String address, String city, String district, String desc, String lat, String lng, String zipcode)
-                    if (jo.get("code") != null && !jo.get("code").isJsonNull())
-                        code = jo.get("code").getAsInt();
-                    if (jo.get("status") != null && !jo.get("status").isJsonNull())
-                        status = jo.get("status").getAsInt();
+                    if (jo.get("errorCode") != null && !jo.get("errorCode").isJsonNull())
+                        code = jo.get("errorCode").getAsInt();
+                    if (jo.get("errorStatus") != null && !jo.get("errorStatus").isJsonNull())
+                        status = jo.get("errorStatus").getAsInt();
                     if (jo.get("detail") != null && !jo.get("detail").isJsonNull())
                         detail = jo.get("detail").getAsString();
                     if (jo.get("message") != null && !jo.get("message").isJsonNull())
                         message = jo.get("message").getAsString();
-                    if (jo.get("more_info") != null && !jo.get("more_info").isJsonNull())
-                        moreInfo = jo.get("moreInfo").getAsString();
+                    //if (jo.get("more_info") != null && !jo.get("more_info").isJsonNull())
+                    //    moreInfo = jo.get("moreInfo").getAsString();
                     if (jo.get("time") != null && !jo.get("time").isJsonNull())
                         time = jo.get("time").getAsString();
-                    ErrorDTO err = new ErrorDTO(status, code, detail, message, moreInfo, time);
-                    dto = new DistrictDTO(err);
+                    dto = new DistrictDTO(status, code, detail, message, moreInfo, time);
                 } catch (Exception e) {
                     LOGGER.error(StackTraceUtil.getStackTrace(e));
-                    ErrorDTO err =
-                        new ErrorDTO(500, 1502, "No information returned from service", "Failure. Please retry.", "");
-                    dto = new DistrictDTO(err);
+                    dto = new DistrictDTO(500, 1502, "No information returned from service", "Failure. Please retry.", "");
                 }
             } else {
                 String address = "", city = "", district = "", desc = "", lat = "", lng = "", zipcode = "";
@@ -205,16 +194,11 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
                     dto = new DistrictDTO(address, city, district, desc, lat, lng, zipcode);
                 } catch (Exception e) {
                     LOGGER.error(StackTraceUtil.getStackTrace(e));
-                    ErrorDTO err =
-                        new ErrorDTO(500, 1502, "No information returned from service", "Failure. Please retry.", "");
-                    dto = new DistrictDTO(err);
+                    dto = new DistrictDTO(500, 1502, "No information returned from service", "Failure. Please retry.", "");
                 }
             }
         } else {
-            ErrorDTO err =
-                new ErrorDTO(400, 1502, "No address returned from service", "Address not found in RTD service area",
-                             "");
-            dto = new DistrictDTO(err);
+            dto = new DistrictDTO(400, 1502, "No address returned from service", "Address not found in RTD service area", "");
         }
 
         return dto;

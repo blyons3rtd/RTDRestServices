@@ -39,8 +39,25 @@ public class DistrictDTO implements Serializable {
     @XmlElement(name = "zipcode")
     private String zipcode = null;
     
-    @XmlElement(name = "Error")
-    private ErrorDTO errorDto = null;
+    @XmlElement(name="status")
+    private int status = 0;
+
+    @XmlElement(name="code")
+    private int code = 0;
+    
+    @XmlElement(name="detail")
+    private String detail = null;
+    
+    @XmlElement(name="message")
+    private String message = null;
+    
+    @XmlElement(name="time")
+    private String time = null;
+    
+    @XmlElement (name="more_info")
+    private String moreInfo = null;
+    
+    private boolean isError = false;
     
     
     public DistrictDTO() {
@@ -69,11 +86,44 @@ public class DistrictDTO implements Serializable {
 
     /**
      * DistrictDTO. Instantiate with this method when an error has occurred.
-     * @param ErrorDTO
+     * @param status
+     * @param code
+     * @param detail
+     * @param message
+     * @param moreInfo
      */
-    public DistrictDTO(ErrorDTO errorDto) {
-        this();
-        this.errorDto = errorDto;
+    public DistrictDTO(int status, int code, String detail, String message, String moreInfo) {
+        super();
+        java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
+        sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
+        java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
+        this.time = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
+        this.status = status;
+        this.code = code;
+        this.detail = detail;
+        this.message = message;
+        this.moreInfo = moreInfo;
+        isError = true;
+    }
+
+    /**
+     * DistrictDTO. Instantiate with this method when an error has occurred and posting time from error source.
+     * @param status
+     * @param code
+     * @param detail
+     * @param message
+     * @param moreInfo
+     * @param time
+     */
+    public DistrictDTO(int status, int code, String detail, String message, String moreInfo, String time) {
+        super();
+        this.time = time;
+        this.status = status;
+        this.code = code;
+        this.detail = detail;
+        this.message = message;
+        this.moreInfo = moreInfo;
+        isError = true;
     }
 
 
@@ -105,8 +155,31 @@ public class DistrictDTO implements Serializable {
         return zipcode;
     }
 
-    public ErrorDTO getErrorDto() {
-        return errorDto;
+    public boolean isError() {
+        return isError;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getMoreInfo() {
+        return moreInfo;
+    }
 }

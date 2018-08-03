@@ -3,7 +3,6 @@ package com.rtddenver.services;
 
 import com.rtddenver.model.dto.DirectorDTO;
 import com.rtddenver.model.dto.DistrictDTO;
-import com.rtddenver.model.dto.ErrorDTO;
 import com.rtddenver.service.facade.BoardDirectorLocal;
 import com.rtddenver.service.facade.GisDistrictServiceLocal;
 
@@ -78,20 +77,21 @@ public class DirectorLookup {
     @GET
     @Produces("application/json")
     @Path("addresses")
-    public DirectorDTO getDirector(@Encoded @NotNull @QueryParam("street") String street, @NotNull @QueryParam("city") String city,
-                                   @NotNull @QueryParam("zip") String zip, @Context final HttpServletResponse response) {
+    public DirectorDTO getDirector(@Encoded @NotNull @QueryParam("street") String street,
+                                   @Encoded @NotNull @QueryParam("city") String city,
+                                   @NotNull @QueryParam("zip") String zip,
+                                   @Context final HttpServletResponse response) {
+
         DirectorDTO dirDto = null;
         DistrictDTO distDto = null;
-        ErrorDTO err = null;
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Input received: " + street + ", " + city + ", " + zip);
         }
 
-        err = validateEntries(street, city, zip);
+        dirDto = validateEntries(street, city, zip);
 
-        if (err == null) {
-
+        if (dirDto == null) {
             if (street.equalsIgnoreCase("refresh") && city.equalsIgnoreCase("the") && zip.equalsIgnoreCase("map")) {
                 dirDto = this.directorService.getDirectorByDistrict("refresh");
             } else {
@@ -99,27 +99,26 @@ public class DirectorLookup {
                 distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
 
                 if (distDto != null) {
-                    if (distDto.getErrorDto() != null) {
-                        dirDto = new DirectorDTO(distDto.getErrorDto());
+                    if (distDto.isError()) {
+                        dirDto = new DirectorDTO(distDto.getStatus(), distDto.getCode(), distDto.getDetail(), distDto.getMessage(), distDto.getMoreInfo());
                     } else {
                         String distr = distDto.getDistrict();
                         dirDto = this.directorService.getDirectorByDistrict(distr);
                     }
                 } else {
-                    LOGGER.warn("No reponse from GIS Service. Internal Service error.");
-                    err =
-                        new ErrorDTO(500, 1999, "Internal Service error. Input received: " + street,
+                    LOGGER.warn("No reponse from GIS Service. Internal Service error. Address: " + street + ", " +
+                                city + " " + zip);
+                    dirDto = new DirectorDTO(500, 1999, "Internal Service error. Input received: " + street,
                                      "No reponse from GIS Service. Retry query.", "");
-                    dirDto = new DirectorDTO(err);
                 }
             }
         } else {
-            dirDto = new DirectorDTO(err);
+            // Return error
         }
 
         int status = 0;
         if (dirDto.isError()) {
-            switch (dirDto.getError().getStatus()) {
+            switch (dirDto.getStatusAsInt()) {
             case 400:
                 status = Response.Status
                                  .BAD_REQUEST
@@ -150,9 +149,9 @@ public class DirectorLookup {
         return dirDto;
     }
 
-    private ErrorDTO validateEntries(String street, String city, String zip) {
+    private DirectorDTO validateEntries(String street, String city, String zip) {
         //LOGGER.info("Validating entries...");
-        ErrorDTO dto = null;
+        DirectorDTO dto = null;
         String detail = "";
         String msg = "";
         boolean err = false;
@@ -171,7 +170,7 @@ public class DirectorLookup {
         }
         if (err) {
             msg = "Bad Request";
-            dto = new ErrorDTO(400, 1610, detail, msg, "");
+            dto = new DirectorDTO(400, 1610, detail, msg, "");
         }
         return dto;
     }

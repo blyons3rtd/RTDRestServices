@@ -149,6 +149,15 @@
           buildAppMinor - Increments the minor release number. Resets the build increment to 1.
           buildApp      - Increments the build number. This is the default build target.
         -->
+    <!-- Local Version -->
+    <target name="createEARLocal" depends="inc.build, setLocal, all">
+        <echo>Creating EAR for Local machine...</echo>
+        <property name="deploy.dir" value="${dist.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
     <!-- DEV Version -->
     <target name="createEARDev" depends="inc.build, setDev, all">
         <echo>Creating EAR for DEV...</echo>
@@ -165,7 +174,7 @@
     <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
         <echo message="Build complete"></echo>
     </target>
-    <target name="createEARCert" depends="inc.build, setProd, all">
+    <target name="createEARCert" depends="inc.build, setCert, all">
         <echo>Creating EAR for CERT...</echo>
         <property name="deploy.dir" value="${cert.dir}"/>
         <condition property="properlyCalled">
@@ -197,13 +206,7 @@
         </copy>
         <copy file="${web.content}/WEB-INF/properties.xml" tofile="${build.dir}/WEB-INF/classes/properties.xml" overwrite="true">
             <filterset>
-                <filter token="svc_url" value="${prod.gis.svc.url}"/>
-            </filterset>
-        </copy>
-        <copy file="${web.content}/WEB-INF/classes/struts.xml" tofile="${build.dir}/WEB-INF/classes/struts.xml"
-              overwrite="true">
-            <filterset>
-                <filter token="true_or_false" value="${prod.struts.devMode}"/>
+                <filter token="district_svc_url" value="${prod.district.svc.url}"/>
             </filterset>
         </copy>
         <echo>Creating PROD EAR...</echo>
@@ -264,6 +267,18 @@
         <antcall target="deploy2WLS"/>
         <echo message="Done"></echo>
     </target>
+    <target name="deployDev" description="Deploys the application archive to the DEV instance of Weblogic"
+            depends="createEARDev">
+        <!--<fail unless="certArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARCert"/>-->
+        <property name="deploy.admin.user" value="${dev.admin.user}"/>
+        <property name="deploy.admin.pswd" value="${dev.admin.pswd}"/>
+        <property name="deploy.admin.url" value="${dev.admin.url}"/>
+        <property name="deploy.target" value="${dev.deploy.target}"/>
+        <property name="ok2Deploy" value="true"/>
+        <property name="archive.dir" value="${dev.dir}"/>
+        <antcall target="deploy2WLS"/>
+        <echo message="deployCert Done"></echo>
+    </target>
     <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic"
             depends="createEARCert">
         <!--<fail unless="certArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARCert"/>-->
@@ -318,17 +333,29 @@
         </condition>
         <echo message="Done"></echo>
     </target>
+    <target name="setLocal">
+        <property name="javac.debug" value="${local.javac.debug}"/>
+        <property name="log.level" value="${local.log.level}"/>
+        <property name="log.basedir" value="${local.log.basedir}"/>
+        <property name="district.svc.url" value="${local.district.svc.url}"/>
+    </target>
     <target name="setDev">
         <property name="javac.debug" value="${dev.javac.debug}"/>
         <property name="log.level" value="${dev.log.level}"/>
         <property name="log.basedir" value="${dev.log.basedir}"/>
-        <property name="gis.svc.url" value="${dev.gis.svc.url}"/>
+        <property name="district.svc.url" value="${dev.district.svc.url}"/>
+    </target>
+    <target name="setCert">
+        <property name="javac.debug" value="${cert.javac.debug}"/>
+        <property name="log.level" value="${cert.log.level}"/>
+        <property name="log.basedir" value="${cert.log.basedir}"/>
+        <property name="district.svc.url" value="${cert.district.svc.url}"/>
     </target>
     <target name="setProd">
         <property name="javac.debug" value="${prod.javac.debug}"/>
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
-        <property name="gis.svc.url" value="${prod.gis.svc.url}"/>
+        <property name="district.svc.url" value="${prod.district.svc.url}"/>
     </target>
     <!-- 
     Prompt user for override of existing file 

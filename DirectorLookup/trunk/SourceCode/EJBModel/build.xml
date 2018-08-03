@@ -128,11 +128,11 @@
                 <filter token="log_level" value="${log.level}"/>
             </filterset>
         </copy>
-        <echo>Setting values in properties.xml...  gis_svc_url:${gis.svc.url}</echo>
+        <echo>Setting values in properties.xml...  district_svc_url:${district.svc.url}</echo>
         <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/properties.xml" tofile="${build.dir}/properties.xml"
               overwrite="true">
             <filterset>
-                <filter token="gis_svc_url" value="${gis.svc.url}"/>
+                <filter token="district_svc_url" value="${district.svc.url}"/>
             </filterset>
         </copy>
     </target>
