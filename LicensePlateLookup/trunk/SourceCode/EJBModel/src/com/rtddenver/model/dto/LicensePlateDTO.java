@@ -30,31 +30,40 @@ public class LicensePlateDTO implements Serializable {
 
     @XmlElement(name = "Response")
     private String reason = null;
+    
+    @XmlElement(name="status")
+    private Long status = null;
 
-    @XmlElement(name = "status")
-    private Integer errorStatus = null;
+    @XmlElement(name="code")
+    private Long code = null;
+    
+    @XmlElement(name="detail")
+    private String detail = null;
+    
+    @XmlElement(name="message")
+    private String message = null;
+    
+    @XmlElement(name="time")
+    private String time = null;
+    
+    @XmlElement (name="more_info")
+    private String moreInfo = null;
 
-    @XmlElement(name = "code")
-    private String errorCode = null;
-
-    @XmlElement(name = "detail")
-    private String errorDetail = null;
-
-    @XmlElement(name = "message")
-    private String errorMessage = null;
-
-    @XmlElement(name = "time")
-    private String errorTime = null;
+    private boolean isError = false;
     
     /**
      * LicensePlateDTO
      */
     public LicensePlateDTO() {
         super();
+        java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
+        sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
+        java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
+        //this.errorTime = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
     }
 
     /**
-     * LicensePlateDTO
+     * LicensePlateDTO. Instantiate with this method when no error has occurred.
      * @param plateNumber String
      * @param inDistrict int
      * @param geocoded int
@@ -86,31 +95,74 @@ public class LicensePlateDTO implements Serializable {
     }
     
     /**
-     * LicensePlateDTO
-     * @param errorStatus int
-     * @param errorCode String
-     * @param errorDetail String
-     * @param errorMessage String
+     * LicensePlateDTO. Instantiate with this method when an error has occurred.
+     * @param status
+     * @param code
+     * @param detail
+     * @param message
+     * @param moreInfo
      */
-    public LicensePlateDTO(int status, String code, String detail, String message) {
+    public LicensePlateDTO(int status, int code, String detail, String message, String moreInfo) {
         this();
-        
-        java.text.SimpleDateFormat sdfOutput = new java.text.SimpleDateFormat();
-        sdfOutput.applyPattern("M-d-yyyy hh:mm aaa");
-        java.util.GregorianCalendar calendar = new java.util.GregorianCalendar();
-       
-        this.errorStatus = status;
-        this.errorCode = code;
-        this.errorDetail = detail;
-        this.errorMessage = message;
-        this.errorTime = sdfOutput.format(new java.util.Date(calendar.getTime().getTime()));
+        this.status = new Long(status);
+        this.code = new Long(code);
+        this.detail = detail;
+        this.message = message;
+        this.moreInfo = moreInfo;
+        isError = true;
     }
     
-    /**
-     * getErrorStatus
-     * @return Integer
-     */
-    public Integer getErrorStatus() {
-        return this.errorStatus;
+    public boolean isError() {
+        return this.isError;
+    }
+
+    public String getPlateNumber() {
+        return plateNumber;
+    }
+
+    public Long getInDistrict() {
+        return inDistrict;
+    }
+
+    public Long getGeocoded() {
+        return geocoded;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public Long getStatus() {
+        return status;
+    }
+    
+    public int getStatusAsInt() {
+        int x = Math.toIntExact(status);
+        return x;
+    }
+
+    public Long getCode() {
+        return code;
+    }
+    
+    public int getCodeAsInt() {
+        int x = Math.toIntExact(code);
+        return x;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getMoreInfo() {
+        return moreInfo;
     }
 }
