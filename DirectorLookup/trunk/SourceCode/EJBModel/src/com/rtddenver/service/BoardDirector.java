@@ -20,8 +20,8 @@ import javax.persistence.Table;
 @NamedQueries({ @NamedQuery(name = "findDirectorByDistrict", query = "select o from BoardDirector o " +
     "WHERE UPPER(o.district) = UPPER(:district) AND UPPER(o.active) = 'Y' "),
                 @NamedQuery(name = "getAllDirectors", query = "select o from BoardDirector o " +
-    "WHERE UPPER(o.active) = 'Y'") })
-@Table(name = "BOARD_DIRECTOR")
+    "WHERE UPPER(o.active) = 'Y' order by o.district") })
+@Table(name = "BOARD_DIRECTOR", schema = "BOARD_DIR")
 @SequenceGenerator(name = "BoardDirector_Id_Seq_Gen", sequenceName = "BOARDDIRECTOR_ID_SEQ_GEN", allocationSize = 50,
                    initialValue = 50)
 

@@ -85,9 +85,7 @@ public class DirectorLookup {
         DirectorDTO dirDto = null;
         DistrictDTO distDto = null;
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Input received: " + street + ", " + city + ", " + zip);
-        }
+        LOGGER.info("Input received: " + street + ", " + city + ", " + zip);
 
         dirDto = validateEntries(street, city, zip);
 
@@ -146,6 +144,8 @@ public class DirectorLookup {
             }
         }
 
+        LOGGER.info("Returning...  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() + "  Message:" + dirDto.getMessage());
+        
         return dirDto;
     }
 

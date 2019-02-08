@@ -32,15 +32,17 @@
     <target name="all" description="Build the entire application" depends="clean,model,services,copy"/>
     <target name="clean" description="Clean the project" unless="cleanDone">
         <echo>Cleaning RESTServices...</echo>
-        <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml" />
+        <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml"/>
         <echo>Cleaning EJBModel...</echo>
         <ant target="clean" dir="${basedir}/EJBModel" antfile="build.xml"/>
         <echo>Cleaning Application...</echo>
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
+            <!-- Move these cleanups under respective build type
             <fileset dir="${dist.dir}" includes="**/*"/>
             <fileset dir="${cert.dir}" includes="**/*"/>
             <fileset dir="${prod.dir}" includes="**/*"/>
+            -->
         </delete>
         <condition property="cleanDone">
             <not>
@@ -156,6 +158,9 @@
         <condition property="properlyCalled">
             <isset property="deploy.dir"/>
         </condition>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${dist.dir}" includes="**/*"/>
+        </delete>
         <antcall target="createEAR"/>
     </target>
     <!-- DEV Version -->
@@ -180,21 +185,34 @@
         <condition property="properlyCalled">
             <isset property="deploy.dir"/>
         </condition>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${cert.dir}" includes="**/*"/>
+        </delete>
         <antcall target="createEAR"/>
     </target>
     <!-- PROD Version -->
+    <target name="createEARProd" depends="setProd, all">
+        <echo>Creating EAR for PROD...</echo>
+        <property name="deploy.dir" value="${prod.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+            <fileset dir="${prod.dir}" includes="**/*"/>
+        </delete>
+        <antcall target="createEAR"/>
+    </target>
+    <!--
     <target name="createEARProd" depends="check4CertArchive">
         <fail unless="certArchiveExists"
               message="*** Deploy failed!  No CERT archive available to create PROD version."/>
         <echo>Creating EAR for PROD...</echo>
-        <!-- Clean build dir of current contents-->
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${prod.dir}"/>
-        <!-- Unzip CERT EAR -->
         <echo>Un-zipping CERT EAR...</echo>
         <unzip src="${cert.dir}/${applicationArchive}" dest="${build.dir}"/>
-        <!-- Over-write files with corresponding PROD versions -->
         <echo>Over-writing some files with their PROD version...</echo>
         <copy file="${web.content}/WEB-INF/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
             <filterset>
@@ -215,6 +233,7 @@
             <fileset dir="${build.dir}"/>
         </war>
     </target>
+    -->
     <!--
         This is the main target for creating the EAR.
         This should not be called directly. But, rather via createEARDev, createEARCert, createEARProd.
@@ -513,12 +532,13 @@
     <macrodef name="load.version.info">
         <sequential>
             <property file="${version.file}"/>
-            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" />
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA"/>
             <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
             <echo>SHA1: ${sha1.number}</echo>
         </sequential>
     </macrodef>
-    <scriptdef name="propertyreset" language="javascript" src="setProperty.js" description="Allows to assign @{property} new value">
+    <scriptdef name="propertyreset" language="javascript" src="setProperty.js"
+               description="Allows to assign @{property} new value">
         <attribute name="name"/>
         <attribute name="value"/>
         <!--project.setProperty(attributes.get("name"), attributes.get("value"));-->

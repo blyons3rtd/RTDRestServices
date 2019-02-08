@@ -170,7 +170,7 @@ public class BoardDirectorBean implements BoardDirectorLocal {
             retVal = true;
         } else {
             Date future = new Date(now.getTime() + (refreshLimit - diff));
-            LOGGER.info("directorMap will be refreshed at " + future.toString());
+            LOGGER.info("directorMap will be refreshed from db at " + future.toString());
         }
         return retVal;
     }
