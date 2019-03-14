@@ -9,13 +9,11 @@ import javax.ejb.EJB;
 
 import javax.servlet.http.HttpServletResponse;
 
-import javax.validation.constraints.NotNull;
-
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -35,7 +33,7 @@ import org.apache.log4j.Logger;
 //BUG in current version of JERSEY/weblogic 12.2.1 - https://github.com/jersey/jersey/issues/2962
 //@Stateless
 @javax.enterprise.context.RequestScoped
-@Path("v1")
+@Path("v1/plates")
 public class LicensePlateLookup {
     private static final Logger LOGGER = LogManager.getLogger(LicensePlateLookup.class.getName());
     
@@ -56,13 +54,13 @@ public class LicensePlateLookup {
      * @return LicensePlateDTO
      */
     @GET
-    @Path("/plates")
+    @Path("{plateNumber}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    public LicensePlateDTO getLicensePlate(@Encoded @NotNull @QueryParam("plate") String plate, @Context final HttpServletResponse response) {
+    public LicensePlateDTO getLicensePlate(@Encoded @PathParam("plateNumber") String plateNumber, @Context final HttpServletResponse response) {
         LicensePlateDTO dto = null;
         
         try {
-            dto = this.licensePlateService.getLicensePlate(plate);
+            dto = this.licensePlateService.getLicensePlate(plateNumber);
         } catch (Exception e) {
             dto = new LicensePlateDTO(500, 1950, e.getMessage(), "Internal Server Error","");
             LOGGER.error("Error in LicensePlateLookup.getLicensePlate - calling session ejb", e);
@@ -97,6 +95,7 @@ public class LicensePlateLookup {
                 LOGGER.error("Error in LicensePlateLookup.getLicensePlate - setting response", e);
             }
         }
+        
 
         return dto;
     }

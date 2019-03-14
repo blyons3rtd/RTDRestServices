@@ -25,8 +25,8 @@ import org.eclipse.persistence.annotations.ReadOnly;
                             query = "SELECT o FROM LicensePlate o WHERE o.plateNumber = :plateNumber")
                 })
 // Schema defined in the WebLogic data source LicensePlateDS, under Init SQL.
-@Table(name = "LICENSE_PLATE_MASTER")
-//@Table(name = "LICENSE_PLATE_MASTER", schema = "CHK_PLT")
+//@Table(name = "LICENSE_PLATE_MASTER")
+@Table(name = "LICENSE_PLATE_MASTER", schema = "CHK_PLT")
 public class LicensePlate implements Serializable {
     @SuppressWarnings("compatibility:-45716201554151264")
     private static final long serialVersionUID = -6476394450503874613L;
