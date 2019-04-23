@@ -5,6 +5,8 @@ import com.rtddenver.service.LicensePlateServiceLocal;
 
 import java.io.IOException;
 
+import java.net.URLDecoder;
+
 import javax.ejb.EJB;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +62,7 @@ public class LicensePlateLookup {
         LicensePlateDTO dto = null;
         
         try {
-            dto = this.licensePlateService.getLicensePlate(plateNumber);
+            dto = this.licensePlateService.getLicensePlate(URLDecoder.decode(plateNumber, "UTF-8"));
         } catch (Exception e) {
             dto = new LicensePlateDTO(500, 1950, e.getMessage(), "Internal Server Error","");
             LOGGER.error("Error in LicensePlateLookup.getLicensePlate - calling session ejb", e);

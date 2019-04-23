@@ -70,25 +70,14 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal, Serial
         } else {
             plateNumber = plate;
             LOGGER.info("Plate received <" + plateNumber + ">");
-            // Convert ascii space to space
-            plateNumber = plateNumber.replaceAll("%20", " ");
-            //LOGGER.info("Plate <" + plateNumber + ">");
-            // Trim any trailing spaces
-            plateNumber = plateNumber.trim();
-            //LOGGER.info("Plate <" + plateNumber + ">");
-            // Trim any leading spaces
-            while (plateNumber.startsWith(" ")) {
-                plateNumber = plateNumber.replaceFirst(" ", "");
-            }
-            LOGGER.info("Plate to checked <" + plateNumber + ">");
             // Check plate number for bad characters
             // Permitted chars are letters A-Z, upper or lower-case, digits 0-9, and embedded spaces
-            //Pattern p = Pattern.compile("[^A-Za-z0-9 ]");
-            //Matcher m = p.matcher(plateNumber);
+            Pattern p = Pattern.compile("[^A-Za-z0-9 ]");
+            Matcher m = p.matcher(plateNumber);
 
-            //if (m.find()) {
-            //    dto = new LicensePlateDTO(400, 1610, "Invalid characters found in license plate", "Bad Request", "");
-            //} else {
+            if (m.find()) {
+                dto = new LicensePlateDTO(400, 1610, "Invalid characters found in license plate", "Bad Request", "");
+            } else {
                 lp = em.createNamedQuery("findByLicensePlateNumber", LicensePlate.class)
                        .setParameter("plateNumber", plateNumber.toUpperCase())
                        .setMaxResults(1)
@@ -96,7 +85,7 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal, Serial
 
                 if (lp.size() == 0) {
                     // No rows returned
-                    dto = new LicensePlateDTO(404, 1700, "License plate not found - " + plateNumber, "Not Found", "");
+                    dto = new LicensePlateDTO(404, 1700, "License plate not found - '" + plateNumber + "'", "Not Found", "");
                 } else {
                     dto =
                         new LicensePlateDTO(lp.get(0).getPlateNumber(), lp.get(0).getInDistrict(),
@@ -107,7 +96,7 @@ public class LicensePlateServiceBean implements LicensePlateServiceLocal, Serial
                     lp.clear();
                     lp = null;
                 }
-            //}
+            }
 
         }
 
