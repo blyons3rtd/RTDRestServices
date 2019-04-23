@@ -5,7 +5,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
+			<param name="ConversionPattern" value="[%d{EEE MMM dd HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
 		</layout>
 	</appender>
 
@@ -14,7 +14,7 @@
 		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
+			<param name="ConversionPattern" value="[%d{EEE MMM dd HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
 		</layout>
 	</appender>
 
@@ -23,7 +23,7 @@
 		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
+			<param name="ConversionPattern" value="[%d{EEE MMM dd HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
 		</layout>
 	</appender>
 
@@ -32,8 +32,7 @@
 		<param name="MaxFileSize" value="1000kb" />
 		<param name="MaxBackupIndex" value="7" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern"
-				value="[%d{EEE MMM d HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
+			<param name="ConversionPattern" value="[%d{EEE MMM dd HH:mm:ss yyyy}] [%-5p] [%-30.30F:%4.4L]: %m%n" />
 		</layout>
 	</appender>
 
