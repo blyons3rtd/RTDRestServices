@@ -84,12 +84,15 @@
     </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,jar"/>
     <target name="clean" description="Clean the project">
+      <echo>Cleaning... ${basedir}</echo>
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
-        </delete>
-        <delete includeemptydirs="true" quiet="true">
             <fileset dir="${dist.dir}" includes="**/*"/>
         </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dist.dir}</echo>
+        <delete dir="${dist.dir}"/>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
         <echo>Compiling with debug=${javac.debug}</echo>

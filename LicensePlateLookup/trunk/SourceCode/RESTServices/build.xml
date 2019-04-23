@@ -73,7 +73,7 @@
     </path>
     <path id="Logging.jar">
         <pathelement location="../lib/log4j-1.2.15.jar"/>
-        <pathelement location="../lib/logger.jar"/>
+        <pathelement location="../lib/rtdLog4j.jar"/>
     </path>
     <path id="classpath">
         <pathelement location="../EJBModel/deploy/EJBModel.jar"/>
@@ -94,11 +94,17 @@
     </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,war"/>
     <target name="clean" description="Clean the project">
-        <echo>Cleaning RESTServices...</echo>
+        <echo>Cleaning... ${basedir}</echo>
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
             <fileset dir="${dist.dir}" includes="**/*"/>
         </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dist.dir}</echo>
+        <delete dir="${dist.dir}"/>
+        <echo>Cleaning... ${basedir}\classes</echo>
+        <delete dir="classes"/>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
         <!-- debugSetting value defined in application level build.xml -->

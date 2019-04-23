@@ -25,9 +25,14 @@
         <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.rjvm.jar"/>
         <pathelement location="${wldeploy.lib.dir}/weblogic.jar"/>
     </path>
+    <path id="Logging.jar">
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/Logger.jar"/>
+    </path>
     <echo message="wldeploy path: ${toString:wldeploy.WebLogic.12.1}"></echo>
     <path id="classpath">
         <path refid="wldeploy.WebLogic.12.1"/>
+        <path refid="Logging.jar"/>
     </path>
     <target name="all" description="Build the entire application" depends="clean,model,services,copy"/>
     <target name="clean" description="Clean the project" unless="cleanDone">
@@ -38,12 +43,24 @@
         <echo>Cleaning Application...</echo>
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${build.dir}" includes="**/*"/>
-            <fileset dir="${dist.dir}" includes="**/*"/>
+            <fileset dir="${dev.dir}" includes="**/*"/>
             <fileset dir="${cert.dir}" includes="**/*"/>
             <fileset dir="${prod.dir}" includes="**/*"/>
             <fileset dir="${expand.jar.dir}" includes="**/*"/>
             <fileset dir="${expand.war.dir}" includes="**/*"/>
         </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dev.dir}</echo>
+        <delete dir="${dev.dir}"/>
+        <echo>Cleaning... ${basedir}\${cert.dir}</echo>
+        <delete dir="${cert.dir}"/>
+        <echo>Cleaning... ${basedir}\${prod.dir}</echo>
+        <delete dir="${prod.dir}"/>
+        <echo>Cleaning... ${basedir}\${expand.jar.dir}</echo>
+        <delete dir="${expand.jar.dir}"/>
+        <echo>Cleaning... ${basedir}\${expand.war.dir}</echo>
+        <delete dir="${expand.war.dir}"/>
         <condition property="cleanDone">
             <not>
                 <available file="${build.dir}" type="dir"/>
@@ -84,8 +101,6 @@
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/lib"/>
         <mkdir dir="${build.dir}/META-INF"/>
-        <mkdir dir="${cert.dir}"/>
-        <mkdir dir="${prod.dir}"/>
         <condition property="initDone">
             <available file="${build.dir}" type="dir"/>
         </condition>
@@ -155,7 +170,7 @@
     <!-- Local Version -->
     <target name="createEARLocal" depends="inc.build, setLocal, all">
         <echo>Creating EAR for Local machine...</echo>
-        <property name="deploy.dir" value="${dist.dir}"/>
+        <property name="deploy.dir" value="${dev.dir}"/>
         <condition property="properlyCalled">
             <isset property="deploy.dir"/>
         </condition>
@@ -164,7 +179,8 @@
     <!-- DEV Version -->
     <target name="createEARDev" depends="inc.build, setDev, all">
         <echo>Creating EAR for DEV...</echo>
-        <property name="deploy.dir" value="${dist.dir}"/>
+        <mkdir dir="${dev.dir}"/>
+        <property name="deploy.dir" value="${dev.dir}"/>
         <condition property="properlyCalled">
             <isset property="deploy.dir"/>
         </condition>
@@ -179,6 +195,7 @@
     </target>
     <target name="createEARCert" depends="inc.build, setCert, all">
         <echo>Creating EAR for CERT...</echo>
+        <mkdir dir="${cert.dir}"/>
         <property name="deploy.dir" value="${cert.dir}"/>
         <condition property="properlyCalled">
             <isset property="deploy.dir"/>
@@ -225,12 +242,8 @@
         </copy>
         <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.jar.dir}/log4j.xml" overwrite="true"/>
         <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.war.dir}/log4j.xml" overwrite="true"/>
-        
-        
-        
         <delete file="${build.dir}/${modelArchive}"/>
         <delete file="${build.dir}/${servicesArchive}"/>
-        
         <!-- Compress JAR and WAR -->
         <echo>Re-Compressing ${modelArchive} and ${servicesArchive} </echo>
         <jar destfile="${build.dir}/${modelArchive}">
@@ -267,6 +280,7 @@
         <manifest file="${build.dir}/META-INF/MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Weblogic-Application-Version" value="${application.version}"/>
+            <attribute name="Destination" value="${destination}"/>
             <attribute name="Build-Number" value="${build.revision.number}"/>
             <attribute name="Build-Date" value="${build_date}"/>
             <attribute name="Build-Time" value="${build_time}"/>
@@ -308,48 +322,11 @@
         <antcall target="deploy2WLS"/>
         <echo message="Done"></echo>
     </target>
-    <target name="deployDev" description="Deploys the application archive to the DEV instance of Weblogic"
-            depends="createEARDev">
-        <!--<fail unless="devArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARDev"/>-->
-        <property name="deploy.admin.user" value="${dev.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${dev.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${dev.admin.url}"/>
-        <property name="deploy.target" value="${dev.deploy.target}"/>
-        <property name="ok2Deploy" value="true"/>
-        <property name="archive.dir" value="${dev.dir}"/>
-        <antcall target="deploy2WLS"/>
-        <echo message="deployCert Done"></echo>
-    </target>
-    <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic"
-            depends="createEARCert">
-        <!--<fail unless="certArchiveExists" message="*** Deploy failed!  No archive available to deploy. Perform createEARCert"/>-->
-        <property name="deploy.admin.user" value="${cert.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${cert.admin.url}"/>
-        <property name="deploy.target" value="${cert.deploy.target}"/>
-        <property name="ok2Deploy" value="true"/>
-        <property name="archive.dir" value="${cert.dir}"/>
-        <antcall target="deploy2WLS"/>
-        <echo message="deployCert Done"></echo>
-    </target>
-    <!-- -->
-    <target name="deployProd" description="Deploys the application archive to the PROD instance of Weblogic"
-            depends="check4CertArchive">
-        <fail unless="certArchiveExists" message="*** Deploy failed!  No CERT archive available to deploy."/>
-        <property name="deploy.admin.user" value="${prod.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${prod.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${prod.admin.url}"/>
-        <property name="deploy.target" value="${prod.deploy.target}"/>
-        <property name="ok2Deploy" value="true"/>
-        <property name="archive.dir" value="${cert.dir}"/>
-        <antcall target="deploy2WLS"/>
-        <echo message="deployProd Done"></echo>
-    </target>
     <!-- 
     This deploy tasks executes scripts located in folder ./scripts 
     -->
     <target name="deploy2WLS" if="ok2Deploy" depends="">
-        <echo message="Deploying ${dist.dir}/${project.name}.ear"></echo>
+        <echo message="Deploying ${dev.dir}/${project.name}.ear"></echo>
         <exec executable="./scripts/deployApp.cmd" failonerror="true">
             <arg value="${deploy.admin.user}"/>
             <arg value="${deploy.admin.pswd}"/>
@@ -363,7 +340,7 @@
     <!-- -->
     <target name="check4Archive">
         <condition property="archiveExists">
-            <available file="${basedir}\${dist.dir}\${applicationArchive}" type="file"/>
+            <available file="${basedir}\${dev.dir}\${applicationArchive}" type="file"/>
         </condition>
         <echo message="Done"></echo>
     </target>
@@ -379,92 +356,28 @@
         <property name="log.level" value="${local.log.level}"/>
         <property name="log.basedir" value="${local.log.basedir}"/>
         <property name="district.svc.url" value="${local.district.svc.url}"/>
+        <property name="destination" value="DEV LOCAL"/>
     </target>
     <target name="setDev">
         <property name="javac.debug" value="${dev.javac.debug}"/>
         <property name="log.level" value="${dev.log.level}"/>
         <property name="log.basedir" value="${dev.log.basedir}"/>
         <property name="district.svc.url" value="${dev.district.svc.url}"/>
+        <property name="destination" value="DEV"/>
     </target>
     <target name="setCert">
         <property name="javac.debug" value="${cert.javac.debug}"/>
         <property name="log.level" value="${cert.log.level}"/>
         <property name="log.basedir" value="${cert.log.basedir}"/>
         <property name="district.svc.url" value="${cert.district.svc.url}"/>
+        <property name="destination" value="CERT"/>
     </target>
     <target name="setProd">
         <property name="javac.debug" value="${prod.javac.debug}"/>
         <property name="log.level" value="${prod.log.level}"/>
         <property name="log.basedir" value="${prod.log.basedir}"/>
         <property name="district.svc.url" value="${prod.district.svc.url}"/>
-    </target>
-    <!-- 
-    Prompt user for override of existing file 
-    -->
-    <target name="permissionToReplaceFile">
-        <input message="Do you wish to overwrite the existing CERT candidate file? (y/n)" addproperty="y.n"/>
-    </target>
-    <!--
-  ==========================================================================================
-  UnDeployment targets
-  ==========================================================================================
-  -->
-    <!--
-    Un-Deploy from Weblogic
-  -->
-    <target name="undeployLocal" depends="getVersion">
-        <property name="deploy.admin.user" value="${local.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${local.admin.url}"/>
-        <property name="deploy.target" value="${local.deploy.target}"/>
-        <condition property="undeploymentDefined">
-            <isset property="deploy.admin.url"/>
-        </condition>
-        <antcall target="unDeployFromWLS"/>
-    </target>
-    <!-- -->
-    <target name="undeployDev" depends="getVersion">
-        <property name="deploy.admin.user" value="${dev.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${dev.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${dev.admin.url}"/>
-        <property name="deploy.target" value="${dev.deploy.target}"/>
-        <condition property="undeploymentDefined">
-            <isset property="deploy.admin.url"/>
-        </condition>
-        <antcall target="unDeployFromWLS"/>
-    </target>
-    <!-- -->
-    <target name="undeployCert" depends="getVersion">
-        <property name="deploy.admin.user" value="${cert.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${cert.admin.url}"/>
-        <property name="deploy.target" value="${cert.deploy.target}"/>
-        <condition property="undeploymentDefined">
-            <isset property="deploy.admin.url"/>
-        </condition>
-        <antcall target="unDeployFromWLS"/>
-    </target>
-    <!-- -->
-    <target name="undeployProd" if="prodPermitted" depends="getVersion"></target>
-    <!-- 
-    This undeploy tasks executes scripts located in folder ./scripts 
-    -->
-    <target name="unDeployFromWLS" if="undeploymentDefined">
-        <echo message="Un-Deploying ${dist.dir}/${project.name}.ear"></echo>
-        <exec executable="./scripts/undeployRetiredApp.cmd" failonerror="true">
-            <arg value="${deploy.admin.user}"/>
-            <arg value="${deploy.admin.pswd}"/>
-            <arg value="${deploy.admin.url}"/>
-            <arg value="${project.name}"/>
-            <arg value="${undeploy.version}"/>
-            <arg value="${deploy.target}"/>
-        </exec>
-    </target>
-    <!-- 
-    Prompt user for application version number 
-    -->
-    <target name="getVersion">
-        <input message="What application version do you wish to un-deploy?" addproperty="undeploy.version"/>
+        <property name="destination" value="PROD"/>
     </target>
     <!--
   ==========================================================================================
