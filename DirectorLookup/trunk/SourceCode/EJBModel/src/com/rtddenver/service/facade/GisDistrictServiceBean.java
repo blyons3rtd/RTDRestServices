@@ -36,9 +36,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
     @EJB
     private PropertiesServiceLocal propertiesBean;
 
-    // The URL assigned is a default. The build process will assign the appropriate URL for dev/cert and prod.
-    // This assigned value gets set in the properties.xml file.
-    private String districtRestUrl = "http://localhost:7001/DistrictLookup/api/v1/district/addresses";
+    // The assigned value gets set in the properties.xml file.
+    private String districtRestUrl = "";
 
     public GisDistrictServiceBean() {
     }
@@ -56,10 +55,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         try {
 
             districtRestUrl = propertiesBean.getProperties().getProperty("DistrictSvcURL");
-            dto = validateEntries(street, city, zip);
 
             if (dto == null) {
-                street = street.replaceAll("%20", " "); // Convert HTML encoded space characters
                 String params = assembleParameters(street, city, zip);
                 URL url = new URL((districtRestUrl + params));
                 LOGGER.info("Assembled service URL: " + url.toString());
@@ -68,9 +65,9 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
                 conn.setRequestProperty("Accept", "application/json");
 
                 if (conn.getResponseCode() != 200) {
-                    LOGGER.error(conn.getResponseCode());
+                    LOGGER.error("GIS Get District service call returned: " + conn.getResponseCode() + ", " + conn.getResponseMessage());
                     dto = new DistrictDTO(conn.getResponseCode(), 1999, "Error calling GIS Get District service",
-                                     "Unexpected error occurred. Retry query.", "");
+                                     "Unexpected error occurred. Retry query. " + conn.getResponseMessage(), "");
                 } else {
                     BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
                     String jsonStr = "";
@@ -87,7 +84,6 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         } catch (Exception e) {
             LOGGER.error("Error querying and processing entity bean: " + e);
             e.printStackTrace();
-            //int status, String code, String detail, String message, String moreInfo
             dto = new DistrictDTO(500, 1502, e.getMessage(), "Error calling GISDistrictService", "");
         }
 
@@ -102,38 +98,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
      * @return String
      */
     private String assembleParameters(String street, String city, String zip) {
-        street = street.replaceAll(" ", "%20");
-        city = city.replaceAll(" ", "%20");
         String paramStr = "?address=" + street + "&city=" + city + "&zipcode=" + zip;
         return paramStr;
-    }
-
-    private DistrictDTO validateEntries(String street, String city, String zip) {
-        //LOGGER.info("Validating entries...");
-        DistrictDTO dto = null;
-        String detail = "";
-        String msg = "";
-        boolean err = false;
-
-        if (street == null || "".equals(street.trim())) {
-            msg = "Street missing. ";
-            detail = "Street is a required entry. ";
-            err = true;
-        }
-        if (city == null || "".equals(city.trim())) {
-            msg = "City missing. ";
-            detail = detail + "City is a required entry. ";
-            err = true;
-        }
-        if (zip == null || "".equals(zip.trim())) {
-            msg = "Zipcode missing. ";
-            detail = detail + "Zipcode is a required entry. ";
-            err = true;
-        }
-        if (err) {
-            dto = new DistrictDTO(400, 1610, detail, msg, "");
-        }
-        return dto;
     }
 
     private DistrictDTO parseJsonMessage(String jsonStr) {

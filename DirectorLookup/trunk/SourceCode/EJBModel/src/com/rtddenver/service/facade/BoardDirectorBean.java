@@ -60,8 +60,8 @@ public class BoardDirectorBean implements BoardDirectorLocal {
         if (district == null || "".equals(district.trim())) {
             LOGGER.warn("District is null or empty");
             dto =
-                new DirectorDTO(500, 1999, "No disrict code returned by DistrictLookup service",
-                                "Unexpected error occurred. Retry query.", "");
+                new DirectorDTO(404, 1700, "No disrict code returned by DistrictLookup service",
+                                "Address not found in RTD District", "");
         } else if (district.equalsIgnoreCase("refresh")) {
             initializeMap();
             dto = new DirectorDTO("Success", "directorMap initialized");

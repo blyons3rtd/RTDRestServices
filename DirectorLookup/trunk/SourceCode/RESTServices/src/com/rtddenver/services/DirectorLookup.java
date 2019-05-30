@@ -8,7 +8,12 @@ import com.rtddenver.service.facade.GisDistrictServiceLocal;
 
 import java.io.IOException;
 
+import java.net.URLDecoder;
+
 import java.util.concurrent.TimeUnit;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
@@ -87,31 +92,45 @@ public class DirectorLookup {
 
         LOGGER.info("Input received: " + street + ", " + city + ", " + zip);
 
-        dirDto = validateEntries(street, city, zip);
+        String streetDc = "";
+        String cityDc = "";
+        String zipDc = "";
+        try {
+            streetDc = URLDecoder.decode(street, "UTF-8");
+            cityDc = URLDecoder.decode(city, "UTF-8");
+            zipDc = URLDecoder.decode(zip, "UTF-8");
 
-        if (dirDto == null) {
-            if (street.equalsIgnoreCase("refresh") && city.equalsIgnoreCase("the") && zip.equalsIgnoreCase("map")) {
-                dirDto = this.directorService.getDirectorByDistrict("refresh");
-            } else {
+            dirDto = validateEntries(streetDc, cityDc, zipDc);
 
-                distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
-
-                if (distDto != null) {
-                    if (distDto.isError()) {
-                        dirDto = new DirectorDTO(distDto.getStatus(), distDto.getCode(), distDto.getDetail(), distDto.getMessage(), distDto.getMoreInfo());
-                    } else {
-                        String distr = distDto.getDistrict();
-                        dirDto = this.directorService.getDirectorByDistrict(distr);
-                    }
+            if (dirDto == null) {
+                if (streetDc.equalsIgnoreCase("refresh") && cityDc.equalsIgnoreCase("the") &&
+                    zipDc.equalsIgnoreCase("map")) {
+                    dirDto = this.directorService.getDirectorByDistrict("refresh");
                 } else {
-                    LOGGER.warn("No reponse from GIS Service. Internal Service error. Address: " + street + ", " +
-                                city + " " + zip);
-                    dirDto = new DirectorDTO(500, 1999, "Internal Service error. Input received: " + street,
-                                     "No reponse from GIS Service. Retry query.", "");
+                    // Pass the original received values to the GIS service call. Do 
+                    distDto = this.gisDistrictService.getDistrictForAddress(street, city, zip);
+                    if (distDto != null) {
+                        if (distDto.isError()) {
+                            dirDto =
+                                new DirectorDTO(distDto.getStatus(), distDto.getCode(), distDto.getDetail(),
+                                                distDto.getMessage(), distDto.getMoreInfo());
+                        } else {
+                            String distr = distDto.getDistrict();
+                            dirDto = this.directorService.getDirectorByDistrict(distr);
+                        }
+                    } else {
+                        LOGGER.warn("No reponse from GIS Service. Internal Service error. Address: " + street + ", " +
+                                    city + " " + zip);
+                        dirDto =
+                            new DirectorDTO(500, 1999, "Internal Service error. Input received: " + street,
+                                            "No reponse from GIS Service. Retry query.", "");
+                    }
                 }
+            } else {
+                // Return error
             }
-        } else {
-            // Return error
+        } catch (Exception e) {
+            dirDto = new DirectorDTO(500, 1950, e.getMessage(), "Internal Server Error", "");
         }
 
         int status = 0;
@@ -144,8 +163,9 @@ public class DirectorLookup {
             }
         }
 
-        LOGGER.info("Returning...  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() + "  Message:" + dirDto.getMessage());
-        
+        LOGGER.info("Returning...  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
+                    "  Message:" + dirDto.getMessage());
+
         return dirDto;
     }
 
@@ -159,14 +179,32 @@ public class DirectorLookup {
         if (street == null || "".equals(street.trim())) {
             detail = "Street cannot be empty/null ";
             err = true;
+        } else {
+            //Pattern p = Pattern.compile("[A-Za-z0-9'\\.\\-\\s\\,]");
+            //Matcher m = p.matcher(street);
+            //if (m.find()) {
+            //    dto = new DirectorDTO(400, 1610, "Invalid Street", "Bad Request", street);
+            //}
         }
         if (city == null || "".equals(city.trim())) {
             detail = detail + "City cannot be empty/null ";
             err = true;
+        } else {
+            //Pattern p = Pattern.compile("^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$");
+            //Matcher m = p.matcher(city);
+            //if (m.find()) {
+            //    dto = new DirectorDTO(400, 1610, "Invalid City", "Bad Request", city);
+            //}
         }
         if (zip == null || "".equals(zip.trim())) {
             detail = detail + "Zipcode cannot be empty/null ";
             err = true;
+        } else {
+            Pattern p = Pattern.compile("\"[^0-9 ]\"");
+            Matcher m = p.matcher(zip);
+            if (m.find()) {
+                dto = new DirectorDTO(400, 1610, "Invalid Zipcode", "Bad Request", zip);
+            }
         }
         if (err) {
             msg = "Bad Request";
