@@ -101,7 +101,7 @@
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
         <!-- debugSetting value defined in application level build.xml -->
-        <echo>Compiling with debug=${javac.debug}</echo>
+        <echo>Compiling RESTServices with debug=${javac.debug}</echo>
         <javac destdir="${build.dir}/WEB-INF/classes" classpathref="classpath" debug="${javac.debug}"
                nowarn="${javac.nowarn}" deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
                includeantruntime="false" target="${javac.target}">
@@ -115,6 +115,7 @@
             <include name="**/*.ejx"/>
             <include name="**/*.gif"/>
             <include name="**/*.ini"/>
+            <include name="**/*.jar"/>
             <include name="**/*.jpeg"/>
             <include name="**/*.jpg"/>
             <include name="**/*.png"/>
@@ -154,6 +155,13 @@
                 <filter token="log_basedir" value="${log.basedir}"/>
                 <filter token="application_name" value="${project.name}"/>
                 <filter token="log_level" value="${log.level}"/>
+            </filterset>
+        </copy>
+        <echo>Setting value in properties.xml...  adaRestSvcURL:${ada.svc.url}</echo>
+        <copy file="${basedir}/config/properties.xml" tofile="${build.dir}/WEB-INF/classes/properties.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="ada_svc_url" value="${ada.svc.url}"/>
             </filterset>
         </copy>
     </target>

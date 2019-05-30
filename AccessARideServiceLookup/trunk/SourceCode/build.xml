@@ -10,7 +10,6 @@
     <property name="modelArchive" value="EJBModel.jar"/>
     <property name="servicesArchive" value="RESTServices.war"/>
     <property name="applicationArchive" value="${project.name}.ear"/>
-    <property name="environment" value=""/>
     <!-- Build timestamp -->
     <tstamp>
         <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
@@ -185,21 +184,36 @@
         <antcall target="createEAR"/>
     </target>
     <!-- PROD Version -->
-    <target name="createEARProd" depends="setProd, check4CertArchive">
+    <target name="createEARProd" depends="check4CertArchive">
+        <echo message="Creating EAR for PROD from CERT EAR..." />
         <fail unless="certArchiveExists"
               message="*** Deploy failed!  No CERT archive available to create PROD version."/>
-        <echo>Creating EAR for PROD...</echo>
         <!-- Clean build dir of current contents-->
         <delete dir="${build.dir}"/>
+        <delete dir="${expand.jar.dir}"/>
+        <delete dir="${expand.war.dir}"/>
+        <delete dir="${prod.dir}"/>
+        <mkdir dir="${expand.war.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${prod.dir}"/>
+        <mkdir dir="${expand.jar.dir}"/>
+        <mkdir dir="${expand.war.dir}"/>
         <!-- Unzip CERT EAR -->
-        <echo>Un-zipping CERT EAR...</echo>
+        <echo>Expanding ${cert.dir}/${applicationArchive} into ${build.dir}...</echo>
         <unzip src="${cert.dir}/${applicationArchive}" dest="${build.dir}"/>
+        <!-- Unzip EJBModel.jar -->
+        <echo>Expanding ${build.dir}/${modelArchive} into ${expand.jar.dir}...</echo>
+        <unzip src="${build.dir}/${modelArchive}" dest="${expand.jar.dir}"/>
+        <!-- Unzip RESTServices.jar -->
+        <echo>Expanding ${build.dir}/${servicesArchive} into ${expand.war.dir}...</echo>
+        <unzip src="${build.dir}/${servicesArchive}" dest="${expand.war.dir}"/>
         <!-- Over-write files with corresponding PROD versions -->
         <echo>Over-writing some files with their PROD version...</echo>
-        
-        <copy file="./public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+        <!-- Create a PROD-environment version of log4j.xml -->
+        <copy file="${basedir}/RESTServices/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+            <filterset>
+                <filter token="application_name" value="${project.name}"/>
+            </filterset>
             <filterset>
                 <filter token="log_basedir" value="${prod.log.basedir}"/>
             </filterset>
@@ -207,8 +221,31 @@
                 <filter token="log_level" value="${prod.log.level}"/>
             </filterset>
         </copy>
-        <echo>Creating PROD EAR...</echo>
-        <war destfile="${prod.dir}/${applicationArchive}" webxml="${build.dir}/WEB-INF/web.xml"
+        <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.jar.dir}/log4j.xml" overwrite="true"/>
+        <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.war.dir}/log4j.xml" overwrite="true"/>
+        <delete file="${build.dir}/${modelArchive}"/>
+        <delete file="${build.dir}/${servicesArchive}"/>
+        <!-- Compress JAR and WAR -->
+        <echo>Re-Compressing ${modelArchive} and ${servicesArchive} </echo>
+        <jar destfile="${build.dir}/${modelArchive}">
+            <fileset dir="${expand.jar.dir}">
+                <include name="com/rtddenver/**"/>
+                <include name="META-INF/**"/>
+                <include name="log4j.xml"/>
+            </fileset>
+        </jar>
+        <war destfile="${build.dir}/${servicesArchive}" webxml="${expand.war.dir}/WEB-INF/web.xml"
+             manifest="${expand.war.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${expand.war.dir}">
+                <include name="WEB-INF/**"/>
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </war>
+        <!-- Compress back into EAR -->
+        <echo>Creating PROD EAR (${prod.dir}/${applicationArchive})...</echo>
+        <war destfile="${prod.dir}/${applicationArchive}" webxml="${basedir}/RESTServices/public_html/WEB-INF/web.xml"
              manifest="${build.dir}/META-INF/MANIFEST.MF">
             <fileset dir="${build.dir}"/>
         </war>
@@ -315,7 +352,7 @@
     <target name="check4CertArchive">
         <echo>Looking for archive: ${basedir}\${cert.dir}\${applicationArchive}</echo>
         <condition property="certArchiveExists">
-            <available file="$basedir}\${cert.dir}\${applicationArchive}" type="file"/>
+            <available file="${basedir}\${cert.dir}\${applicationArchive}" type="file"/>
         </condition>
         <echo message="Done"></echo>
     </target>

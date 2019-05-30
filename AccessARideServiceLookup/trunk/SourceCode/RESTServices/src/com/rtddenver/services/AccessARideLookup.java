@@ -75,10 +75,8 @@ public class AccessARideLookup {
 
         DistrictDTO districtDTO = null;
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
-                         departureTime);
-        }
+       LOGGER.info("Input received: " + street + " " + city + " " + zip + " " + departureDay + " " +
+            departureTime);
         
         districtDTO = validateEntries(street, city, zip, departureDay, departureTime);
 
@@ -161,7 +159,7 @@ public class AccessARideLookup {
         // Validates time is in a format expected by the GIS service.
         // 12hr format
         time = time.toUpperCase();
-        String TIMEHOURS_PATTERN = "(1[012]|[1-9]):[0-5][0-9](AM|PM)";;
+        String TIMEHOURS_PATTERN = "(1[012]|[1-9]):[0-5][0-9](AM|am|PM|pm)";;
         Pattern pattern = Pattern.compile(TIMEHOURS_PATTERN);
         Matcher matcher = pattern.matcher(time);
         return matcher.matches();
