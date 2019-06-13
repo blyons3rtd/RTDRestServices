@@ -47,9 +47,6 @@ public class AlertEventRoute implements Serializable {
     @SuppressWarnings("compatibility:-6057906969190255096")
     private static final long serialVersionUID = -8754009577974458970L;
 
-    @Id
-    @Column(name = "ALERT_EVENT_ROUTES_ID")
-    private Integer alertEventRoutesId = null;
     @Column(name = "ALERT_EVENT_ID")
     private int alertEventId = 0;
     @Column(name = "MASTER_ROUTE")
@@ -60,7 +57,11 @@ public class AlertEventRoute implements Serializable {
     private int routeSequence = 0;
     @Column(name = "ROUTE_TYPE_NAME")
     private String routeTypeName = null;
-
+    
+    @Id
+    @Column(name = "ALERT_EVENT_ROUTES_ID")
+    private Integer alertEventRoutesId = null;
+    
     @OneToMany (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
     private List<AlertEventRouteDirection> alertRoutesDirection = null;

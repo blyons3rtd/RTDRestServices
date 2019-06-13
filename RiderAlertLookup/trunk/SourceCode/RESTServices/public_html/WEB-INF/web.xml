@@ -2,33 +2,27 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
-    <servlet>
-        <!-- The servlet name is the full qualified name of your rest application it must be a subclass of java.ws.rs.Application -->
+         <servlet>
+        <!-- The servlet name is the full qualified name of your rest application it must be a subclass of java.ws.rs.Application --> 
         <servlet-name>com.rtddenver.services.GenericApplication</servlet-name>
         <!--servlet-class is not needed -->
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <!-- As init parameter pass the full qualified name of the java.ws.rs.Application subclass -->
+            <!-- As init parameter pass the full qualified name of the java.ws.rs.Application subclass --> 
             <param-value>com.rtddenver.services.GenericApplication</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <!-- other servlet definitions -->
-    <!--servlet mapping -->
+    <!-- other servlet definitions --> 
+
+
+    <!--servlet mapping --> 
+
     <error-page>
         <error-code>404</error-code>
         <location>/NotFound.html</location>
     </error-page>
-    <!--
-    <module-name>DirectorLookup</module-name>
-    <display-name>DirectorLookup</display-name>
-    -->
     <session-config>
         <session-timeout>30</session-timeout>
-    </session-config>
-    <!--<module-name>RiderAlert</module-name>
-    <display-name>RiderAlertLookup</display-name>
-    <session-config>
-        <session-timeout>30</session-timeout>
-    </session-config>-->
+    </session-config> 
 </web-app>

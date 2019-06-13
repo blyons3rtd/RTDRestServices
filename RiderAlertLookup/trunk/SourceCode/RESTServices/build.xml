@@ -69,6 +69,10 @@
     <path id="library.Gson-2.7.jar">
         <pathelement location="../lib/gson-2.7.jar"/>
     </path>
+    <path id="Logging.jar">
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/rtdLog4j.jar"/>
+    </path>
     <path id="classpath">
         <pathelement location="../EJBModel/deploy/EJBModel.jar"/>
         <path refid="library.Java.EE"/>
@@ -77,6 +81,7 @@
         <path refid="library.JAX-RS.Jersey.2.x"/>
         <path refid="library.JSP.Runtime"/>
         <path refid="library.Gson-2.7.jar"/>
+        <path refid="Logging.jar"/>
     </path>
     <target name="init">
         <tstamp/>
@@ -87,13 +92,24 @@
     </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,war"/>
     <target name="clean" description="Clean the project">
+        <echo>Cleaning... ${basedir}</echo>
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${output.dir}" includes="**/*"/>
+            <fileset dir="${build.dir}" includes="**/*"/>
+            <fileset dir="${dist.dir}" includes="**/*"/>
         </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dist.dir}</echo>
+        <delete dir="${dist.dir}"/>
+        <echo>Cleaning... ${basedir}\classes</echo>
+        <delete dir="classes"/>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
-        <javac destdir="${output.dir}/WEB-INF/classes" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
-               deprecation="${javac.deprecation}" encoding="Cp1252" source="${javac.source}" target="${javac.target}">
+        <!-- debugSetting value defined in application level build.xml -->
+        <echo>Compiling with debug=${javac.debug}</echo>
+        <javac destdir="${build.dir}/WEB-INF/classes" classpathref="classpath" debug="${javac.debug}"
+               nowarn="${javac.nowarn}" deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}"
+               includeantruntime="false" target="${javac.target}">
             <src path="src"/>
         </javac>
     </target>
@@ -121,42 +137,57 @@
             <exclude name="build.properties"/>
             <exclude name="package-info.class"/>
         </patternset>
-        <copy todir="${output.dir}/WEB-INF/classes">
+        <copy todir="${build.dir}/WEB-INF/classes">
             <fileset dir="src">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
-        <copy todir="${output.dir}/WEB-INF">
+        <copy todir="${build.dir}/WEB-INF">
             <fileset dir="${basedir}/public_html/WEB-INF">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
-        <!--
-        <copy todir="${output.dir}/WEB-INF/lib">
+        <!-- Not required for this project
+        <copy todir="${build.dir}/WEB-INF/lib">
             <fileset dir="${basedir}/../lib">
                 <patternset refid="copy.patterns"/>
             </fileset>
         </copy>
         -->
+        <echo>Setting values in log4j.xml...  log_basedir:${log.basedir}, application_name:${project.name}, log_level:${log.level}</echo>
+        <copy file="${basedir}/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="log_basedir" value="${log.basedir}"/>
+                <filter token="application_name" value="${project.name}"/>
+                <filter token="log_level" value="${log.level}"/>
+            </filterset>
+        </copy>
     </target>
     <!-- 
         Create WAR file 
         -->
-    <target name="war" depends="compile">
+    <target name="war" depends="checkForBuild">
+        <!--<fail unless="buildWasDone" message="*** Build was not performed!"/>-->
         <echo>Building the war file...</echo>
-        <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Build-Date" value="${build_date}"/>
             <attribute name="Build-Time" value="${build_time}"/>
         </manifest>
-        <war destfile="${dist.dir}/RESTServices.war" webxml="${output.dir}/WEB-INF/web.xml"
-             manifest="${output.dir}/META-INF/MANIFEST.MF">
-            <fileset dir="${output.dir}">
+        <war destfile="${dist.dir}/RESTServices.war" webxml="${build.dir}/WEB-INF/web.xml"
+             manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}">
                 <include name="WEB-INF/**"/>
             </fileset>
-            <fileset dir="${output.dir}">
+            <fileset dir="${build.dir}">
                 <include name="META-INF/**"/>
             </fileset>
         </war>
+    </target>
+    <target name="checkForBuild">
+        <condition property="buildWasDone">
+            <available file="${build.dir}/WEB-INF/classes/com/rtddenver/services/*.class" type="file"/>
+        </condition>
     </target>
 </project>

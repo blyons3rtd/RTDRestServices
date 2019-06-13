@@ -37,7 +37,7 @@
       <hash n="profileDefinitions">
          <hash n="RiderAlert">
             <hash n="archiveOptions">
-               <value n="hasManifest" v="false"/>
+               <value n="hasManifest" v="true"/>
             </hash>
             <hash n="dependencies">
                <list n="dependencyList">
@@ -102,10 +102,6 @@
                               <value n="type" v="0"/>
                            </hash>
                            <hash>
-                              <value n="pattern" v="logger.jar"/>
-                              <value n="type" v="0"/>
-                           </hash>
-                           <hash>
                               <value n="pattern" v="rtdLog4j.jar"/>
                               <value n="type" v="0"/>
                            </hash>
@@ -119,6 +115,13 @@
                      <value n="targetWithinJar" v="lib"/>
                      <value n="type" v="3"/>
                   </hash>
+               </list>
+            </hash>
+            <hash n="libraryDependencies">
+               <list n="unselectedLibraries">
+                  <string v="Hibernate-validator-6.0.10.Final.jar"/>
+                  <string v="TopLink"/>
+                  <string v="JSP Runtime"/>
                </list>
             </hash>
             <value n="platformType" v="WEBLOGIC"/>
@@ -157,16 +160,7 @@
             </hash>
             <hash>
                <list n="classPath">
-                  <url path="lib/logger.jar" jar-entry=""/>
-               </list>
-               <value n="deployedByDefault" v="true"/>
-               <value n="description" v="Logger.jar"/>
-               <value n="id" v="Logger.jar"/>
-               <value n="locked" v="true"/>
-            </hash>
-            <hash>
-               <list n="classPath">
-                  <url path="lib/rtdLog4j.jar" jar-entry=""/>
+                  <url path="lib/RtdLog4j.jar" jar-entry=""/>
                </list>
                <value n="deployedByDefault" v="true"/>
                <value n="description" v="RtdLog4j.jar"/>
@@ -182,10 +176,6 @@
          </hash>
          <hash>
             <value n="id" v="Log4j-1.2.15.jar"/>
-            <value n="isJDK" v="false"/>
-         </hash>
-         <hash>
-            <value n="id" v="Logger.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
          <hash>

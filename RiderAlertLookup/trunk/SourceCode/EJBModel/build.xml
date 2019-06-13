@@ -49,11 +49,9 @@
         <pathelement location="${install.dir}/wlserver/server/lib/wlnmclient.jar"/>
         <pathelement location="${install.dir}/wlserver/server/lib/wlsafclient.jar"/>
     </path>
-    <path id="library.Whoismydirector.jar">
-        <pathelement location="../lib/whoismydirector.jar"/>
-    </path>
-    <path id="library.Gson-2.7.jar">
-        <pathelement location="../lib/gson-2.7.jar"/>
+    <path id="Logging.jar">
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/rtdLog4j.jar"/>
     </path>
     <path id="classpath">
         <path refid="library.Java.EE"/>
@@ -61,8 +59,7 @@
         <path refid="library.TopLink"/>
         <path refid="library.Oracle.XML.Parser.v2"/>
         <path refid="library.WebLogic.12.1.Thin-Client"/>
-        <path refid="library.Whoismydirector.jar"/>
-        <path refid="library.Gson-2.7.jar"/>
+        <path refid="Logging.jar"/>
     </path>
     <target name="init">
         <tstamp/>
@@ -70,13 +67,21 @@
     </target>
     <target name="all" description="Build the project" depends="clean,compile,copy,jar"/>
     <target name="clean" description="Clean the project">
+      <echo>Cleaning... ${basedir}</echo>
         <delete includeemptydirs="true" quiet="true">
-            <fileset dir="${output.dir}" includes="**/*"/>
+            <fileset dir="${build.dir}" includes="**/*"/>
+            <fileset dir="${dist.dir}" includes="**/*"/>
         </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dist.dir}</echo>
+        <delete dir="${dist.dir}"/>
     </target>
     <target name="compile" description="Compile Java source files" depends="init">
-        <javac destdir="${output.dir}" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
-               deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}" target="${javac.target}">
+        <echo>Compiling with debug=${javac.debug}</echo>
+        <javac destdir="${build.dir}" classpathref="classpath" debug="${javac.debug}" nowarn="${javac.nowarn}"
+               deprecation="${javac.deprecation}" encoding="UTF-8" source="${javac.source}" includeantruntime="false"
+               target="${javac.target}">
             <src path="src"/>
         </javac>
     </target>
@@ -104,27 +109,43 @@
             <exclude name="build.properties"/>
             <exclude name="package-info.class"/>
         </patternset>
-        <copy todir="${output.dir}">
+        <copy todir="${build.dir}">
             <fileset dir="src">
                 <patternset refid="copy.patterns"/>
             </fileset>
+        </copy>
+        <echo>Setting values in log4j.xml...  log_basedir:${log.basedir}, application_name:${project.name}, log_level:${log.level}</echo>
+        <copy file="${basedir}/../RESTServices/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/log4j.xml"
+              overwrite="true">
+            <filterset>
+                <filter token="log_basedir" value="${log.basedir}"/>
+                <filter token="application_name" value="${project.name}"/>
+                <filter token="log_level" value="${log.level}"/>
+            </filterset>
         </copy>
     </target>
     <!-- 
         Create JAR file 
         -->
-    <target name="jar" depends="compile">
+    <target name="jar" depends="checkForBuild">
+        <!--<fail unless="buildWasDone" message="*** Build was not performed!"/>-->
         <echo>Building the jar file...</echo>
-        <manifest file="${output.dir}/META-INF/MANIFEST.MF">
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Build-Date" value="${build_date}"/>
             <attribute name="Build-Time" value="${build_time}"/>
         </manifest>
-        <jar destfile="${dist.dir}/EJBModel.jar" manifest="${output.dir}/META-INF/MANIFEST.MF">
-            <fileset dir="${output.dir}">
+        <jar destfile="${dist.dir}/EJBModel.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}">
                 <include name="com/rtddenver/**"/>
                 <include name="META-INF/**"/>
+                <include name="log4j.xml"/>
             </fileset>
         </jar>
+    </target>
+    <target name="checkForBuild">
+        <condition property="buildWasDone">
+            <available file="${build.dir}/WEB-INF/classes/com/rtddenver/services/*.class" type="file"/>
+        </condition>
     </target>
 </project>

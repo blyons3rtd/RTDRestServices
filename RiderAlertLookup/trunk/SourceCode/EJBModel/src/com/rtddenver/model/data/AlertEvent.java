@@ -52,8 +52,8 @@ public class AlertEvent implements Serializable {
     @SuppressWarnings("compatibility:9166475870670687228")
     private static final long serialVersionUID = 6980798237182890443L;
 
-    @Id
     @Column(name = "ALERT_EVENT_ID")
+    @Id
     private int alertEventId = 0;
     @Column(name = "ALERT_CATEGORY_DETAIL")
     private String alertCategoryDetail = null;

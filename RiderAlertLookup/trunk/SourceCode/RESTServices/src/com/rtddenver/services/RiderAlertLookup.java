@@ -51,6 +51,8 @@ public class RiderAlertLookup {
     public ActiveAlertEventDTO getActiveAlertEventList(@Context final HttpServletResponse response) {
         ActiveAlertEventDTO dto = null;
         
+        LOGGER.info("getActiveAlertEventList...");
+        
         try {
             dto = this.riderAlertService.getActiveAlertEventList();
         } catch (Exception e) {
@@ -75,6 +77,8 @@ public class RiderAlertLookup {
     public AlertEventDTO getAlertEventById(@Encoded @PathParam("alertEventId") Integer alertEventId, @Context final HttpServletResponse response) {
         AlertEventDTO dto = null;
        
+        LOGGER.info("getAlertEventById:" + alertEventId);
+
         try {
             dto = this.riderAlertService.getAlertEventById(alertEventId);
         } catch (Exception e) {
@@ -99,6 +103,8 @@ public class RiderAlertLookup {
     public RouteActiveAlertEventDTO getRoutesWithActiveAlerts(@Context final HttpServletResponse response) {
         RouteActiveAlertEventDTO dto = null;
         
+        LOGGER.info("getRoutesWithActiveAlerts...");
+        
         try {
             dto = this.riderAlertService.getRoutesActiveAlerts();
         } catch (Exception e) {
@@ -122,6 +128,8 @@ public class RiderAlertLookup {
     @Path("routes/{masterRoute}")
     public AlertEventRouteDTO getAlertEventRouteByMasterRoute(@Encoded @PathParam("masterRoute") String masterRoute, @Context final HttpServletResponse response) {
         AlertEventRouteDTO dto = null;
+        
+        LOGGER.info("getAlertEventRouteByMasterRoute:" + masterRoute);
         
         try {
             dto = this.riderAlertService.getAlertEventRouteByMasterRoute(masterRoute);

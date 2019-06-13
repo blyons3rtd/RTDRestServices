@@ -1,138 +1,166 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="all" basedir=".">
-  <!--
+<project xmlns="antlib:org.apache.tools.ant" name="ApplicationBuild" default="" basedir=".">
+    <!--
     This is the ant build file for the Application-level 
     -->
-  <property file="${basedir}/build.properties"/>
-  <property name="version.file" location="${basedir}/build.properties"/>
-  <property name="wldeploy.lib.dir" location="c:/Development/Tools/Weblogic/wldeploy"/>
-  <!-- Archive file names -->
-  <property name="modelArchive" value="EJBModel.jar"/>
-  <property name="servicesArchive" value="RESTServices.war"/>
-  <property name="applicationArchive" value="${project.name}.ear"/>
-  <!-- Build timestamp -->
-  <tstamp>
-    <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
-    <format property="build_time" pattern="HH:mm:ss zzz" locale="en,US"/>
-  </tstamp>
-  <path id="wldeploy.WebLogic.12.1">
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.webservices.wls.jaxws-wlswss-client.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.ant.taskdefs.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.beanapi.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.service.ffimpl.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.crypto.utils.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.rjvm.jar"/>
-    <pathelement location="${wldeploy.lib.dir}/weblogic.jar"/>
-  </path>
-  <echo message="wldeploy path: ${toString:wldeploy.WebLogic.12.1}"></echo>
-  <path id="classpath">
-    <path refid="wldeploy.WebLogic.12.1"/>
-  </path>
-  <target name="all" description="Build the entire application" depends="clean,model,services,copy,createEAR"/>
-  <target name="clean" description="Clean the project" unless="cleanDone">
-    <echo>Cleaning RESTServices...</echo>
-    <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml"/>
-    <echo>Cleaning EJBModel...</echo>
-    <ant target="clean" dir="${basedir}/EJBModel" antfile="build.xml"/>
-    <echo>Cleaning Application...</echo>
-    <delete includeemptydirs="true" quiet="true">
-      <fileset dir="${output.dir}" includes="**/*"/>
-      <fileset dir="${dist.dir}" includes="**/*"/>
-      <fileset dir="${cert.dir}" includes="**/*"/>
-    </delete>
-    <condition property="cleanDone">
-      <not>
-        <available file="${output.dir}" type="dir"/>
-      </not>
-    </condition>
-  </target>
-  <!--
+    <property file="${basedir}/build.properties"/>
+    <property name="version.file" location="${basedir}/build.properties"/>
+    <property name="wldeploy.lib.dir" location="c:/Development/Tools/Weblogic/wldeploy"/>
+    <!-- Archive file names -->
+    <property name="modelArchive" value="EJBModel.jar"/>
+    <property name="servicesArchive" value="RESTServices.war"/>
+    <property name="applicationArchive" value="${project.name}.ear"/>
+    <!-- Build timestamp -->
+    <tstamp>
+        <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
+        <format property="build_time" pattern="HH:mm:ss zzz" locale="en,US"/>
+    </tstamp>
+    <path id="wldeploy.WebLogic.12.1">
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.webservices.wls.jaxws-wlswss-client.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.ant.taskdefs.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.beanapi.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.service.ffimpl.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.crypto.utils.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.rjvm.jar"/>
+        <pathelement location="${wldeploy.lib.dir}/weblogic.jar"/>
+    </path>
+    <path id="Logging.jar">
+        <pathelement location="./lib/log4j-1.2.15.jar"/>
+        <pathelement location="./lib/rtdLog4j.jar"/>
+    </path>
+    <!--<echo message="wldeploy path: ${toString:wldeploy.WebLogic.12.1}"></echo> -->
+    <path id="classpath">
+        <path refid="wldeploy.WebLogic.12.1"/>
+        <path refid="Logging.jar"/>
+    </path>
+    <echo message="Build path: ${toString:wldeploy.WebLogic.12.1};${toString:Logging.jar}"></echo>
+    <target name="all" description="Build the entire application" depends="clean,model,services,copy"/>
+    <target name="clean" description="Clean the project" unless="cleanDone">
+        <echo>Cleaning RESTServices...</echo>
+        <ant target="clean" dir="${basedir}/RESTServices" antfile="build.xml"/>
+        <echo>Cleaning EJBModel...</echo>
+        <ant target="clean" dir="${basedir}/EJBModel" antfile="build.xml"/>
+        <echo>Cleaning Application...</echo>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+            <fileset dir="${dev.dir}" includes="**/*"/>
+            <fileset dir="${cert.dir}" includes="**/*"/>
+            <fileset dir="${prod.dir}" includes="**/*"/>
+            <fileset dir="${expand.jar.dir}" includes="**/*"/>
+            <fileset dir="${expand.war.dir}" includes="**/*"/>
+        </delete>
+        <echo>Cleaning... ${basedir}\${build.dir}</echo>
+        <delete dir="${build.dir}"/>
+        <echo>Cleaning... ${basedir}\${dev.dir}</echo>
+        <delete dir="${dev.dir}"/>
+        <echo>Cleaning... ${basedir}\${cert.dir}</echo>
+        <delete dir="${cert.dir}"/>
+        <echo>Cleaning... ${basedir}\${prod.dir}</echo>
+        <delete dir="${prod.dir}"/>
+        <echo>Cleaning... ${basedir}\${expand.jar.dir}</echo>
+        <delete dir="${expand.jar.dir}"/>
+        <echo>Cleaning... ${basedir}\${expand.war.dir}</echo>
+        <delete dir="${expand.war.dir}"/>
+        <condition property="cleanDone">
+            <not>
+                <available file="${build.dir}" type="dir"/>
+            </not>
+        </condition>
+    </target>
+    <!--
   ==========================================================================================
   Project Build targets
   ==========================================================================================
   -->
-  <!-- Call the build.xml for the Model project -->
-  <target name="model">
-    <echo>Calling EJBModel ant build...</echo>
-    <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml"/>
-    <echo message="Done"/>
-  </target>
-  <!-- Call the build.xml for the Services project -->
-  <target name="services">
-    <echo>Calling RESTServices ant build...</echo>
-    <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml"/>
-    <echo message="Done"/>
-  </target>
-  <!--
+    <!-- Call the build.xml for the Model project -->
+    <target name="model">
+        <echo>Calling EJBModel ant build...</echo>
+        <ant target="all" dir="${basedir}/EJBModel" antfile="build.xml">
+            <property name="javac.debug" value="${javac.debug}"/>
+        </ant>
+        <echo message="Done"></echo>
+    </target>
+    <!-- Call the build.xml for the Services project -->
+    <target name="services">
+        <echo>Calling RESTServices ant build...</echo>
+        <ant target="all" dir="${basedir}/RESTServices" antfile="build.xml">
+            <property name="javac.debug" value="${javac.debug}"/>
+            <property name="log.level" value="${log.level}"/>
+            <property name="log.path" value="${log.basedir}"/>
+            <property name="project.name" value="${project.name}"/>
+        </ant>
+        <echo message="Done"></echo>
+    </target>
+    <!--
   ==========================================================================================
   Initialization targets
   ==========================================================================================
   -->
-  <target name="init" unless="initDone">
-    <tstamp/>
-    <mkdir dir="${output.dir}"/>
-    <mkdir dir="${output.dir}/lib"/>
-    <mkdir dir="${output.dir}/META-INF"/>
-    <condition property="initDone">
-      <available file="${output.dir}" type="dir"/>
-    </condition>
-  </target>
-  <target name="copy" description="Copy files to output directory" depends="init" unless="copyDone">
-    <patternset id="copy.patterns">
-      <include name="**/*.cpx"/>
-      <include name="**/*.dcx"/>
-      <include name="**/*.ejx"/>
-      <include name="**/*.gif"/>
-      <include name="**/*.ini"/>
-      <include name="**/*.jpeg"/>
-      <include name="**/*.jpg"/>
-      <include name="**/*.png"/>
-      <include name="**/*.properties"/>
-      <include name="**/*.sva"/>
-      <include name="**/*.tag"/>
-      <include name="**/*.tld"/>
-      <include name="**/*.wsdl"/>
-      <include name="**/*.xcfg"/>
-      <include name="**/*.xlf"/>
-      <include name="**/*.xml"/>
-      <include name="**/*.xsd"/>
-      <include name="**/*.xsl"/>
-      <include name="**/*.jar"/>
-      <include name="**/*.war"/>
-      <exclude name="build.xml"/>
-      <exclude name="build.properties"/>
-    </patternset>
-    <copy todir="${output.dir}/lib">
-      <fileset dir="lib">
-        <patternset refid="copy.patterns"/>
-      </fileset>
-    </copy>
-    <copy todir="${output.dir}/META-INF">
-      <fileset dir="${basedir}/src/META-INF">
-        <patternset refid="copy.patterns"/>
-      </fileset>
-    </copy>
-    <copy todir="${output.dir}">
-      <fileset dir="${basedir}/EJBModel/${dist.dir}">
-        <patternset refid="copy.patterns"/>
-      </fileset>
-    </copy>
-    <copy todir="${output.dir}">
-      <fileset dir="${basedir}/RESTServices/${dist.dir}">
-        <patternset refid="copy.patterns"/>
-      </fileset>
-    </copy>
-    <condition property="copyDone">
-      <available file="${output.dir}/WEB-INF/lib/*.jar" type="file"/>
-    </condition>
-  </target>
-  <!--
+    <target name="init" unless="initDone">
+        <tstamp/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/lib"/>
+        <mkdir dir="${build.dir}/META-INF"/>
+        <condition property="initDone">
+            <available file="${build.dir}" type="dir"/>
+        </condition>
+    </target>
+    <target name="copy" description="Copy files to build directory" depends="init" unless="copyDone">
+        <patternset id="copy.patterns">
+            <include name="**/*.cpx"/>
+            <include name="**/*.dcx"/>
+            <include name="**/*.ejx"/>
+            <include name="**/*.gif"/>
+            <include name="**/*.ini"/>
+            <include name="**/*.jpeg"/>
+            <include name="**/*.jpg"/>
+            <include name="**/*.png"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.sva"/>
+            <include name="**/*.tag"/>
+            <include name="**/*.tld"/>
+            <include name="**/*.wsdl"/>
+            <include name="**/*.xcfg"/>
+            <include name="**/*.xlf"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.xsd"/>
+            <include name="**/*.xsl"/>
+            <include name="**/*.jar"/>
+            <include name="**/*.war"/>
+            <exclude name="build.xml"/>
+            <exclude name="build.properties"/>
+        </patternset>
+        <copy todir="${build.dir}/lib">
+            <fileset dir="lib">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}/META-INF">
+            <fileset dir="${basedir}/src/META-INF">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}">
+            <fileset dir="${basedir}/EJBModel/${dist.dir}">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}">
+            <fileset dir="${basedir}/RESTServices/${dist.dir}">
+                <patternset refid="copy.patterns"/>
+            </fileset>
+        </copy>
+        <condition property="copyDone">
+            <available file="${build.dir}/WEB-INF/lib/*.jar" type="file"/>
+        </condition>
+    </target>
+    <!--
   ==========================================================================================
   Build targets
   ==========================================================================================
   -->
-  <!-- 
+    <!-- 
         Create EAR file 
         
         Targets:
@@ -140,282 +168,336 @@
           buildAppMinor - Increments the minor release number. Resets the build increment to 1.
           buildApp      - Increments the build number. This is the default build target.
         -->
-  <target name="buildAppMajor" depends="resetIncrementMajor, all"><echo message="Build complete"/></target>
-  <target name="buildAppMinor" depends="resetIncrementMinor, all"><echo message="Build complete"/></target>
-  <target name="buildApp" depends="all"><echo message="Build complete"/></target>
-  <target name="createEAR" depends="inc.build">
-    <echo>Building the ear file...</echo>
-    <manifest file="${output.dir}/META-INF/MANIFEST.MF">
-      <attribute name="Built-By" value="${user.name}"/>
-      <attribute name="Weblogic-Application-Version" value="${application.version}"/>
-      <attribute name="Build-Number" value="${build.revision.number}"/>
-      <attribute name="Build-Date" value="${build_date}"/>
-      <attribute name="Build-Time" value="${build_time}"/>
-    </manifest>
-    <ear destfile="${dist.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
-         manifest="${output.dir}/META-INF/MANIFEST.MF">
-      <fileset dir="${output.dir}">
-        <include name="META-INF/**"/>
-      </fileset>
-      <fileset dir="${output.dir}">
-        <include name="/lib/**"/>
-      </fileset>
-      <fileset dir="${output.dir}">
-        <include name="**/${modelArchive}"/>
-      </fileset>
-      <fileset dir="${output.dir}">
-        <include name="**/"/>
-      </fileset>
-    </ear>
-    <echo message="Done"/>
-  </target>
-  <!--
+    <!-- Local Version -->
+    <target name="createEARLocal" depends="inc.build, setLocal, all">
+        <echo>Creating EAR for Local machine...</echo>
+        <property name="deploy.dir" value="${dev.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
+    <!-- DEV Version -->
+    <target name="createEARDev" depends="inc.build, setDev, all">
+        <echo>Creating EAR for DEV...</echo>
+        <mkdir dir="${dev.dir}"/>
+        <property name="deploy.dir" value="${dev.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
+    <!-- CERT Version targets -->
+    <target name="createEARCertMajor" depends="resetIncrementMajor, createEARCert">
+        <echo message="Build complete"></echo>
+    </target>
+    <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
+        <echo message="Build complete"></echo>
+    </target>
+    <target name="createEARCert" depends="inc.build, setCert, all">
+        <echo>Creating EAR for CERT...</echo>
+        <mkdir dir="${cert.dir}"/>
+        <property name="deploy.dir" value="${cert.dir}"/>
+        <condition property="properlyCalled">
+            <isset property="deploy.dir"/>
+        </condition>
+        <antcall target="createEAR"/>
+    </target>
+    <!-- PROD Version -->
+    <target name="createEARProd" depends="check4CertArchive">
+        <echo message="Creating EAR for PROD from CERT EAR..."></echo>
+        <fail unless="certArchiveExists"
+              message="*** Deploy failed!  No CERT archive available to create PROD version."/>
+        <!-- Clean build dir of current contents-->
+        <delete dir="${build.dir}"/>
+        <delete dir="${expand.jar.dir}"/>
+        <delete dir="${expand.war.dir}"/>
+        <delete dir="${prod.dir}"/>
+        <mkdir dir="${expand.war.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${prod.dir}"/>
+        <mkdir dir="${expand.jar.dir}"/>
+        <mkdir dir="${expand.war.dir}"/>
+        <!-- Unzip CERT EAR -->
+        <echo>Expanding ${cert.dir}/${applicationArchive} into ${build.dir}...</echo>
+        <unzip src="${cert.dir}/${applicationArchive}" dest="${build.dir}"/>
+        <!-- Unzip EJBModel.jar -->
+        <echo>Expanding ${build.dir}/${modelArchive} into ${expand.jar.dir}...</echo>
+        <unzip src="${build.dir}/${modelArchive}" dest="${expand.jar.dir}"/>
+        <!-- Unzip RESTServices.jar -->
+        <echo>Expanding ${build.dir}/${servicesArchive} into ${expand.war.dir}...</echo>
+        <unzip src="${build.dir}/${servicesArchive}" dest="${expand.war.dir}"/>
+        <!-- Over-write files with corresponding PROD versions -->
+        <echo>Over-writing some files with their PROD version...</echo>
+        <!-- Create a PROD-environment version of log4j.xml -->
+        <copy file="${basedir}/RESTServices/public_html/WEB-INF/classes/log4j.xml"
+              tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+            <filterset>
+                <filter token="application_name" value="${project.name}"/>
+            </filterset>
+            <filterset>
+                <filter token="log_basedir" value="${prod.log.basedir}"/>
+            </filterset>
+            <filterset>
+                <filter token="log_level" value="${prod.log.level}"/>
+            </filterset>
+        </copy>
+        <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.jar.dir}/log4j.xml" overwrite="true"/>
+        <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.war.dir}/log4j.xml" overwrite="true"/>
+        <delete file="${build.dir}/${modelArchive}"/>
+        <delete file="${build.dir}/${servicesArchive}"/>
+        <!-- Compress JAR and WAR -->
+        <echo>Re-Compressing ${modelArchive} and ${servicesArchive} </echo>
+        <jar destfile="${build.dir}/${modelArchive}">
+            <fileset dir="${expand.jar.dir}">
+                <include name="com/rtddenver/**"/>
+                <include name="META-INF/**"/>
+                <include name="log4j.xml"/>
+            </fileset>
+        </jar>
+        <war destfile="${build.dir}/${servicesArchive}" webxml="${expand.war.dir}/WEB-INF/web.xml"
+             manifest="${expand.war.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${expand.war.dir}">
+                <include name="WEB-INF/**"/>
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="META-INF/**"/>
+            </fileset>
+        </war>
+        <!-- Compress back into EAR -->
+        <echo>Creating PROD EAR (${prod.dir}/${applicationArchive})...</echo>
+        <war destfile="${prod.dir}/${applicationArchive}" webxml="${basedir}/RESTServices/public_html/WEB-INF/web.xml"
+             manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}"/>
+        </war>
+    </target>
+    <!--
+        This is the main target for creating the EAR.
+        This should not be called directly. But, rather via createEARDev, createEARCert, createEARProd.
+    -->
+    <target name="createEAR" depends="">
+        <fail unless="properlyCalled"
+              message="*** createEAR failed!  Call via createEARDev, createEARCert, or createEARProd"/>
+        <echo>Building the ear file...</echo>
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Weblogic-Application-Version" value="${application.version}"/>
+            <attribute name="Destination" value="${destination}"/>
+            <attribute name="Build-Number" value="${build.revision.number}"/>
+            <attribute name="Build-Date" value="${build_date}"/>
+            <attribute name="Build-Time" value="${build_time}"/>
+        </manifest>
+        <ear destfile="${deploy.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
+             manifest="${build.dir}/META-INF/MANIFEST.MF">
+            <fileset dir="${build.dir}">
+                <include name="META-INF/weblogic-application.xml"/>
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="/lib/**"/>
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="**/${modelArchive}"/>
+            </fileset>
+            <fileset dir="${build.dir}">
+                <include name="**/${servicesArchive}"/>
+            </fileset>
+        </ear>
+        <echo message="Done"></echo>
+    </target>
+    <!--
   ==========================================================================================
   Deployment targets
   ==========================================================================================
   -->
-  <!--
+    <!--
         Deploy to WebLogic
         -->
-  <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic" depends="buildApp, check4Archive">
-    <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
-    <property name="deploy.admin.user" value="${local.admin.user}"/>
-    <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
-    <property name="deploy.admin.url" value="${local.admin.url}"/>
-    <property name="deploy.target" value="${local.deploy.target}"/>
-    <property name="ok2Deploy" value="true"/>
-    <antcall target="deploy2WLS"/>
-    <echo message="Done"/>
-  </target>
-  <target name="deployCert" description="Deploys the application archive to the CERT instance of Weblogic" depends="buildApp, check4Archive">
-    <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
-    <property name="deploy.admin.user" value="${cert.admin.user}"/>
-    <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
-    <property name="deploy.admin.url" value="${cert.admin.url}"/>
-    <property name="deploy.target" value="${cert.deploy.target}"/>
-    <!-- Copy archive to the cert directory for retention and deployment -->
-    <echo message="Copying file ${applicationArchive} to CERT deployment directory..."/>
-    <copy file="${dist.dir}/${applicationArchive}" todir="${cert.dir}"/>
-    <condition property="archiveExists">
-      <available file="${cert.dir}/${applicationArchive}" type="file"/>
-    </condition>
-    <property name="ok2Deploy" value="true"/>
-    <antcall target="deploy2WLS"/>
-    <echo message="deployCert Done"/>
-  </target>
-  <!-- -->
-  <target name="deployProd" description="Deploys the application archive to the PROD instance of Weblogic" depends="check4CertArchive">
-    <fail unless="certArchiveExists" message="*** Deploy failed!  No CERT archive available to deploy."/>
-    <property name="deploy.admin.user" value="${prod.admin.user}"/>
-    <property name="deploy.admin.pswd" value="${prod.admin.pswd}"/>
-    <property name="deploy.admin.url" value="${prod.admin.url}"/>
-    <property name="deploy.target" value="${prod.deploy.target}"/>
-    <property name="ok2Deploy" value="true"/>
-    <antcall target="deploy2WLS"/>
-    <echo message="deployProd Done"/>
-  </target>
-  <!-- 
+    <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic"
+            depends="createEARDev, check4Archive">
+        <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
+        <property name="deploy.admin.user" value="${local.admin.user}"/>
+        <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
+        <property name="deploy.admin.url" value="${local.admin.url}"/>
+        <property name="deploy.target" value="${local.deploy.target}"/>
+        <property name="ok2Deploy" value="true"/>
+        <property name="archive.dir" value="${deploy.dir}"/>
+        <antcall target="deploy2WLS"/>
+        <echo message="Done"></echo>
+    </target>
+    <!-- 
     This deploy tasks executes scripts located in folder ./scripts 
     -->
-  <target name="deploy2WLS" if="ok2Deploy" depends="">
-    <echo message="Deploying ${dist.dir}/${project.name}.ear"></echo>
-    <exec executable="./scripts/deployApp.cmd" failonerror="true">
-      <arg value="${deploy.admin.user}"/>
-      <arg value="${deploy.admin.pswd}"/>
-      <arg value="${deploy.admin.url}"/>
-      <arg value="${project.name}"/>
-      <arg value="../${dist.dir}/${applicationArchive}"/>
-      <arg value="${application.version}"/>
-      <arg value="${deploy.target}"/>
-    </exec>
-  </target>
-  <!-- -->
-  <target name="check4Archive">
-    <condition property="archiveExists">
-      <available file="${dist.dir}/${applicationArchive}" type="file"/>
-    </condition>
-    <echo message="Done"/>
-  </target>
-  <target name="check4CertArchive">
-    <condition property="certArchiveExists">
-      <available file="${cert.dir}/${applicationArchive}" type="file"/>
-    </condition>
-    <echo message="Done"/>
-  </target>
-  <!-- 
-    Prompt user for override of existing file 
-    -->
-  <target name="permissionToReplaceFile">
-    <input message="Do you wish to overwrite the existing CERT candidate file? (y/n)" addproperty="y.n"/>
-  </target>
-  <!--
-  ==========================================================================================
-  UnDeployment targets
-  ==========================================================================================
-  -->
-  <!--
-    Un-Deploy from Weblogic
-  -->
-  <target name="undeployLocal" depends="getVersion">
-    <property name="deploy.admin.user" value="${local.admin.user}"/>
-    <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
-    <property name="deploy.admin.url" value="${local.admin.url}"/>
-    <property name="deploy.target" value="${local.deploy.target}"/>
-    <condition property="undeploymentDefined">
-        <isset property="deploy.admin.url"/>
-    </condition>
-    <antcall target="unDeployFromWLS"/>
-  </target>
-  <!-- -->
-  <target name="undeployCert" depends="getVersion">
-    <property name="deploy.admin.user" value="${cert.admin.user}"/>
-    <property name="deploy.admin.pswd" value="${cert.admin.pswd}"/>
-    <property name="deploy.admin.url" value="${cert.admin.url}"/>
-    <property name="deploy.target" value="${cert.deploy.target}"/>
-    <condition property="undeploymentDefined">
-        <isset property="deploy.admin.url"/>
-    </condition>
-    <antcall target="unDeployFromWLS"/>
-  </target>
-  <!-- -->
-  <target name="undeployProd" if="prodPermitted" depends="getVersion"></target>
-  <!-- 
-    This undeploy tasks executes scripts located in folder ./scripts 
-    -->
-  <target name="unDeployFromWLS" if="undeploymentDefined">
-    <echo message="Un-Deploying ${dist.dir}/${project.name}.ear"></echo>
-    <exec executable="./scripts/undeployRetiredApp.cmd" failonerror="true">
-      <arg value="${deploy.admin.user}"/>
-      <arg value="${deploy.admin.pswd}"/>
-      <arg value="${deploy.admin.url}"/>
-      <arg value="${project.name}"/>
-      <arg value="${undeploy.version}"/>
-      <arg value="${deploy.target}"/>
-    </exec>
-  </target>
-  <!-- 
-    Prompt user for application version number 
-    -->
-  <target name="getVersion">
-    <input message="What application version do you wish to un-deploy?" addproperty="undeploy.version"/>
-  </target>
-  
-  <!--
+    <target name="deploy2WLS" if="ok2Deploy" depends="">
+        <echo message="Deploying ${dev.dir}/${project.name}.ear"></echo>
+        <exec executable="./scripts/deployApp.cmd" failonerror="true">
+            <arg value="${deploy.admin.user}"/>
+            <arg value="${deploy.admin.pswd}"/>
+            <arg value="${deploy.admin.url}"/>
+            <arg value="${project.name}"/>
+            <arg value="../${archive.dir}/${applicationArchive}"/>
+            <arg value="${application.version}"/>
+            <arg value="${deploy.target}"/>
+        </exec>
+    </target>
+    <!-- -->
+    <target name="check4Archive">
+        <condition property="archiveExists">
+            <available file="${basedir}\${dev.dir}\${applicationArchive}" type="file"/>
+        </condition>
+        <echo message="Done"></echo>
+    </target>
+    <target name="check4CertArchive">
+        <echo>Looking for archive: ${basedir}\${cert.dir}\${applicationArchive}</echo>
+        <condition property="certArchiveExists">
+            <available file="${basedir}\${cert.dir}\${applicationArchive}" type="file"/>
+        </condition>
+        <echo message="Done"></echo>
+    </target>
+    <target name="setLocal">
+        <property name="javac.debug" value="${local.javac.debug}"/>
+        <property name="log.level" value="${local.log.level}"/>
+        <property name="log.basedir" value="${local.log.basedir}"/>
+        <property name="district.svc.url" value="${local.district.svc.url}"/>
+        <property name="destination" value="DEV LOCAL"/>
+    </target>
+    <target name="setDev">
+        <property name="javac.debug" value="${dev.javac.debug}"/>
+        <property name="log.level" value="${dev.log.level}"/>
+        <property name="log.basedir" value="${dev.log.basedir}"/>
+        <property name="district.svc.url" value="${dev.district.svc.url}"/>
+        <property name="destination" value="DEV"/>
+    </target>
+    <target name="setCert">
+        <property name="javac.debug" value="${cert.javac.debug}"/>
+        <property name="log.level" value="${cert.log.level}"/>
+        <property name="log.basedir" value="${cert.log.basedir}"/>
+        <property name="district.svc.url" value="${cert.district.svc.url}"/>
+        <property name="destination" value="CERT"/>
+    </target>
+    <target name="setProd">
+        <property name="javac.debug" value="${prod.javac.debug}"/>
+        <property name="log.level" value="${prod.log.level}"/>
+        <property name="log.basedir" value="${prod.log.basedir}"/>
+        <property name="district.svc.url" value="${prod.district.svc.url}"/>
+        <property name="destination" value="PROD"/>
+    </target>
+    <!--
   ==========================================================================================
   Build Numbering targets 
   ==========================================================================================
   -->
-  <target name="inc.build" depends="inc.major, inc.minor, inc.revision, inc.application.version"></target>
-  <!-- -->
-  <target name="resetIncrementMinor">
-    <propertyreset name="increment.minor" value="true"/>
-  </target>
-  <!-- -->
-  <target name="resetIncrementMajor">
-    <propertyreset name="increment.major" value="true"/>
-  </target>
-  <!-- -->
-  <target name="inc.major" depends="inc.major.properties" if="${increment.major}"></target>
-  <!-- -->
-  <target name="inc.minor" depends="inc.major, inc.minor.properties" if="${increment.minor}"></target>
-  <!-- -->
-  <target name="inc.revision" depends="inc.major, inc.minor, inc.revision.properties" if="${increment.revision}"></target>
-  <!-- -->
-  <!-- Next three targets update the build numbers in the properties file -->
-  <target name="inc.revision.properties" if="${increment.revision}">
-    <echo>Incrementing build.revision.number...</echo>
-    <math operation="+" operator1="${build.revision.number}" operator2="1" result="newRevision"/>
-    <echo>newRevision=${newRevision}</echo>
-    <propertyfile file="${version.file}">
-      <entry key="build.major.number" default="0" operation="=" type="int"/>
-      <entry key="build.minor.number" default="0" operation="=" type="int"/>
-      <entry key="build.revision.number" default="0" operation="+" type="int"/>
-      <entry key="increment.revision" value="true" type="string"/>
-    </propertyfile>
-    <propertyreset name="build.revision.number" value="${newRevision}"/>
-  </target>
-  <!-- -->
-  <target name="inc.minor.properties" if="${increment.minor}">
-    <echo>Incrementing build.minor.number...</echo>
-    <property name="increment.revision" value="false"/>
-    <math operation="+" operator1="${build.minor.number}" operator2="1" result="newMinor"/>
-    <echo>new build.minor.number=${newMinor}</echo>
-    <propertyfile file="${version.file}">
-      <entry key="build.major.number" default="0" operation="=" type="int"/>
-      <entry key="build.minor.number" default="0" operation="+" type="int"/>
-      <entry key="build.revision.number" value="0" operation="=" type="int"/>
-      <entry key="increment.minor" value="false" type="string"/>
-    </propertyfile>
-    <propertyreset name="build.minor.number" value="${newMinor}"/>
-    <propertyreset name="increment.revision" value="false"/>
-    <propertyreset name="increment.app.version" value="true"/>
-  </target>
-  <!-- -->
-  <target name="inc.major.properties" if="${increment.major}">
-    <echo>Incrementing build.major.number...</echo>
-    <!--<echo>inc.major=${increment.major}, inc.minor=${increment.minor}, inc.revision=${increment.revision}</echo>-->
-    <math operation="+" operator1="${build.major.number}" operator2="1" result="newMajor"/>
-    <echo>new build.major.number=${newMajor}</echo>
-    <propertyfile file="${version.file}">
-      <entry key="build.major.number" default="0" operation="+" type="int"/>
-      <entry key="build.minor.number" value="0" operation="=" type="int"/>
-      <entry key="build.revision.number" value="0" operation="=" type="int"/>
-      <entry key="increment.major" value="false" type="string"/>
-    </propertyfile>
-    <propertyreset name="build.major.number" value="${newMajor}"/>
-    <propertyreset name="build.minor.number" value="0"/>
-    <propertyreset name="build.revision.number" value="0"/>
-    <propertyreset name="increment.minor" value="false"/>
-    <propertyreset name="increment.revision" value="false"/>
-    <propertyreset name="increment.app.version" value="true"/>
-  </target>
-  <!-- -->
-  <target name="inc.application.version" if="increment.app.version">
-    <echo>Updating application.version...</echo>
-    <property file="build.properties"/>
-    <property name="major.number" value="${build.major.number}"/>
-    <property name="minor.number" value="${build.minor.number}"/>
-    <propertyreset name="application.version" value="v${major.number}.${minor.number}"/>
-    <echo>new application.version=${application.version}</echo>
-    <propertyfile file="${version.file}">
-      <entry key="application.version" value="v${build.major.number}.${build.minor.number}" type="string"/>
-    </propertyfile>
-  </target>
-  <!-- Update Deployed Version and Retired Version -->
-  <target name="inc.deployed.versions.properties">
-    <echo>Updating deployed.version and retired.version...</echo>
-    <propertyfile file="${version.file}">
-      <entry key="deployed.version" value="${application.version}" type="string"/>
-      <entry key="retired.version" value="${new.retired.version}" type="string"/>
-    </propertyfile>
-    <propertyreset name="build.revision.number" value="${newRevision}"/>
-  </target>
-  <!-- -->
-  <!--
+    <target name="inc.build" depends="inc.major, inc.minor, inc.revision, inc.application.version"></target>
+    <!-- -->
+    <target name="resetIncrementMinor">
+        <propertyreset name="increment.minor" value="true"/>
+    </target>
+    <!-- -->
+    <target name="resetIncrementMajor">
+        <propertyreset name="increment.major" value="true"/>
+    </target>
+    <!-- -->
+    <target name="inc.major" depends="inc.major.properties" if="${increment.major}"></target>
+    <!-- -->
+    <target name="inc.minor" depends="inc.major, inc.minor.properties" if="${increment.minor}"></target>
+    <!-- -->
+    <target name="inc.revision" depends="inc.major, inc.minor, inc.revision.properties" if="${increment.revision}"></target>
+    <!-- -->
+    <!-- Next three targets update the build numbers in the properties file -->
+    <target name="inc.revision.properties" if="${increment.revision}">
+        <echo>Incrementing build.revision.number...</echo>
+        <math operation="+" operator1="${build.revision.number}" operator2="1" result="newRevision"/>
+        <echo>newRevision=${newRevision}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="=" type="int"/>
+            <entry key="build.minor.number" default="0" operation="=" type="int"/>
+            <entry key="build.revision.number" default="0" operation="+" type="int"/>
+            <entry key="increment.revision" value="true" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.revision.number" value="${newRevision}"/>
+    </target>
+    <!-- -->
+    <target name="inc.minor.properties" if="${increment.minor}">
+        <echo>Incrementing build.minor.number...</echo>
+        <property name="increment.revision" value="false"/>
+        <math operation="+" operator1="${build.minor.number}" operator2="1" result="newMinor"/>
+        <echo>new build.minor.number=${newMinor}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="=" type="int"/>
+            <entry key="build.minor.number" default="0" operation="+" type="int"/>
+            <entry key="build.revision.number" value="0" operation="=" type="int"/>
+            <entry key="increment.minor" value="false" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.minor.number" value="${newMinor}"/>
+        <propertyreset name="increment.revision" value="false"/>
+        <propertyreset name="increment.app.version" value="true"/>
+    </target>
+    <!-- -->
+    <target name="inc.major.properties" if="${increment.major}">
+        <echo>Incrementing build.major.number...</echo>
+        <!--<echo>inc.major=${increment.major}, inc.minor=${increment.minor}, inc.revision=${increment.revision}</echo>-->
+        <math operation="+" operator1="${build.major.number}" operator2="1" result="newMajor"/>
+        <echo>new build.major.number=${newMajor}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="build.major.number" default="0" operation="+" type="int"/>
+            <entry key="build.minor.number" value="0" operation="=" type="int"/>
+            <entry key="build.revision.number" value="0" operation="=" type="int"/>
+            <entry key="increment.major" value="false" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.major.number" value="${newMajor}"/>
+        <propertyreset name="build.minor.number" value="0"/>
+        <propertyreset name="build.revision.number" value="0"/>
+        <propertyreset name="increment.minor" value="false"/>
+        <propertyreset name="increment.revision" value="false"/>
+        <propertyreset name="increment.app.version" value="true"/>
+    </target>
+    <!-- -->
+    <target name="inc.application.version" if="increment.app.version">
+        <echo>Updating application.version...</echo>
+        <property file="build.properties"/>
+        <property name="major.number" value="${build.major.number}"/>
+        <property name="minor.number" value="${build.minor.number}"/>
+        <propertyreset name="application.version" value="v${major.number}.${minor.number}"/>
+        <echo>new application.version=${application.version}</echo>
+        <propertyfile file="${version.file}">
+            <entry key="application.version" value="v${build.major.number}.${build.minor.number}" type="string"/>
+        </propertyfile>
+    </target>
+    <!-- Update Deployed Version and Retired Version -->
+    <target name="inc.deployed.versions.properties">
+        <echo>Updating deployed.version and retired.version...</echo>
+        <propertyfile file="${version.file}">
+            <entry key="deployed.version" value="${application.version}" type="string"/>
+            <entry key="retired.version" value="${new.retired.version}" type="string"/>
+        </propertyfile>
+        <propertyreset name="build.revision.number" value="${newRevision}"/>
+    </target>
+    <!-- -->
+    <!--
   ==========================================================================================
   Macros for resetting properties 
   ==========================================================================================
   -->
-  <macrodef name="load.version.info">
-    <sequential>
-      <property file="${version.file}"/>
-      <checksum file="${version.file}" property="sha1.number" algorithm="SHA" format="CHECKSUM"/>
-      <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
-      <echo>SHA1: ${sha1.number}</echo>
-    </sequential>
-  </macrodef>
-  <scriptdef name="propertyreset" language="javascript" description="Allows to assign @{property} new value">
-    <attribute name="name"/>
-    <attribute name="value"/>
-    project.setProperty(attributes.get("name"), attributes.get("value"));
-  </scriptdef>
-  <macrodef name="math">
-    <attribute name="operation"/>
-    <attribute name="operator1"/>
-    <attribute name="operator2"/>
-    <attribute name="result"/>
-    <sequential>
-      <script language="javascript">
+    <macrodef name="load.version.info">
+        <sequential>
+            <property file="${version.file}"/>
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA"/>
+            <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
+            <echo>SHA1: ${sha1.number}</echo>
+        </sequential>
+    </macrodef>
+    <scriptdef name="propertyreset" language="javascript" src="setProperty.js"
+               description="Allows to assign @{property} new value">
+        <attribute name="name"/>
+        <attribute name="value"/>
+        <!--project.setProperty(attributes.get("name"), attributes.get("value"));-->
+    </scriptdef>
+    <macrodef name="math">
+        <attribute name="operation"/>
+        <attribute name="operator1"/>
+        <attribute name="operator2"/>
+        <attribute name="result"/>
+        <sequential>
+            <script language="javascript">
 		     tmp = 0;
 		     switch ("@{operation}")
 		     {
@@ -431,6 +513,6 @@
 		     }
 		     project.setProperty("@{result}", tmp);
 		    </script>
-    </sequential>
-  </macrodef>
+        </sequential>
+    </macrodef>
 </project>

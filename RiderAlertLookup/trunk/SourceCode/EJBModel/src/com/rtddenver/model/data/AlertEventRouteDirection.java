@@ -29,22 +29,27 @@ import org.eclipse.persistence.annotations.ReadOnly;
 @ReadOnly
 @NamedQueries({ @NamedQuery(name = "findRoutesDirectionByID", query = "select o from AlertEventRouteDirection o " + 
                             "WHERE o.alertEventRoutesId = :alertEventRoutesId " +
-                            "AND LENGTH(o.directionAlert) > 0 " +
+                            //"AND LENGTH(o.directionAlert) > 0 " +
                             "ORDER BY o.directionName") })
 @Table(name = "ALERT_EVENT_ROUTES_DIRECTION", schema = "SCHEDLS")
 public class AlertEventRouteDirection implements Serializable {
     @SuppressWarnings("compatibility:1924203674063957519")
     private static final long serialVersionUID = 8097255506880411562L;
 
-    @Id    
     @Column(name = "DIRECTION_ALERT")
     private String directionAlert = null;
+    @Column(name = "DIRECTION_NAME")
+    private String directionName = null;
+    
+    // 2019-06-12 jb21854 - Had to revise the key to include only direction_id and alert_event_routes_id, 
+    // as defined in the table schema in Oracle.  Previously, all columns were included in the key in this object.
+    // That became a problem when null values started to appear in direction_alert
+    @Id    
     @Column(name = "DIRECTION_ID")
     private BigDecimal directionId = null;
     @Column(name = "ALERT_EVENT_ROUTES_ID")
     private int alertEventRoutesId = 0;
-    @Column(name = "DIRECTION_NAME")
-    private String directionName = null;
+    
 
     @ManyToOne (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
