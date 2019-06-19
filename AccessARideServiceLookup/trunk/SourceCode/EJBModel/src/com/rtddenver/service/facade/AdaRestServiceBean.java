@@ -59,9 +59,9 @@ public class AdaRestServiceBean implements AdaRestServiceLocal {
             adaRestUrl = propertiesBean.getProperties().getProperty("adaRestSvcURL");
             String params = assembleParameters(street, city, zip, departureDay, departureTime);
             URL url = new URL((adaRestUrl + params));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Assembled service URL: " + url.toString());
-            }
+            //if (LOGGER.isDebugEnabled()) {
+                LOGGER.info("Assembled service URL: " + url.toString());
+            //}
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
@@ -152,9 +152,9 @@ public class AdaRestServiceBean implements AdaRestServiceLocal {
 
 
     private DistrictDTO parseJsonMessage(String jsonStr) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Parsing JSON string... \n" + jsonStr);
-        }
+        //if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("Parsing JSON string... \n" + jsonStr);
+        //}
         JsonParser jsonParser = new JsonParser();
         JsonObject jo = (JsonObject) jsonParser.parse(jsonStr);
         DistrictDTO dto = null;

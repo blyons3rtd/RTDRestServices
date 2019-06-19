@@ -291,7 +291,7 @@
         Deploy to WebLogic
         -->
     <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic"
-            depends="setDev, createEARDev, check4Archive">
+            depends="setLocal, createEARLocal, check4Archive">
         <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
         <property name="deploy.admin.user" value="${local.admin.user}"/>
         <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
