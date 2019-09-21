@@ -1,0 +1,1 @@
+project.setProperty(attributes.get("name"), attributes.get("value"));
