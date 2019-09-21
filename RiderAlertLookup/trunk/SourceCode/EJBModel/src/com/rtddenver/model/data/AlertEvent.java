@@ -2,6 +2,8 @@ package com.rtddenver.model.data;
 
 import com.rtddenver.model.dto.AlertEventRouteDTO;
 
+import com.rtddenver.service.RiderAlertServiceBean;
+
 import java.io.Serializable;
 
 import java.text.DateFormat;
@@ -9,6 +11,9 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.List;
+
+import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -53,6 +58,8 @@ import org.eclipse.persistence.annotations.ReadOnly;
 public class AlertEvent implements Serializable {
     @SuppressWarnings("compatibility:9166475870670687228")
     private static final long serialVersionUID = 6980798237182890443L;
+    
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.LogManager.getLogger(AlertEvent.class.getName());
 
     @Column(name = "ALERT_EVENT_ID")
     @Id
@@ -201,6 +208,7 @@ public class AlertEvent implements Serializable {
      * @return String
      */
     public String parseDate(String inputDate, int timeType) {
+        LOGGER.info("inputDate:" + inputDate + ", timeType:" + timeType);
         String outputDate = "";
         try {
             DateFormat outputDateFormat = new SimpleDateFormat("MMMMM dd, yyy");
@@ -225,6 +233,7 @@ public class AlertEvent implements Serializable {
             ex.printStackTrace();
             System.out.println(ex);
         }
+        LOGGER.info("outputDate:" + outputDate);
         return outputDate;
     }
 
