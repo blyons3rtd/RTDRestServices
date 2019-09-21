@@ -8,8 +8,8 @@
     <properties>
       <property name="javax.persistence.jtaDataSource" value="jdbc/RiderAlertDS"/>
       <property name="eclipselink.logging.logger" value="JavaLogger"/>
-      <property name="eclipselink.logging.file" value="C:/domains/rtddomain/logs/eclipselink.log"/>
-<!--      <property name="eclipselink.logging.file" value="/u01/app/config/rtd_share/rtdwebservices/logs/eclipselink.log"/> -->
+<!--      <property name="eclipselink.logging.file" value="C:/domains/rtddomain/logs/eclipselink.log"/> -->
+      <property name="eclipselink.logging.file" value="/u01/app/config/rtd_share/rtdwebservices/logs/eclipselink.log"/>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
 
