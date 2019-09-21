@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,6 +29,7 @@ import org.eclipse.persistence.annotations.ReadOnly;
 //***********************************************************
 @Entity
 @ReadOnly
+@Cacheable(value=false)
 @NamedQueries({ @NamedQuery(name = "findRoutesWithActiveAlerts",
                             query =
                             "SELECT o from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +

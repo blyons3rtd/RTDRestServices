@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,6 +28,7 @@ import org.eclipse.persistence.annotations.ReadOnly;
 //***********************************************************
 @Entity
 @ReadOnly
+@Cacheable(value=false)
 @NamedQueries({ @NamedQuery(name = "findRoutesDirectionByID", query = "select o from AlertEventRouteDirection o " + 
                             "WHERE o.alertEventRoutesId = :alertEventRoutesId " +
                             //"AND LENGTH(o.directionAlert) > 0 " +

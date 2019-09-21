@@ -2,6 +2,7 @@ package com.rtddenver.model.data;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,6 +22,7 @@ import org.eclipse.persistence.annotations.ReadOnly;
 //***********************************************************
 @Entity
 @ReadOnly
+@Cacheable(value=false)
 @NamedQueries({ @NamedQuery(name = "findAlertCategories",
                             query = "select o from AlertEventCategory o order by o.alertCategoryId"), 
                 @NamedQuery(name = "findAlertEventCategoryByID",
