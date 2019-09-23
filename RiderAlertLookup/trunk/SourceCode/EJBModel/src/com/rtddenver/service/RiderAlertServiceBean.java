@@ -249,8 +249,8 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                     List<AlertEventRouteDirectionDTO> directions =
                         new ArrayList<AlertEventRouteDirectionDTO>(route.getAlertRoutesDirection().size());
                     route.getAlertRoutesDirection()
-                        .forEach(direction -> { directions.add(this.createAlertEventRoutesDirectionDTO(direction)); });
-
+                        .forEach(direction -> { 
+                            directions.add(this.createAlertEventRoutesDirectionDTO(direction));});
                     alert.setRoutesDirectionList(directions);
                     alerts.add(alert);
 
@@ -272,10 +272,11 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEvent>
      */
     private List<AlertEvent> findActiveEventAlerts() {
-        long now = Calendar.getInstance().getTime().getTime();
         return em.createNamedQuery("findActiveEventAlerts", AlertEvent.class)
-            .setParameter("alertDate", new java.sql.Date(now))
-            .getResultList();
+                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
+                           .getTime()
+                           .getTime()))
+                 .getResultList();
     }
 
     /**
@@ -283,10 +284,11 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEvent>
      */
     private List<AlertEvent> findStationsWithActiveEventAlerts() {
-        long now = Calendar.getInstance().getTime().getTime();
         return em.createNamedQuery("findActiveStationsWithActiveEventtAlerts", AlertEvent.class)
-                .setParameter("alertDate", new java.sql.Date(now))
-                .getResultList();
+                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
+                           .getTime()
+                           .getTime()))
+                 .getResultList();
     }
 
     /**
@@ -304,11 +306,13 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEventRoute>
      */
     private List<AlertEventRoute> findRouteWithActiveAlertsByMasterRoute(String masterRoute) {
-        long now = Calendar.getInstance().getTime().getTime();
+        long now = Calendar.getInstance()
+                           .getTime()
+                           .getTime();
         return em.createNamedQuery("findRouteWithActiveAlertsByMasterRoute", AlertEventRoute.class)
-                .setParameter("masterRoute", masterRoute)
-                .setParameter("alertDate", new java.sql.Date(now))
-                .getResultList();
+                 .setParameter("masterRoute", masterRoute)
+                 .setParameter("alertDate", new java.sql.Date(now))
+                 .getResultList();
     }
 
     /**
@@ -316,10 +320,11 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEventRoute>
      */
     private List<AlertEventRoute> findRoutesWithActiveAlerts() {
-        long now = Calendar.getInstance().getTime().getTime();
         return em.createNamedQuery("findRoutesWithActiveAlerts", AlertEventRoute.class)
-                .setParameter("alertDate", new java.sql.Date(now))
-                .getResultList();
+                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
+                           .getTime()
+                           .getTime()))
+                 .getResultList();
     }
 
     /**
@@ -327,13 +332,15 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEventRoute>
      */
     private List findRoutesWithActiveAlertsGroupByMasterRoute() {
-        long now = Calendar.getInstance().getTime().getTime();
         TypedQuery query =
             em.createQuery("SELECT o.masterRoute from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate GROUP BY o.masterRoute",
                            java.lang.String.class);
-        query.setParameter("alertDate", new java.sql.Date(now));
+        query.setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
+                           .getTime()
+                           .getTime()));
         return query.getResultList();
     }
+
 
     /**
      * createAlertEventDTO

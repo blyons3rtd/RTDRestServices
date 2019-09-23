@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -46,12 +46,13 @@ public class AlertEventRouteDirection implements Serializable {
     // 2019-06-12 jb21854 - Had to revise the key to include only direction_id and alert_event_routes_id, 
     // as defined in the table schema in Oracle.  Previously, all columns were included in the key in this object.
     // That became a problem when null values started to appear in direction_alert
-    @Id    
+    //@Id    
     @Column(name = "DIRECTION_ID")
     private BigDecimal directionId = null;
     @Column(name = "ALERT_EVENT_ROUTES_ID")
     private int alertEventRoutesId = 0;
-    
+    @EmbeddedId
+    private AlertEvnetRouteDirectionId id = null;
 
     @ManyToOne (fetch=FetchType.LAZY)
     @JoinColumn(name="ALERT_EVENT_ROUTES_ID", insertable=false, updatable=false)
