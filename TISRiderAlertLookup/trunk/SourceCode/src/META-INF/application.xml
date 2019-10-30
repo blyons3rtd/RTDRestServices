@@ -13,7 +13,7 @@
         RESTServices.war
       </web-uri>
       <context-root>
-        RiderAlert
+        TISRiderAlert
       </context-root>
     </web>
   </module>
