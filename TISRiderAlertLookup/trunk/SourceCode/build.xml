@@ -5,36 +5,21 @@
     -->
     <property file="${basedir}/build.properties"/>
     <property name="version.file" location="${basedir}/build.properties"/>
-    <property name="wldeploy.lib.dir" location="c:/Development/Tools/Weblogic/wldeploy"/>
+    <property name="wldeploy.lib.dir" location="/Development/Tools/Weblogic/wldeploy"/>
     <!-- Archive file names -->
     <property name="modelArchive" value="EJBModel.jar"/>
     <property name="servicesArchive" value="RESTServices.war"/>
     <property name="applicationArchive" value="${project.name}.ear"/>
     <!-- Build timestamp -->
     <tstamp>
-        <format property="build_date" pattern="MM-dd-yyyy" locale="en,US"/>
-        <format property="build_time" pattern="HH:mm:ss zzz" locale="en,US"/>
+        <format property="build_date_time" pattern="EEE, MMM dd, yyyy hh:mm:ss a z" locale="en,US"/>
     </tstamp>
-    <path id="wldeploy.WebLogic.12.1">
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.webservices.wls.jaxws-wlswss-client.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.ant.taskdefs.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.deploy.beanapi.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.service.ffimpl.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.security.crypto.utils.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/com.oracle.weblogic.rjvm.jar"/>
-        <pathelement location="${wldeploy.lib.dir}/weblogic.jar"/>
-    </path>
+
     <path id="Logging.jar">
-        <pathelement location="./lib/log4j-1.2.15.jar"/>
-        <pathelement location="./lib/rtdLog4j.jar"/>
+        <pathelement location="../lib/log4j-1.2.15.jar"/>
+        <pathelement location="../lib/Logger.jar"/>
     </path>
-    <!--<echo message="wldeploy path: ${toString:wldeploy.WebLogic.12.1}"></echo> -->
-    <path id="classpath">
-        <path refid="wldeploy.WebLogic.12.1"/>
-        <path refid="Logging.jar"/>
-    </path>
-    <echo message="Build path: ${toString:wldeploy.WebLogic.12.1};${toString:Logging.jar}"></echo>
+
     <target name="all" description="Build the entire application" depends="clean,model,services,copy"/>
     <target name="clean" description="Clean the project" unless="cleanDone">
         <echo>Cleaning RESTServices...</echo>
@@ -155,6 +140,16 @@
             <available file="${build.dir}/WEB-INF/lib/*.jar" type="file"/>
         </condition>
     </target>
+    
+    
+  <!--
+  ==========================================================================================
+  Application Version Increment targets
+  ==========================================================================================
+  -->  
+    <target name="newMajorRelease" depends="resetIncrementMajor, inc.build"/>
+    <target name="newMinorRelease" depends="resetIncrementMinor, inc.build"/>
+
     <!--
   ==========================================================================================
   Build targets
@@ -187,13 +182,7 @@
         </condition>
         <antcall target="createEAR"/>
     </target>
-    <!-- CERT Version targets -->
-    <target name="createEARCertMajor" depends="resetIncrementMajor, createEARCert">
-        <echo message="Build complete"></echo>
-    </target>
-    <target name="createEARCertMinor" depends="resetIncrementMinor, createEARCert">
-        <echo message="Build complete"></echo>
-    </target>
+    <!-- CERT Version -->
     <target name="createEARCert" depends="inc.build, setCert, all">
         <echo>Creating EAR for CERT...</echo>
         <mkdir dir="${cert.dir}"/>
@@ -204,8 +193,13 @@
         <antcall target="createEAR"/>
     </target>
     <!-- PROD Version -->
-    <target name="createEARProd" depends="check4CertArchive">
-        <echo message="Creating EAR for PROD from CERT EAR..."></echo>
+    <!-- 
+	Create archive file for PROD environment.  This relies on a previous CERT build.
+	The CERT build files are used while the manifest and property files are revised
+	to reflect PROD-centric information.
+    -->
+    <target name="createEARProd" depends="check4CertArchive, setProd">
+        <echo message="Creating EAR for PROD from CERT EAR..." />
         <fail unless="certArchiveExists"
               message="*** Deploy failed!  No CERT archive available to create PROD version."/>
         <!-- Clean build dir of current contents-->
@@ -230,8 +224,7 @@
         <!-- Over-write files with corresponding PROD versions -->
         <echo>Over-writing some files with their PROD version...</echo>
         <!-- Create a PROD-environment version of log4j.xml -->
-        <copy file="${basedir}/RESTServices/public_html/WEB-INF/classes/log4j.xml"
-              tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
+        <copy file="${basedir}/RESTServices/public_html/WEB-INF/classes/log4j.xml" tofile="${build.dir}/WEB-INF/classes/log4j.xml" overwrite="true">
             <filterset>
                 <filter token="application_name" value="${project.name}"/>
             </filterset>
@@ -242,6 +235,13 @@
                 <filter token="log_level" value="${prod.log.level}"/>
             </filterset>
         </copy>
+        <manifest file="${build.dir}/META-INF/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Weblogic-Application-Version" value="${application.version}"/>
+            <attribute name="Destination" value="${destination}"/>
+            <attribute name="Jenkins-Build-Number" value="${build.number}"/>
+            <attribute name="Build-Date" value="${build_date_time}"/>
+        </manifest>
         <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.jar.dir}/log4j.xml" overwrite="true"/>
         <copy file="${build.dir}/WEB-INF/classes/log4j.xml" tofile="${expand.war.dir}/log4j.xml" overwrite="true"/>
         <delete file="${build.dir}/${modelArchive}"/>
@@ -283,9 +283,8 @@
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Weblogic-Application-Version" value="${application.version}"/>
             <attribute name="Destination" value="${destination}"/>
-            <attribute name="Build-Number" value="${build.revision.number}"/>
-            <attribute name="Build-Date" value="${build_date}"/>
-            <attribute name="Build-Time" value="${build_time}"/>
+            <attribute name="Jenkins-Build-Number" value="${build.number}"/>
+            <attribute name="Build-Date" value="${build_date_time}"/>
         </manifest>
         <ear destfile="${deploy.dir}/${applicationArchive}" appxml="${basedir}/src/META-INF/application.xml"
              manifest="${build.dir}/META-INF/MANIFEST.MF">
@@ -306,40 +305,9 @@
     </target>
     <!--
   ==========================================================================================
-  Deployment targets
+  Utility targets
   ==========================================================================================
   -->
-    <!--
-        Deploy to WebLogic
-        -->
-    <target name="deployLocal" description="Deploys the application archive to a local instance of Weblogic"
-            depends="createEARDev, check4Archive">
-        <fail unless="archiveExists" message="*** Deploy failed!  No archive available to deploy."/>
-        <property name="deploy.admin.user" value="${local.admin.user}"/>
-        <property name="deploy.admin.pswd" value="${local.admin.pswd}"/>
-        <property name="deploy.admin.url" value="${local.admin.url}"/>
-        <property name="deploy.target" value="${local.deploy.target}"/>
-        <property name="ok2Deploy" value="true"/>
-        <property name="archive.dir" value="${deploy.dir}"/>
-        <antcall target="deploy2WLS"/>
-        <echo message="Done"></echo>
-    </target>
-    <!-- 
-    This deploy tasks executes scripts located in folder ./scripts 
-    -->
-    <target name="deploy2WLS" if="ok2Deploy" depends="">
-        <echo message="Deploying ${dev.dir}/${project.name}.ear"></echo>
-        <exec executable="./scripts/deployApp.cmd" failonerror="true">
-            <arg value="${deploy.admin.user}"/>
-            <arg value="${deploy.admin.pswd}"/>
-            <arg value="${deploy.admin.url}"/>
-            <arg value="${project.name}"/>
-            <arg value="../${archive.dir}/${applicationArchive}"/>
-            <arg value="${application.version}"/>
-            <arg value="${deploy.target}"/>
-        </exec>
-    </target>
-    <!-- -->
     <target name="check4Archive">
         <condition property="archiveExists">
             <available file="${basedir}\${dev.dir}\${applicationArchive}" type="file"/>
@@ -414,6 +382,7 @@
             <entry key="increment.revision" value="true" type="string"/>
         </propertyfile>
         <propertyreset name="build.revision.number" value="${newRevision}"/>
+        <propertyreset name="date.last.incremented" value="${build_date_time}"/>
     </target>
     <!-- -->
     <target name="inc.minor.properties" if="${increment.minor}">
@@ -426,10 +395,12 @@
             <entry key="build.minor.number" default="0" operation="+" type="int"/>
             <entry key="build.revision.number" value="0" operation="=" type="int"/>
             <entry key="increment.minor" value="false" type="string"/>
+            <entry key="date.last.incremented" value="${build_date_time}" type="string"/>
         </propertyfile>
         <propertyreset name="build.minor.number" value="${newMinor}"/>
         <propertyreset name="increment.revision" value="false"/>
         <propertyreset name="increment.app.version" value="true"/>
+        <propertyreset name="date.last.incremented" value="${build_date_time}"/>
     </target>
     <!-- -->
     <target name="inc.major.properties" if="${increment.major}">
@@ -442,6 +413,7 @@
             <entry key="build.minor.number" value="0" operation="=" type="int"/>
             <entry key="build.revision.number" value="0" operation="=" type="int"/>
             <entry key="increment.major" value="false" type="string"/>
+            <entry key="date.last.incremented" value="${build_date_time}" type="string"/>
         </propertyfile>
         <propertyreset name="build.major.number" value="${newMajor}"/>
         <propertyreset name="build.minor.number" value="0"/>
@@ -449,6 +421,7 @@
         <propertyreset name="increment.minor" value="false"/>
         <propertyreset name="increment.revision" value="false"/>
         <propertyreset name="increment.app.version" value="true"/>
+        <propertyreset name="date.last.incremented" value="${build_date_time}"/>
     </target>
     <!-- -->
     <target name="inc.application.version" if="increment.app.version">
@@ -462,16 +435,7 @@
             <entry key="application.version" value="v${build.major.number}.${build.minor.number}" type="string"/>
         </propertyfile>
     </target>
-    <!-- Update Deployed Version and Retired Version -->
-    <target name="inc.deployed.versions.properties">
-        <echo>Updating deployed.version and retired.version...</echo>
-        <propertyfile file="${version.file}">
-            <entry key="deployed.version" value="${application.version}" type="string"/>
-            <entry key="retired.version" value="${new.retired.version}" type="string"/>
-        </propertyfile>
-        <propertyreset name="build.revision.number" value="${newRevision}"/>
-    </target>
-    <!-- -->
+
     <!--
   ==========================================================================================
   Macros for resetting properties 
@@ -480,13 +444,12 @@
     <macrodef name="load.version.info">
         <sequential>
             <property file="${version.file}"/>
-            <checksum file="${version.file}" property="sha1.number" algorithm="SHA"/>
+            <checksum file="${version.file}" property="sha1.number" algorithm="SHA" />
             <echo>Version: v${build.major.number}.${build.minor.number}.${build.revision.number}</echo>
             <echo>SHA1: ${sha1.number}</echo>
         </sequential>
     </macrodef>
-    <scriptdef name="propertyreset" language="javascript" src="setProperty.js"
-               description="Allows to assign @{property} new value">
+    <scriptdef name="propertyreset" language="javascript" src="setProperty.js" description="Allows to assign @{property} new value">
         <attribute name="name"/>
         <attribute name="value"/>
         <!--project.setProperty(attributes.get("name"), attributes.get("value"));-->
