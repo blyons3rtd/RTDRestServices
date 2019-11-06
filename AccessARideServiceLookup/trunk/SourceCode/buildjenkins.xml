@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="antlib:org.apache.tools.ant" name="BuildJenkins" basedir=".">
+  <!--<taskdef resource="net/sf/antcontrib/antlib.xml" />-->
+  <tstamp>
+    <format property="build_date" pattern="MM-dd-yyyy"/>
+    <format property="build_time" pattern="hh:mma"/>
+  </tstamp>
+  <property file="./buildjenkins.properties"/>
+  <property file="./build.properties"/>
+  <property name="application.archive" value="${project.name}.${archive.type}"/>
+
+  <!-- Build / Deploy targets -->
+  <!-- DEV -->
+  <target name="buildDeployDev" depends="buildDev, deployDev"/>
+  <target name="buildDev">
+    <property name="destination" value="DEV"/>
+    <ant target="createEARDev" dir="${basedir}" antfile="build.xml">
+      <property name="build.number" value="${build.number}"/>
+    </ant>
+  </target>
+  <!-- CERT -->
+  <target name="buildDeployCert" depends="buildCert, deployCert"/>
+  <target name="buildCert">
+    <property name="destination" value="CERT"/>
+    <ant target="createEARCert" dir="${basedir}" antfile="build.xml">
+      <property name="build.number" value="${build.number}"/>
+    </ant>
+  </target>
+  <!-- PROD -->
+  <target name="buildDeployProd" depends="buildProd, deployProd"/>
+  <target name="buildProd" depends="check4CertArchive">
+    <ant target="createEARProd" dir="${basedir}" antfile="build.xml">
+      <property name="build.number" value="${build.number}"/>
+    </ant>
+  </target>
+  <target name="check4DevArchive">
+    <echo>Looking for archive: ${basedir}\dev\${application.archive}</echo>
+    <condition property="devArchiveExists">
+      <available file="${basedir}/dev/${application.archive}" type="file"/>
+    </condition>
+    <echo message="Done"></echo>
+  </target>
+  <target name="check4CertArchive">
+    <echo>Looking for archive: ${basedir}\cert\${application.archive}</echo>
+    <condition property="certArchiveExists">
+      <available file="${basedir}/cert/${application.archive}" type="file"/>
+    </condition>
+    <echo message="Done"></echo>
+  </target>
+  <target name="check4ProdArchive">
+    <echo>Looking for archive: ${basedir}\prod\${application.archive}</echo>
+    <condition property="prodArchiveExists">
+      <available file="${basedir}/prod/${application.archive}" type="file"/>
+    </condition>
+    <echo message="Done"></echo>
+  </target>
+
+  <!-- 
+  ==========================================================================================
+  Deployment targets
+  ==========================================================================================
+-->
+  <!--
+        Deploy to WebLogic
+        These targets call targets in the project's build.xml
+  -->
+  <!-- DEV -->
+  <target name="deployDev" depends="check4DevArchive" description="Deploys the application archive to the DEV instance of Weblogic">
+    <fail unless="devArchiveExists" message="*** Deploy failed!  No DEV archive available to deploy."/>
+    <property name="ok2Deploy" value="true"/>
+    <property name="archive.dir" value="${basedir}/dev"/>
+    <echo message="Calling deploy2WLSDev...  workspace:${workspace} build.number:${build.number}"></echo>
+    <ant target="deploy2WLSDev" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
+      <property name="application.name" value="${project.name}"/>
+      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="application.version" value="${application.version}"/>
+      <property name="deploy.env" value="dev"/>
+    </ant>
+    <echo message="deployDev Complete"></echo>
+  </target>
+  <!-- CERT -->
+  <target name="deployCert" depends="check4CertArchive" description="Deploys the application archive to the CERT instance of Weblogic">
+    <fail unless="certArchiveExists" message="*** Deploy failed!  No CERT archive available to deploy."/>
+    <property name="deploy.env" value="cert"/>
+    <property name="ok2Deploy" value="true"/>
+    <property name="archive.dir" value="${basedir}/cert"/>
+    <ant target="deploy2WLSCert" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
+      <property name="application.name" value="${project.name}"/>
+      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="application.version" value="${application.version}"/>
+      <property name="deploy.env" value="${deploy.env}"/>
+    </ant>
+    <echo message="deployCert Complete"></echo>
+  </target>
+  <!-- PROD -->
+  <target name="deployProd" depends="check4ProdArchive" description="Deploys the application archive to the PROD instance of Weblogic">
+    <fail unless="prodArchiveExists" message="*** Deploy failed!  No PROD archive available to deploy."/>
+    <property name="deploy.env" value="prod"/>
+    <property name="ok2Deploy" value="true"/>
+    <property name="archive.dir" value="${basedir}/prod"/>
+    <ant target="deploy2WLSProd" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
+      <property name="application.name" value="${project.name}"/>
+      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="application.version" value="${application.version}"/>
+      <property name="deploy.env" value="${deploy.env}"/>
+    </ant>
+    <echo message="deployProd Complete"></echo>
+  </target>
+</project>
