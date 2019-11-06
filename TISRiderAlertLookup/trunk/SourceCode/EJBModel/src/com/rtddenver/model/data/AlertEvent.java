@@ -45,14 +45,14 @@ import org.eclipse.persistence.annotations.ReadOnly;
 @ReadOnly
 @NamedQueries({ 
                 //Get active alerts for bus & rail
-                @NamedQuery(name = "findActiveEventAlerts",
+                                @NamedQuery(name = "findActiveEventAlerts",
                             query =
-                            "select o from AlertEvent o WHERE o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate " + 
-                            "ORDER BY o.alertEventStartDate DESC"),
+                            "select o from AlertEvent o WHERE o.alertTypeId = 1 " + 
+                            "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventStartDate DESC"),
                 @NamedQuery(name = "findActiveStationsWithActiveEventtAlerts",
                             query =
-                            "select o from AlertEvent o WHERE o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate " +
-                            "ORDER BY o.alertEventStartDate DESC")
+                            "select o from AlertEvent o WHERE o.alertTypeId = 3 " +
+                            "AND o.alertEventEffEndDate >= :alertDate AND o.alertEventEffStartDate <= :alertDate ORDER BY o.alertEventStartDate DESC")
     })
 @Table(name = "ALERT_EVENTS", schema = "RIDER_ALERT")
 public class AlertEvent implements Serializable {
