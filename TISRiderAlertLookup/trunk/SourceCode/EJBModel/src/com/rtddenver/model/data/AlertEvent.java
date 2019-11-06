@@ -64,10 +64,9 @@ public class AlertEvent implements Serializable {
     @Column(name = "ALERT_EVENT_ID")
     @Id
     private int alertEventId = 0;
-    @Column(name = "ALERT_CETATORY_DETAIL")
+    @Column(name = "ALERT_CATEGORY_DETAIL")
     private String alertCategoryDetail = null;
     @Transient
-    //@Column(name = "'' as ALERT_CATEGORY_ID1")
     private int alertCategoryId = 0;
     @Temporal(TemporalType.DATE)
     @Column(name = "ALERT_EVENT_EFF_END_DATE")
@@ -87,8 +86,7 @@ public class AlertEvent implements Serializable {
     private String alertEventStartDate = null;
     @Column(name = "ALERT_EVENT_START_TIME_TYPE")
     private int alertEventStartTimeType;
-    @Transient
-    //@Column(name = "'' as ALERT_TYPE_ID")
+    @Column(name = "ALERT_TYPE_ID")
     private int alertTypeId = 0;
 
     @OneToMany (fetch=FetchType.LAZY)
