@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="antlib:org.apache.tools.ant" name="BuildJenkins" basedir=".">
   <!--<taskdef resource="net/sf/antcontrib/antlib.xml" />-->
-  <tstamp>
-    <format property="build_date" pattern="MM-dd-yyyy"/>
-    <format property="build_time" pattern="hh:mma"/>
-  </tstamp>
   <property file="./buildjenkins.properties"/>
   <property file="./build.properties"/>
-  <property name="application.archive" value="${project.name}.${archive.type}"/>
+  <property name="applicationArchive" value="${project.name}.${archive.type}"/>
 
   <!-- Build / Deploy targets -->
   <!-- DEV -->
@@ -34,23 +30,23 @@
     </ant>
   </target>
   <target name="check4DevArchive">
-    <echo>Looking for archive: ${basedir}\dev\${application.archive}</echo>
+    <echo>Looking for archive: ${basedir}\dev\${applicationArchive}</echo>
     <condition property="devArchiveExists">
-      <available file="${basedir}/dev/${application.archive}" type="file"/>
+      <available file="${basedir}/dev/${applicationArchive}" type="file"/>
     </condition>
     <echo message="Done"></echo>
   </target>
   <target name="check4CertArchive">
-    <echo>Looking for archive: ${basedir}\cert\${application.archive}</echo>
+    <echo>Looking for archive: ${basedir}\cert\${applicationArchive}</echo>
     <condition property="certArchiveExists">
-      <available file="${basedir}/cert/${application.archive}" type="file"/>
+      <available file="${basedir}/cert/${applicationArchive}" type="file"/>
     </condition>
     <echo message="Done"></echo>
   </target>
   <target name="check4ProdArchive">
-    <echo>Looking for archive: ${basedir}\prod\${application.archive}</echo>
+    <echo>Looking for archive: ${basedir}\prod\${applicationArchive}</echo>
     <condition property="prodArchiveExists">
-      <available file="${basedir}/prod/${application.archive}" type="file"/>
+      <available file="${basedir}/prod/${applicationArchive}" type="file"/>
     </condition>
     <echo message="Done"></echo>
   </target>
@@ -72,7 +68,7 @@
     <echo message="Calling deploy2WLSDev...  workspace:${workspace} build.number:${build.number}"></echo>
     <ant target="deploy2WLSDev" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
       <property name="application.name" value="${project.name}"/>
-      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="archive.file" location="${archive.dir}/${applicationArchive}"/>
       <property name="application.version" value="${application.version}"/>
       <property name="deploy.env" value="dev"/>
     </ant>
@@ -86,7 +82,7 @@
     <property name="archive.dir" value="${basedir}/cert"/>
     <ant target="deploy2WLSCert" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
       <property name="application.name" value="${project.name}"/>
-      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="archive.file" location="${archive.dir}/${applicationArchive}"/>
       <property name="application.version" value="${application.version}"/>
       <property name="deploy.env" value="${deploy.env}"/>
     </ant>
@@ -100,7 +96,7 @@
     <property name="archive.dir" value="${basedir}/prod"/>
     <ant target="deploy2WLSProd" dir="${wlst.scripts.dir}" antfile="buildWlst.xml">
       <property name="application.name" value="${project.name}"/>
-      <property name="archive.file" location="${archive.dir}/${application.archive}"/>
+      <property name="archive.file" location="${archive.dir}/${applicationArchive}"/>
       <property name="application.version" value="${application.version}"/>
       <property name="deploy.env" value="${deploy.env}"/>
     </ant>
