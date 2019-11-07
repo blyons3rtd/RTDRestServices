@@ -9,7 +9,7 @@
     <!-- Archive file names -->
     <property name="modelArchive" value="EJBModel.jar"/>
     <property name="servicesArchive" value="RESTServices.war"/>
-    <property name="applicationArchive" value="${project.name}.ear"/>
+    <property name="applicationArchive" value="${project.name}.${archive.type}"/>
     <!-- Build timestamp -->
     <tstamp>
         <format property="build_date_time" pattern="EEE, MMM dd, yyyy hh:mm:ss a z" locale="en,US"/>
@@ -147,8 +147,8 @@
   Application Version Increment targets
   ==========================================================================================
   -->  
-    <target name="newMajorRelease" depends="resetIncrementMajor, inc.build"/>
-    <target name="newMinorRelease" depends="resetIncrementMinor, inc.build"/>
+    <target name="_newMajorRelease" depends="resetIncrementMajor, inc.build"/>
+    <target name="_newMinorRelease" depends="resetIncrementMinor, inc.build"/>
 
     <!--
   ==========================================================================================
