@@ -85,7 +85,8 @@
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dir}/lib"/>
     <mkdir dir="${build.dir}/META-INF"/>
-    <condition property="initDone">
+	<mkdir dir="${cert.dir}"/>
+    <mkdir dir="${prod.dir}"/>    <condition property="initDone">
       <available file="${build.dir}" type="dir"/>
     </condition>
   </target>
@@ -320,28 +321,28 @@
     <property name="javac.debug" value="${local.javac.debug}"/>
     <property name="log.level" value="${local.log.level}"/>
     <property name="log.basedir" value="${local.log.basedir}"/>
-    <property name="district.svc.url" value="${local.district.svc.url}"/>
+    <property name="ada.svc.url" value="${local.ada.svc.url}"/>
     <property name="destination" value="DEV LOCAL"/>
   </target>
   <target name="setDev">
     <property name="javac.debug" value="${dev.javac.debug}"/>
     <property name="log.level" value="${dev.log.level}"/>
     <property name="log.basedir" value="${dev.log.basedir}"/>
-    <property name="district.svc.url" value="${dev.district.svc.url}"/>
+    <property name="ada.svc.url" value="${dev.ada.svc.url}"/>
     <property name="destination" value="DEV"/>
   </target>
   <target name="setCert">
     <property name="javac.debug" value="${cert.javac.debug}"/>
     <property name="log.level" value="${cert.log.level}"/>
     <property name="log.basedir" value="${cert.log.basedir}"/>
-    <property name="district.svc.url" value="${cert.district.svc.url}"/>
+    <property name="ada.svc.url" value="${cert.ada.svc.url}"/>
     <property name="destination" value="CERT"/>
   </target>
   <target name="setProd">
     <property name="javac.debug" value="${prod.javac.debug}"/>
     <property name="log.level" value="${prod.log.level}"/>
     <property name="log.basedir" value="${prod.log.basedir}"/>
-    <property name="district.svc.url" value="${prod.district.svc.url}"/>
+    <property name="ada.svc.url" value="${prod.ada.svc.url}"/>
     <property name="destination" value="PROD"/>
   </target>
   <!--
