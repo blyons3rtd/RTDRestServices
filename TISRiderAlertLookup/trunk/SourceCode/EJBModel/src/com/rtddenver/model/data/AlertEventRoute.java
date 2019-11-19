@@ -32,17 +32,13 @@ import org.eclipse.persistence.annotations.ReadOnly;
 @Cacheable(value=false)
 @NamedQueries({ @NamedQuery(name = "findRoutesWithActiveAlerts",
                             query =
-                            "SELECT o from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
-                            "ORDER BY o.routeSequence"),
+                            "SELECT o from AlertEventRoute o ORDER BY o.routeSequence"),
                 @NamedQuery(name = "findRoutesWithActiveAlertsGroupByMasterRoute",
                             query =
-                            "SELECT o.masterRoute from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
-                            "GROUP BY o.masterRoute"),
+                            "SELECT o.masterRoute from AlertEventRoute o GROUP BY o.masterRoute"),
                 @NamedQuery(name = "findRouteWithActiveAlertsByMasterRoute",
                             query =
-                            "SELECT o from AlertEventRoute o WHERE o.masterRoute = :masterRoute " +
-                            "AND o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate " +
-                            "ORDER BY o.routeSequence")
+                            "SELECT o from AlertEventRoute o WHERE o.masterRoute = :masterRoute ORDER BY o.routeSequence")
     })
 @Table(name = "ALERT_EVENT_ROUTES", schema = "RIDER_ALERT")
 public class AlertEventRoute implements Serializable {

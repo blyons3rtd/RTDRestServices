@@ -8,7 +8,6 @@ import com.rtddenver.model.dto.AlertEventRouteDTO;
 import com.rtddenver.model.dto.RouteActiveAlertEventDTO;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -245,11 +244,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEvent>
      */
     private List<AlertEvent> findActiveEventAlerts() {
-        return em.createNamedQuery("findActiveEventAlerts", AlertEvent.class)
-                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
-                           .getTime()
-                           .getTime()))
-                 .getResultList();
+        return em.createNamedQuery("findActiveEventAlerts", AlertEvent.class).getResultList();
     }
 
     /**
@@ -257,11 +252,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEvent>
      */
     private List<AlertEvent> findStationsWithActiveEventAlerts() {
-        return em.createNamedQuery("findActiveStationsWithActiveEventtAlerts", AlertEvent.class)
-                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
-                           .getTime()
-                           .getTime()))
-                 .getResultList();
+        return em.createNamedQuery("findActiveStationsWithActiveEventtAlerts", AlertEvent.class).getResultList();
     }
 
     /**
@@ -279,12 +270,8 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEventRoute>
      */
     private List<AlertEventRoute> findRouteWithActiveAlertsByMasterRoute(String masterRoute) {
-        long now = Calendar.getInstance()
-                           .getTime()
-                           .getTime();
         return em.createNamedQuery("findRouteWithActiveAlertsByMasterRoute", AlertEventRoute.class)
                  .setParameter("masterRoute", masterRoute)
-                 .setParameter("alertDate", new java.sql.Date(now))
                  .getResultList();
     }
 
@@ -293,11 +280,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEventRoute>
      */
     private List<AlertEventRoute> findRoutesWithActiveAlerts() {
-        return em.createNamedQuery("findRoutesWithActiveAlerts", AlertEventRoute.class)
-                 .setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
-                           .getTime()
-                           .getTime()))
-                 .getResultList();
+        return em.createNamedQuery("findRoutesWithActiveAlerts", AlertEventRoute.class).getResultList();
     }
 
     /**
@@ -306,11 +289,8 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      */
     private List findRoutesWithActiveAlertsGroupByMasterRoute() {
         TypedQuery query =
-            em.createQuery("SELECT o.masterRoute from AlertEventRoute o WHERE o.alert.alertEventEffEndDate >= :alertDate AND o.alert.alertEventEffStartDate <= :alertDate GROUP BY o.masterRoute",
+            em.createQuery("SELECT o.masterRoute from AlertEventRoute o GROUP BY o.masterRoute",
                            java.lang.String.class);
-        query.setParameter("alertDate", new java.sql.Date(Calendar.getInstance()
-                           .getTime()
-                           .getTime()));
         return query.getResultList();
     }
 
