@@ -45,13 +45,24 @@ import org.eclipse.persistence.annotations.ReadOnly;
 @ReadOnly
 @NamedQueries({ 
                 //Get active alerts for bus & rail
-                                @NamedQuery(name = "findActiveEventAlerts",
+                @NamedQuery(name = "findActiveEventAlerts",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 1 " + 
                             "ORDER BY o.alertEventStartDate DESC"),
-                @NamedQuery(name = "findActiveStationsWithActiveEventtAlerts",
+                //Get active alerts for Station/park-n-Ride Alerts
+                @NamedQuery(name = "findActiveStationsWithActiveEventAlerts",
                             query =
                             "select o from AlertEvent o WHERE o.alertTypeId = 3 " +
+                            "ORDER BY o.alertEventStartDate DESC"),
+                //Get active systemwide alerts for bus
+                @NamedQuery(name = "findActiveSystemwideBusAlerts",
+                            query =
+                            "select o from AlertEvent o WHERE o.alertTypeId = 4 " +
+                            "ORDER BY o.alertEventStartDate DESC"),
+                //Get active systemwide alerts for rail
+                @NamedQuery(name = "findActiveSystemwideRailAlerts",
+                            query =
+                            "select o from AlertEvent o WHERE o.alertTypeId = 5 " +
                             "ORDER BY o.alertEventStartDate DESC")
     })
 @Table(name = "ALERT_EVENTS", schema = "RIDER_ALERT")
@@ -253,6 +264,12 @@ public class AlertEvent implements Serializable {
                 break;
             case 3:
                 this.customAlertType = "Station/Park-n-Ride"; 
+                break;
+            case 4:
+                this.customAlertType = "Systemwide Alert Bus"; 
+                break;
+            case 5:
+                this.customAlertType = "Systemwide Alert Rail"; 
                 break;
             default:
                 this.customAlertType = Integer.toString(this.alertTypeId);
