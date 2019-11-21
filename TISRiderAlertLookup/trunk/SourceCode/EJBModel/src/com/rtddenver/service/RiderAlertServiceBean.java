@@ -60,10 +60,6 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
         ActiveAlertEventDTO dtoAlert = new ActiveAlertEventDTO();
         List<AlertEvent> stationPNRList = null;
         List<AlertEventDTO> stations = new ArrayList<AlertEventDTO>();
-        List<AlertEvent> systemwideBusList = null;
-        List<AlertEventDTO> systemwideBusAlerts = new ArrayList<AlertEventDTO>();
-        List<AlertEvent> systemwideRailList = null;
-        List<AlertEventDTO> systemwideRailAlerts = new ArrayList<AlertEventDTO>();
 
         try {
 
@@ -108,36 +104,6 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             if (stationPNRList != null) {
                 stationPNRList.clear();
                 stationPNRList = null;
-            }
-            
-            // Next, get active systemwide alerts for bus...
-            systemwideBusList = this.findActiveSystemwideBusAlerts();
-
-            if (systemwideBusList.size() == 0 && noAlertsFound) {
-                dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active systemwide alerts for bus.");
-            } else {
-                systemwideBusList.forEach(systemwideBus -> { systemwideBusAlerts.add(this.createAlertEventDTO(systemwideBus)); });
-                dtoAlert.setActiveSystemwideBusAlertsList(systemwideBusAlerts);
-            }
-
-            if (systemwideBusList != null) {
-                systemwideBusList.clear();
-                systemwideBusList = null;
-            }
-            
-            // Next, get active systemwide alerts for rail...
-            systemwideRailList = this.findActiveSystemwideRailAlerts();
-
-            if (systemwideRailList.size() == 0 && noAlertsFound) {
-                dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active systemwide alerts for rail.");
-            } else {
-                systemwideRailList.forEach(systemwideRail -> { systemwideRailAlerts.add(this.createAlertEventDTO(systemwideRail)); });
-                dtoAlert.setActiveSystemwideRailAlertsList(systemwideRailAlerts);
-            }
-
-            if (systemwideRailList != null) {
-                systemwideRailList.clear();
-                systemwideRailList = null;
             }
 
         } catch (Exception e) {
@@ -286,7 +252,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
      *  @return List<AlertEvent>
      */
     private List<AlertEvent> findStationsWithActiveEventAlerts() {
-        return em.createNamedQuery("findActiveStationsWithActiveEventAlerts", AlertEvent.class).getResultList();
+        return em.createNamedQuery("findActiveStationsWithActiveEventtAlerts", AlertEvent.class).getResultList();
     }
 
     /**
@@ -356,21 +322,5 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
                                                .routeId(alertRoute.getRouteId())
                                                .routeType(alertRoute.getCustomRouteType())
                                                .build();
-    }
-    
-    /**
-     *  findActiveSystemwideBusAlerts
-     *  @return List<AlertEvent>
-     */
-    private List<AlertEvent> findActiveSystemwideBusAlerts() {
-        return em.createNamedQuery("findActiveSystemwideBusAlerts", AlertEvent.class).getResultList();
-    }
-    
-    /**
-     *  findActiveSystemwideRailAlerts
-     *  @return List<AlertEvent>
-     */
-    private List<AlertEvent> findActiveSystemwideRailAlerts() {
-        return em.createNamedQuery("findActiveSystemwideRailAlerts", AlertEvent.class).getResultList();
     }
 }

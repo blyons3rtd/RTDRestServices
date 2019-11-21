@@ -26,12 +26,6 @@ public class ActiveAlertEventDTO extends Error implements Serializable {
     @XmlElement(name = "activeStationPNRAlertsList")
     private List<AlertEventDTO> activeStationPNRAlertsList = null;
     
-    @XmlElement(name = "activeSystemwideBusAlertsList")
-    private List<AlertEventDTO> activeSystemwideBusAlertsList = null;
-    
-    @XmlElement(name = "activeSystemwideRailAlertsList")
-    private List<AlertEventDTO> activeSystemwideRailAlertsList = null;
-    
     /**
      * ActiveAlertEventDTO
      */
@@ -88,37 +82,5 @@ public class ActiveAlertEventDTO extends Error implements Serializable {
      */
     public List<AlertEventDTO> getActiveStationPNRAlertsList() {
         return this.activeStationPNRAlertsList;
-    }
-    
-    /**
-     * setActiveSystemwideBusAlertsList
-     * @param activeSystemwideBusAlertsList List<AlertEventDTO>
-     */
-    public void setActiveSystemwideBusAlertsList(List<AlertEventDTO> activeSystemwideBusAlertsList) {
-        this.activeSystemwideBusAlertsList = activeSystemwideBusAlertsList;
-    }
-
-    /**
-     * getActiveSystemwideBusAlertsList
-     * @return List<AlertEventDTO>
-     */
-    public List<AlertEventDTO> getActiveSystemwideBusAlertsList() {
-        return this.activeSystemwideBusAlertsList;
-    }
-    
-    /**
-     * setActiveSystemwideRailAlertsList
-     * @param activeSystemwideRailAlertsList List<AlertEventDTO>
-     */
-    public void setActiveSystemwideRailAlertsList(List<AlertEventDTO> activeSystemwideRailAlertsList) {
-        this.activeSystemwideRailAlertsList = activeSystemwideRailAlertsList;
-    }
-
-    /**
-     * getActiveSystemwideRailAlertsList
-     * @return List<AlertEventDTO>
-     */
-    public List<AlertEventDTO> getActiveSystemwideRailAlertsList() {
-        return this.activeSystemwideRailAlertsList;
     }
 }
