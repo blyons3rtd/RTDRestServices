@@ -56,19 +56,16 @@ public class BoardDirectorBean implements BoardDirectorLocal {
             LOGGER.debug("Entered getDirectorByDistrict(" + district + ")...");
         }
         DirectorDTO dto = null;
-        // Provide a means to force a refresh of the directorMap via a svc call
-        if (district == null || "".equals(district.trim())) {
-            LOGGER.warn("District is null or empty");
-            dto = new DirectorDTO("", "Address is Not in an RTD District");
-                new DirectorDTO(404, 1700, "No disrict code returned by DistrictLookup service",
-                    "Unexpected Error", "");
-        } else if ("out".equals(district.toLowerCase())) {
-            dto = new DirectorDTO("", "Address if Outside of an RTD District");
+        if ("OUT".equalsIgnoreCase(district)) {
+            LOGGER.info("Address is outside of an RTD district");
+            dto =  new DirectorDTO("OUT", "Address is Outside of an RTD District");
         } else if (district.equalsIgnoreCase("refresh")) {
             // This is used to force a refresh of the district/director map object
+            LOGGER.info("District/Director map being refreshed...");
             initializeMap();
             dto = new DirectorDTO("Success", "directorMap initialized");
         } else {
+            LOGGER.info("Looking for Director of district " + district);
             try {
                 int cnt = 0;
                 if (timeToRefresh()) {
@@ -80,9 +77,13 @@ public class BoardDirectorBean implements BoardDirectorLocal {
                     BoardDirector bd = directorMap.get(district.toUpperCase());
                     if (bd != null) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Got director from cached directorMap");
+                            LOGGER.debug("Got director from cached directorMap... " + bd.getDistrict() + ":" + bd.getDirectorFullName() );
                         }
                         dto = new DirectorDTO(bd.getDistrict(), bd.getDirectorFullName());
+                        //LOGGER.info("dto returned... " + 
+                        //    "  District:" + dto.getDistrict() + "  Director:" + dto.getDirector() +
+                        //    "  Code:" + dto.getCodeAsInt() + "  Status:" + dto.getStatusAsInt() + 
+                        //    "  Message:" + dto.getMessage() + " Details:" + dto.getMoreInfo());
                         cnt = 2;
                     } else {
                         if (cnt >= 1) {
@@ -103,6 +104,7 @@ public class BoardDirectorBean implements BoardDirectorLocal {
                 dto = new DirectorDTO(500, 1999, e.getMessage(), "Unexpected error occurred. Retry query.", "");
             }
         }
+        LOGGER.info("Returning dto");
         return dto;
     }
 

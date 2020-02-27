@@ -117,6 +117,7 @@ public class DirectorLookup {
                         } else {
                             String distr = distDto.getDistrict();
                             dirDto = this.directorService.getDirectorByDistrict(distr);
+                            LOGGER.info("dirDto returned null... " + (dirDto == null)); 
                         }
                     } else {
                         LOGGER.warn("No reponse from GIS Service. Internal Service error. Address: " + street + ", " +
@@ -130,6 +131,7 @@ public class DirectorLookup {
                 // Return error
             }
         } catch (Exception e) {
+            LOGGER.error(e.toString());
             dirDto = new DirectorDTO(500, 1950, e.getMessage(), "Internal Server Error", e.toString());
         }
 
@@ -151,6 +153,11 @@ public class DirectorLookup {
                                  .INTERNAL_SERVER_ERROR
                                  .getStatusCode();
                 break;
+            default:
+                status = Response.Status
+                                 .SEE_OTHER
+                                 .getStatusCode();
+                break;
             }
 
             try {
@@ -163,10 +170,10 @@ public class DirectorLookup {
             }
         }
 
-        LOGGER.info("Returning...  " + 
-            "  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
-            "  Code:" + dirDto.getCodeAsInt() + "  Status:" + dirDto.getStatusAsInt() + 
-            "  Message:" + dirDto.getMessage() + " Details:" + dirDto.getMoreInfo());
+        //LOGGER.info("Returning...  " + 
+        //    "  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
+        //    "  Code:" + dirDto.getCodeAsInt() + "  Status:" + dirDto.getStatusAsInt() + 
+        //    "  Message:" + dirDto.getMessage() + " Details:" + dirDto.getMoreInfo());
 
         return dirDto;
     }

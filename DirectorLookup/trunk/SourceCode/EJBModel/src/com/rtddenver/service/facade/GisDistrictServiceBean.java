@@ -64,8 +64,8 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
 
+                LOGGER.error("GIS Get District service call returned: " + conn.getResponseCode() + ", " + conn.getResponseMessage());
                 if (conn.getResponseCode() != 200) {
-                    LOGGER.error("GIS Get District service call returned: " + conn.getResponseCode() + ", " + conn.getResponseMessage());
                     dto = new DistrictDTO(conn.getResponseCode(), 1999, "Error returned from GISDistrictService",
                                      "Unexpected error occurred. Retry query. " + conn.getResponseMessage(), "");
                 } else {

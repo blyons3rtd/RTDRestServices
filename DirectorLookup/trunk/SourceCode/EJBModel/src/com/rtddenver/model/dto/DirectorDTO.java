@@ -60,6 +60,7 @@ public class DirectorDTO implements Serializable {
      * @param director
      */
     public DirectorDTO(String district, String director) {
+        super();
         this.district = district;
         this.director = director;
     }
@@ -103,6 +104,9 @@ public class DirectorDTO implements Serializable {
     }
 
     public int getStatusAsInt() {
+        if (status == null) {
+            return 0;
+        }
         int x = Math.toIntExact(status);
         return x;
     }
@@ -112,6 +116,9 @@ public class DirectorDTO implements Serializable {
     }
     
     public int getCodeAsInt() {
+        if (code == null) {
+            return 0;
+        }
         int x = Math.toIntExact(code);
         return x;
     }
