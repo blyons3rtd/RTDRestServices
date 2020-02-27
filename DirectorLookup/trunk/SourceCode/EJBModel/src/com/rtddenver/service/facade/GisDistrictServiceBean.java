@@ -66,7 +66,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
 
                 if (conn.getResponseCode() != 200) {
                     LOGGER.error("GIS Get District service call returned: " + conn.getResponseCode() + ", " + conn.getResponseMessage());
-                    dto = new DistrictDTO(conn.getResponseCode(), 1999, "Error calling GIS Get District service",
+                    dto = new DistrictDTO(conn.getResponseCode(), 1999, "Error returned from GISDistrictService",
                                      "Unexpected error occurred. Retry query. " + conn.getResponseMessage(), "");
                 } else {
                     BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -84,7 +84,7 @@ public class GisDistrictServiceBean implements GisDistrictServiceLocal {
         } catch (Exception e) {
             LOGGER.error("Error querying and processing entity bean: " + e);
             e.printStackTrace();
-            dto = new DistrictDTO(500, 1502, e.getMessage(), "Error calling GISDistrictService", "");
+            dto = new DistrictDTO(500, 1502, e.getMessage(), "Error calling GISDistrictService", e.toString());
         }
 
         return dto;

@@ -130,7 +130,7 @@ public class DirectorLookup {
                 // Return error
             }
         } catch (Exception e) {
-            dirDto = new DirectorDTO(500, 1950, e.getMessage(), "Internal Server Error", "");
+            dirDto = new DirectorDTO(500, 1950, e.getMessage(), "Internal Server Error", e.toString());
         }
 
         int status = 0;
@@ -159,12 +159,14 @@ public class DirectorLookup {
                 response.getOutputStream().close();
                 response.flushBuffer();
             } catch (IOException e) {
-                LOGGER.error("Error in LicensePlateLookup.getLicensePlate - setting response", e);
+                LOGGER.error("Error in DirectorLookup.getDirector - setting response", e);
             }
         }
 
-        LOGGER.info("Returning...  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
-                    "  Message:" + dirDto.getMessage());
+        LOGGER.info("Returning...  " + 
+            "  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
+            "  Code:" + dirDto.getCodeAsInt() + "  Status:" + dirDto.getStatusAsInt() + 
+            "  Message:" + dirDto.getMessage() + " Details:" + dirDto.getMoreInfo());
 
         return dirDto;
     }

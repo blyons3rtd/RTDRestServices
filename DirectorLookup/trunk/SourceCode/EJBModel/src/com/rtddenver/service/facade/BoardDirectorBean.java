@@ -53,16 +53,19 @@ public class BoardDirectorBean implements BoardDirectorLocal {
 
     public DirectorDTO getDirectorByDistrict(String district) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered getDirectoryByDistrict(" + district + ")...");
+            LOGGER.debug("Entered getDirectorByDistrict(" + district + ")...");
         }
         DirectorDTO dto = null;
         // Provide a means to force a refresh of the directorMap via a svc call
         if (district == null || "".equals(district.trim())) {
             LOGGER.warn("District is null or empty");
-            dto =
+            dto = new DirectorDTO("", "Address is Not in an RTD District");
                 new DirectorDTO(404, 1700, "No disrict code returned by DistrictLookup service",
-                                "Address not found in RTD District", "");
+                    "Unexpected Error", "");
+        } else if ("out".equals(district.toLowerCase())) {
+            dto = new DirectorDTO("", "Address if Outside of an RTD District");
         } else if (district.equalsIgnoreCase("refresh")) {
+            // This is used to force a refresh of the district/director map object
             initializeMap();
             dto = new DirectorDTO("Success", "directorMap initialized");
         } else {
