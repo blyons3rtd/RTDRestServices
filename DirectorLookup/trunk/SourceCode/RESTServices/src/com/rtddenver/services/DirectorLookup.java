@@ -117,7 +117,6 @@ public class DirectorLookup {
                         } else {
                             String distr = distDto.getDistrict();
                             dirDto = this.directorService.getDirectorByDistrict(distr);
-                            LOGGER.info("dirDto returned null... " + (dirDto == null)); 
                         }
                     } else {
                         LOGGER.warn("No reponse from GIS Service. Internal Service error. Address: " + street + ", " +
@@ -169,11 +168,6 @@ public class DirectorLookup {
                 LOGGER.error("Error in DirectorLookup.getDirector - setting response", e);
             }
         }
-
-        //LOGGER.info("Returning...  " + 
-        //    "  District:" + dirDto.getDistrict() + "  Director:" + dirDto.getDirector() +
-        //    "  Code:" + dirDto.getCodeAsInt() + "  Status:" + dirDto.getStatusAsInt() + 
-        //    "  Message:" + dirDto.getMessage() + " Details:" + dirDto.getMoreInfo());
 
         return dirDto;
     }

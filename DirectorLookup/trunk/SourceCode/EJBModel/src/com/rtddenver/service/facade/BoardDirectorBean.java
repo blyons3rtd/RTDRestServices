@@ -58,7 +58,7 @@ public class BoardDirectorBean implements BoardDirectorLocal {
         DirectorDTO dto = null;
         if ("OUT".equalsIgnoreCase(district)) {
             LOGGER.info("Address is outside of an RTD district");
-            dto =  new DirectorDTO("OUT", "Address is Outside of an RTD District");
+            dto =  new DirectorDTO("", "Address is Outside of an RTD District");
         } else if (district.equalsIgnoreCase("refresh")) {
             // This is used to force a refresh of the district/director map object
             LOGGER.info("District/Director map being refreshed...");
@@ -73,17 +73,12 @@ public class BoardDirectorBean implements BoardDirectorLocal {
                 }
                 while (cnt < 2) {
                     //Get director info from an existing cached map
-                    //LOGGER.info("cnt:" + cnt);
                     BoardDirector bd = directorMap.get(district.toUpperCase());
                     if (bd != null) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Got director from cached directorMap... " + bd.getDistrict() + ":" + bd.getDirectorFullName() );
                         }
                         dto = new DirectorDTO(bd.getDistrict(), bd.getDirectorFullName());
-                        //LOGGER.info("dto returned... " + 
-                        //    "  District:" + dto.getDistrict() + "  Director:" + dto.getDirector() +
-                        //    "  Code:" + dto.getCodeAsInt() + "  Status:" + dto.getStatusAsInt() + 
-                        //    "  Message:" + dto.getMessage() + " Details:" + dto.getMoreInfo());
                         cnt = 2;
                     } else {
                         if (cnt >= 1) {
