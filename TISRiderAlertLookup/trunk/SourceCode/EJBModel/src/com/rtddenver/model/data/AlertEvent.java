@@ -211,22 +211,21 @@ public class AlertEvent implements Serializable {
         LOGGER.info("inputDate:" + inputDate + ", timeType:" + timeType);
         String outputDate = "";
         try {
-            DateFormat outputDateFormat = new SimpleDateFormat("MMMMM dd, yyy");
+            //DateFormat outputDateFormat = new SimpleDateFormat("MMMMM dd, yyy");
             DateFormat outputDateTimeFormat = new SimpleDateFormat("MMMMM dd, yyyy h:mma");
             DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             String tmpInputDate = inputDate;
-            Date date = inputFormat.parse(tmpInputDate);
+            //Date date = inputFormat.parse(tmpInputDate);
             
             switch(timeType){
                 case 2:
-                    outputDate = outputDateFormat.format(date) + " TBD";
+                    outputDate = "Until Further Notice";
                     break;
                 case 3:
+                    Date date = inputFormat.parse(tmpInputDate);
                     outputDate = outputDateTimeFormat.format(date);
                     break;
-                default:
-                    outputDate = outputDateFormat.format(date);
             }
         }
         catch (Exception ex) {
