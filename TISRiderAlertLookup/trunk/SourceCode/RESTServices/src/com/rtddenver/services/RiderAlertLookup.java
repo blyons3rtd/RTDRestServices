@@ -164,6 +164,9 @@ public class RiderAlertLookup {
         case 500:
             responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
             break;
+//        case 200:
+//            responseStatus = Response.Status.OK.getStatusCode();
+//            break;
         }
 
         try {
