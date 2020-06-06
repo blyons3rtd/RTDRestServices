@@ -99,7 +99,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             stationPNRList = this.findStationsWithActiveEventAlerts();
 
             if (stationPNRList.size() == 0 && noAlertsFound) {
-                dtoAlert = new ActiveAlertEventDTO(200, "1700", "Not found", "Currently there are no active alerts.");
+                dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active alerts.");
             } else {
                 stationPNRList.forEach(station_pnr -> { stations.add(this.createAlertEventDTO(station_pnr)); });
                 dtoAlert.setActiveStationPNRAlertsList(stations);
@@ -114,7 +114,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             systemwideBusList = this.findActiveSystemwideBusAlerts();
 
             if (systemwideBusList.size() == 0 && noAlertsFound) {
-                dtoAlert = new ActiveAlertEventDTO(200, "1700", "Not found", "Currently there are no active alerts.");
+                dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active systemwide alerts for bus.");
             } else {
                 systemwideBusList.forEach(systemwideBus -> { systemwideBusAlerts.add(this.createAlertEventDTO(systemwideBus)); });
                 dtoAlert.setActiveSystemwideBusAlertsList(systemwideBusAlerts);
@@ -129,7 +129,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             systemwideRailList = this.findActiveSystemwideRailAlerts();
 
             if (systemwideRailList.size() == 0 && noAlertsFound) {
-                dtoAlert = new ActiveAlertEventDTO(200, "1700", "Not found", "Currently there are no active alerts.");
+                dtoAlert = new ActiveAlertEventDTO(404, "1700", "Not found", "Currently there are no active systemwide alerts for rail.");
             } else {
                 systemwideRailList.forEach(systemwideRail -> { systemwideRailAlerts.add(this.createAlertEventDTO(systemwideRail)); });
                 dtoAlert.setActiveSystemwideRailAlertsList(systemwideRailAlerts);
@@ -162,7 +162,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
             // First, get active alert by ID
             alert = this.findAlertEventById(alertEventId);
             if (alert == null) {
-                alertDTO = new AlertEventDTO(200, "1700", "Not found", "Alert " + alertEventId + " not found.");
+                alertDTO = new AlertEventDTO(404, "1700", "Not found", "Alert " + alertEventId + " not found.");
             } else {
                 alertDTO = this.createAlertEventDTO(alert);
                 List<AlertEventRouteDTO> routes = new ArrayList<AlertEventRouteDTO>(alert.getAlertEventRoutes().size());
@@ -203,7 +203,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
 
             if (routesWithActiveAlertsGroupByMasetrRouteList.isEmpty()) {
                 routeActiveAlertEventDTO =
-                    new RouteActiveAlertEventDTO(200, "1700", "Not found", "No routes with active alerts were found.");
+                    new RouteActiveAlertEventDTO(404, "1700", "Not found", "No routes with active alerts were found.");
             } else {
                 routeActiveAlertEventDTO = new RouteActiveAlertEventDTO();
                 routesWithActiveAlertsGroupByMasetrRouteList.forEach(masterRoute -> {
@@ -251,7 +251,7 @@ public class RiderAlertServiceBean implements RiderAlertServiceLocal {
 
             if (alertEventRouteList.isEmpty()) {
                 alertEventRouteDTO =
-                    new AlertEventRouteDTO(200, "1700", "Not found", "Route " + masterRoute + " not found.");
+                    new AlertEventRouteDTO(404, "1700", "Not found", "Route " + masterRoute + " not found.");
             } else {
                 // get route info from 1st record
                 alertEventRouteDTO = this.createAlertEventRouteDTO(alertEventRouteList.get(0));
